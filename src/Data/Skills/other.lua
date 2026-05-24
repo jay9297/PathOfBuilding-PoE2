@@ -5623,8 +5623,6 @@ skills["MirageDeadeyePlayer"] = {
 		[19] = { levelRequirement = 84, },
 		[20] = { levelRequirement = 90, },
 	},
-	statSets = {
-	}
 }
 skills["MomentOfVulnerabilityPlayer"] = {
 	name = "Moment of Vulnerability",

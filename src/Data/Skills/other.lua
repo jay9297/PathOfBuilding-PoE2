@@ -5591,6 +5591,41 @@ skills["MeditatePlayer"] = {
 		},
 	}
 }
+skills["MirageDeadeyePlayer"] = {
+	name = "Mirage Deadeye",
+	baseTypeName = "Mirage Deadeye",
+	fromTree = true,
+	color = 4,
+	description = "When you use a Bow, Crossbow, or Spear Skill, a Mirage of yourself appears briefly and also uses that Skill.",
+	skillTypes = { [SkillType.Buff] = true, [SkillType.OngoingSkill] = true, [SkillType.HasReservation] = true, [SkillType.Persistent] = true, [SkillType.AttackInPlace] = true, },
+	castTime = 1,
+	qualityStats = {
+	},
+	levels = {
+		[1] = { levelRequirement = 0, },
+		[2] = { levelRequirement = 3, },
+		[3] = { levelRequirement = 6, },
+		[4] = { levelRequirement = 10, },
+		[5] = { levelRequirement = 14, },
+		[6] = { levelRequirement = 18, },
+		[7] = { levelRequirement = 22, },
+		[8] = { levelRequirement = 26, },
+		[9] = { levelRequirement = 31, },
+		[10] = { levelRequirement = 36, },
+		[11] = { levelRequirement = 41, },
+		[12] = { levelRequirement = 46, },
+		[13] = { levelRequirement = 52, },
+		[14] = { levelRequirement = 58, },
+		[15] = { levelRequirement = 64, },
+		[16] = { levelRequirement = 66, },
+		[17] = { levelRequirement = 72, },
+		[18] = { levelRequirement = 78, },
+		[19] = { levelRequirement = 84, },
+		[20] = { levelRequirement = 90, },
+	},
+	statSets = {
+	}
+}
 skills["MomentOfVulnerabilityPlayer"] = {
 	name = "Moment of Vulnerability",
 	baseTypeName = "Moment of Vulnerability",

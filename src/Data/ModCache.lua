@@ -5306,7 +5306,7 @@ c["Grants Skill: Level 20 Withering Presence"]={{[1]={flags=0,keywordFlags=0,nam
 c["Grants Skill: Life Remnants"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=1,skillId="LifeRemnantsPlayer"}}},nil}
 c["Grants Skill: Manifest Weapon"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=1,skillId="ManifestWeaponPlayer"}}},nil}
 c["Grants Skill: Meditate"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=1,skillId="MeditatePlayer"}}},nil}
-c["Grants Skill: Mirage Deadeye"]={nil,nil}
+c["Grants Skill: Mirage Deadeye"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=1,skillId="MirageDeadeyePlayer"}}},nil}
 c["Grants Skill: Moment of Vulnerability"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=1,skillId="MomentOfVulnerabilityPlayer"}}},nil}
 c["Grants Skill: Navira's Fracturing"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=1,skillId="ChilledGroundBurstWaterDjinn"}}},nil}
 c["Grants Skill: Navira's Oasis"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=1,skillId="ChilledGroundOasisConvertWaterDjinn"}}},nil}

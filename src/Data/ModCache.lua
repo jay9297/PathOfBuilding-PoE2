@@ -5180,7 +5180,7 @@ c["Grants 1 Passive Skill Point"]={{[1]={flags=0,keywordFlags=0,name="ExtraPoint
 c["Grants 1 additional Skill Slot"]={{[1]={flags=0,keywordFlags=0,name="SkillSlots",type="BASE",value=1}},nil}
 c["Grants 4 Passive Skill Point"]={{[1]={flags=0,keywordFlags=0,name="ExtraPoints",type="BASE",value=4}},nil}
 c["Grants Onslaught during effect"]={nil,"Grants Onslaught during effect "}
-c["Grants Sands of Time"]={nil,"Grants Sands of Time "}
+c["Grants Sands of Time"]={{},nil}
 c["Grants Skill: Acidic Concoction"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=1,skillId="AcidicConcoctionPlayer"}}},nil}
 c["Grants Skill: Align Fate"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=1,skillId="AlignFatePlayer"}}},nil}
 c["Grants Skill: Ancestral Spirits"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=1,skillId="AncestralSpiritsPlayer"}}},nil}
@@ -5199,8 +5199,8 @@ c["Grants Skill: Fire Spell on Hit"]={{[1]={flags=0,keywordFlags=0,name="ExtraSk
 c["Grants Skill: Fulminating Concoction"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=1,skillId="FulminatingConcoctionPlayer"}}},nil}
 c["Grants Skill: Inevitable Agony"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=1,skillId="InevitableAgonyPlayer"}}},nil}
 c["Grants Skill: Into the Breach"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=1,skillId="IntoTheBreachPlayer"}}},nil}
-c["Grants Skill: Kelari's Deception"]={nil,nil}
-c["Grants Skill: Kelari's Judgment"]={nil,nil}
+c["Grants Skill: Kelari's Deception"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=1,skillId="ExplosiveTeleportSandDjinn"}}},nil}
+c["Grants Skill: Kelari's Judgment"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=1,skillId="HandSlamSandDjinn"}}},nil}
 c["Grants Skill: Kelari's Malediction"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=1,skillId="CorpseBeetlesPlayer"}}},nil}
 c["Grants Skill: Kelari, the Tainted Sands"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=1,skillId="SummonSandDjinnPlayer"}}},nil}
 c["Grants Skill: Level 11 Black Powder Blitz"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=11,skillId="BlackPowderBlitzReservationPlayer"}}},nil}
@@ -5308,16 +5308,16 @@ c["Grants Skill: Manifest Weapon"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkil
 c["Grants Skill: Meditate"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=1,skillId="MeditatePlayer"}}},nil}
 c["Grants Skill: Mirage Deadeye"]={nil,nil}
 c["Grants Skill: Moment of Vulnerability"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=1,skillId="MomentOfVulnerabilityPlayer"}}},nil}
-c["Grants Skill: Navira's Fracturing"]={nil,nil}
-c["Grants Skill: Navira's Oasis"]={nil,nil}
-c["Grants Skill: Navira's Well"]={nil,nil}
+c["Grants Skill: Navira's Fracturing"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=1,skillId="ChilledGroundBurstWaterDjinn"}}},nil}
+c["Grants Skill: Navira's Oasis"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=1,skillId="ChilledGroundOasisConvertWaterDjinn"}}},nil}
+c["Grants Skill: Navira's Well"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=1,skillId="ESRechargeForceRestartWaterDjinn"}}},nil}
 c["Grants Skill: Navira, the Last Mirage"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=1,skillId="SummonWaterDjinnPlayer"}}},nil}
 c["Grants Skill: Parry"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=1,skillId="ParryPlayer"}}},nil}
 c["Grants Skill: Raise Shield"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=1,skillId="ShieldBlockPlayer"}}},nil}
 c["Grants Skill: Ritual Sacrifice"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=1,skillId="RitualSacrificePlayer"}}},nil}
-c["Grants Skill: Ruzhan's Fury"]={nil,nil}
-c["Grants Skill: Ruzhan's Reckoning"]={nil,nil}
-c["Grants Skill: Ruzhan's Trap"]={nil,nil}
+c["Grants Skill: Ruzhan's Fury"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=1,skillId="MassFusilladeFireDjinn"}}},nil}
+c["Grants Skill: Ruzhan's Reckoning"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=1,skillId="MeteorFireDjinn"}}},nil}
+c["Grants Skill: Ruzhan's Trap"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=1,skillId="FireRuneFireDjinn"}}},nil}
 c["Grants Skill: Ruzhan, the Blazing Sword"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=1,skillId="SummonFireDjinnPlayer"}}},nil}
 c["Grants Skill: Shattering Concoction"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=1,skillId="ShatteringConcoctionPlayer"}}},nil}
 c["Grants Skill: Sorcery Ward"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=1,skillId="SorceryWardPlayer"}}},nil}
@@ -5330,7 +5330,7 @@ c["Grants Skill: Time Freeze"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",t
 c["Grants Skill: Time Snap"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=1,skillId="TimeSnapPlayer"}}},nil}
 c["Grants Skill: Unbound Avatar"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=1,skillId="UnboundAvatarPlayer"}}},nil}
 c["Grants Skill: Void Illusion"]={{[1]={flags=0,keywordFlags=0,name="ExtraSkill",type="LIST",value={level=1,skillId="VoidIllusionPlayer"}}},nil}
-c["Grants Thaumaturgical Dynamism"]={nil,"Grants Thaumaturgical Dynamism "}
+c["Grants Thaumaturgical Dynamism"]={{},nil}
 c["Grants Unravelling"]={{[1]={flags=0,keywordFlags=0,name="Unravelling",type="FLAG",value=true}},nil}
 c["Grants a Frenzy Charge on use"]={nil,"Grants a Frenzy Charge on use "}
 c["Grants a Power Charge on use"]={nil,"Grants a Power Charge on use "}

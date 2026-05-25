@@ -601,6 +601,11 @@ return {
 ["grenade_skill_cooldown_speed_+%"] = {
 	mod("CooldownRecovery", "INC", nil),
 },
+-- Note: stat tracks 8s window, reuses NonInstantSpellCastRecently (4s "Recently" label).
+-- User configures the count manually, so functionally equivalent.
+["cast_speed_+%_per_num_unique_spells_cast_in_last_8_seconds"] = {
+	mod("Speed", "INC", nil, ModFlag.Cast, 0, { type = "Multiplier", var = "NonInstantSpellCastRecently" }),
+},
 -- AoE
 ["active_skill_base_area_of_effect_radius"] = {
 	skill("radius", nil),

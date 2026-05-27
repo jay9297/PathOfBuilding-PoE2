@@ -262,7 +262,7 @@ local use4kIfPossible = false
 local idPassiveTree = 'Default'
 -- Find a way to get version
 local basePath = GetWorkDir() .. "/../TreeData/"
-local version = "0_4"
+local version = "0_5"
 local path = basePath .. version .. "/"
 local fileTree = path .. "tree.lua"
 

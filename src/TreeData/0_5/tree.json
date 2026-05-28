@@ -370,12 +370,12 @@
           }
         },
         {
-          "id": "Necromancer",
+          "id": "Lich",
           "internalId": "Witch3",
-          "name": "Necromancer",
+          "name": "Lich",
           "background": {
             "height": 1500,
-            "image": "ClassesNecromancer",
+            "image": "ClassesLich",
             "section": "AscendancyBackground",
             "width": 1500,
             "x": -3230.2751094136,
@@ -690,12 +690,12 @@
           }
         },
         {
-          "id": "Brute",
+          "id": "Warbringer",
           "internalId": "Warrior2",
-          "name": "Brute",
+          "name": "Warbringer",
           "background": {
             "height": 1500,
-            "image": "ClassesBrute",
+            "image": "ClassesWarbringer",
             "section": "AscendancyBackground",
             "width": 1500,
             "x": -13458.999762149,
@@ -895,12 +895,12 @@
           }
         },
         {
-          "id": "Gambler",
+          "id": "Gemling Legionnaire",
           "internalId": "Mercenary3",
-          "name": "Gambler",
+          "name": "Gemling Legionnaire",
           "background": {
             "height": 1500,
-            "image": "ClassesGambler",
+            "image": "ClassesGemling Legionnaire",
             "section": "AscendancyBackground",
             "width": 1500,
             "x": -3210.1101987684,
@@ -946,12 +946,12 @@
           }
         },
         {
-          "id": "Master of the Elements",
+          "id": "Invoker",
           "internalId": "Monk2",
-          "name": "Master of the Elements",
+          "name": "Invoker",
           "background": {
             "height": 1500,
-            "image": "ClassesMaster of the Elements",
+            "image": "ClassesInvoker",
             "section": "AscendancyBackground",
             "width": 1500,
             "x": 12594.531392424,
@@ -23232,9 +23232,9 @@
       "group": 51,
       "orbit": 6,
       "orbitIndex": 48,
-      "name": "Brute",
+      "name": "Warbringer",
       "icon": "Art/2DArt/SkillIcons/passives/damage.png",
-      "ascendancyName": "Brute",
+      "ascendancyName": "Warbringer",
       "isAscendancyStart": true,
       "id": "AscendancyWarrior2Start",
       "connections": [
@@ -52563,9 +52563,9 @@
       "group": 457,
       "orbit": 9,
       "orbitIndex": 72,
-      "name": "Gambler",
+      "name": "Gemling Legionnaire",
       "icon": "Art/2DArt/SkillIcons/passives/damage.png",
-      "ascendancyName": "Gambler",
+      "ascendancyName": "Gemling Legionnaire",
       "isAscendancyStart": true,
       "id": "AscendancyMercenary3Start",
       "connections": [
@@ -101678,9 +101678,9 @@
       "group": 1173,
       "orbit": 9,
       "orbitIndex": 0,
-      "name": "Necromancer",
+      "name": "Lich",
       "icon": "Art/2DArt/SkillIcons/passives/damage.png",
-      "ascendancyName": "Necromancer",
+      "ascendancyName": "Lich",
       "isAscendancyStart": true,
       "id": "AscendancyWitch3Start_",
       "connections": [
@@ -123587,9 +123587,9 @@
       "group": 1505,
       "orbit": 9,
       "orbitIndex": 24,
-      "name": "Master of the Elements",
+      "name": "Invoker",
       "icon": "Art/2DArt/SkillIcons/passives/damage.png",
-      "ascendancyName": "Master of the Elements",
+      "ascendancyName": "Invoker",
       "isAscendancyStart": true,
       "id": "AscendancyMonk2Start",
       "connections": [

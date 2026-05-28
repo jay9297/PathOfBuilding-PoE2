@@ -622,7 +622,7 @@ function PassiveTreeClass:BuildConnector(node1, node2, connection)
 		end
 
 		-- return
-	elseif node1.g == node2.g and node1.o == node2.o and connection.orbit == 0 then
+	elseif node1.g == node2.g and node1.o == node2.o and node1.o ~= 0 and connection.orbit == 0 then
 		-- Nodes are in the same orbit of the same group
 		-- Calculate the starting angle (node1.angle) and arc angle
 		if node1.angle > node2.angle then

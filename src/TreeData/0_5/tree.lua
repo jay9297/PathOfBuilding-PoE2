@@ -1510,6 +1510,8 @@ return {
 			ClassesWarrior=31,
 			ClassesWitch=32,
 			ClassesWitchhunter=33,
+			["ClassesMartial Artist"]=34,
+			["ClassesSpirit Walker"]=35,
 		},
 		["ascendancy-background_4000_4000_BC7.dds.zst"]={
 			BGTree=1,

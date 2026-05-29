@@ -92,3 +92,7 @@ docker compose run --rm tests --coverage         # with luacov
 - `spec/System/` — Busted test suite.
 - `runtime/lua/` — extra Lua libraries used at runtime.
 - `tests/` — Docker-based test harness.
+
+## Fork rules
+
+- **NEVER open PRs against the upstream repo** (`PathOfBuildingCommunity/PathOfBuilding-PoE2`). All PRs must target the fork (`jay9297/PathOfBuilding-PoE2`). Upstream sync is done by merging `origin/dev` locally, not via PRs.

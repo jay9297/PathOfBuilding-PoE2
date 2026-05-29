@@ -41,7 +41,10 @@ local ItemSetListClass = newClass("ItemSetListControl", "ListControl", function(
 			t_insert(existing, itemsTab.itemSets[id])
 		end
 		local newSet = itemsTab:NewItemSet()
-		require("Modules/BuildExportPoE2").PresetNextLevels(existing, newSet)
+		local ok, BuildExportPoE2 = pcall(require, "Modules/BuildExportPoE2")
+		if ok then
+			BuildExportPoE2.PresetNextLevels(existing, newSet)
+		end
 		self:RenameSet(newSet, true)
 	end)
 end)
@@ -97,7 +100,7 @@ end
 
 function ItemSetListClass:ReceiveDrag(type, value, source)
 	if type == "SharedItemList" then
-		local itemSet = self.itemsTab:NewItemSet()
+		local itemSet = self.itemsTab:CreateItemSet()
 		itemSet.title = value.title
 		for slotName, item in pairs(value.slots) do
 			local newItem = new("Item", item.raw)

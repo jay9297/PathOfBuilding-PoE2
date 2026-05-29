@@ -51,7 +51,10 @@ local SkillSetListClass = newClass("SkillSetListControl", "ListControl", functio
 			t_insert(existing, skillsTab.skillSets[id])
 		end
 		local newSet = skillsTab:NewSkillSet()
-		require("Modules/BuildExportPoE2").PresetNextLevels(existing, newSet)
+		local ok, BuildExportPoE2 = pcall(require, "Modules/BuildExportPoE2")
+		if ok then
+			BuildExportPoE2.PresetNextLevels(existing, newSet)
+		end
 		self:RenameSet(newSet, true)
 	end)
 end)

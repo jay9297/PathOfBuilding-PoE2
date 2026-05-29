@@ -346,22 +346,24 @@ local ImportTabClass = newClass("ImportTab", "ControlHost", "Control", function(
 	end
 
 	-- Path of Exile 2 BuildPlanner export
-	local BuildExportPoE2 = require("Modules/BuildExportPoE2")
-	self.controls.sectionPoE2Export = new("SectionControl", {"TOPLEFT",self.controls.sectionBuild,"BOTTOMLEFT",true}, {0, 18, 650, 112}, "Export to Path of Exile 2 BuildPlanner")
-	self.controls.poe2ExportDesc = new("LabelControl", {"TOPLEFT",self.controls.sectionPoE2Export,"TOPLEFT"}, {6, 14, 0, 16}, "^7Save this build as a .build file the in-game BuildPlanner can load.")
-	self.controls.poe2ExportDesc2 = new("LabelControl", {"TOPLEFT",self.controls.poe2ExportDesc,"BOTTOMLEFT"}, {0, 2, 0, 14}, "^xAAAAAATree specs, item sets and skill sets are exported as level-bracketed loadouts.")
-	self.controls.poe2ExportDesc3 = new("LabelControl", {"TOPLEFT",self.controls.poe2ExportDesc2,"BOTTOMLEFT"}, {0, 2, 0, 14}, "^xAAAAAAEdit each set's level range in its Manage popup.")
-	self.poe2ExportStatus = ""
-	self.controls.poe2ExportPath = new("EditControl", {"TOPLEFT",self.controls.poe2ExportDesc3,"BOTTOMLEFT"}, {0, 8, 560, 20}, BuildExportPoE2.DefaultPath(self.build), "Path", nil, 260)
-	self.controls.poe2ExportSave = new("ButtonControl", {"LEFT",self.controls.poe2ExportPath,"RIGHT"}, {8, 0, 80, 20}, "Save", function()
-		self:DoPoE2Export(BuildExportPoE2, self.controls.poe2ExportPath.buf)
-	end)
-	self.controls.poe2ExportSave.enabled = function()
-		return self.controls.poe2ExportPath.buf and self.controls.poe2ExportPath.buf ~= ""
+	local ok, BuildExportPoE2 = pcall(require, "Modules/BuildExportPoE2")
+	if ok then
+		self.controls.sectionPoE2Export = new("SectionControl", {"TOPLEFT",self.controls.sectionBuild,"BOTTOMLEFT",true}, {0, 18, 650, 112}, "Export to Path of Exile 2 BuildPlanner")
+		self.controls.poe2ExportDesc = new("LabelControl", {"TOPLEFT",self.controls.sectionPoE2Export,"TOPLEFT"}, {6, 14, 0, 16}, "^7Save this build as a .build file the in-game BuildPlanner can load.")
+		self.controls.poe2ExportDesc2 = new("LabelControl", {"TOPLEFT",self.controls.poe2ExportDesc,"BOTTOMLEFT"}, {0, 2, 0, 14}, "^xAAAAAATree specs, item sets and skill sets are exported as level-bracketed loadouts.")
+		self.controls.poe2ExportDesc3 = new("LabelControl", {"TOPLEFT",self.controls.poe2ExportDesc2,"BOTTOMLEFT"}, {0, 2, 0, 14}, "^xAAAAAAEdit each set's level range in its Manage popup.")
+		self.poe2ExportStatus = ""
+		self.controls.poe2ExportPath = new("EditControl", {"TOPLEFT",self.controls.poe2ExportDesc3,"BOTTOMLEFT"}, {0, 8, 560, 20}, BuildExportPoE2.DefaultPath(self.build), "Path", nil, 260)
+		self.controls.poe2ExportSave = new("ButtonControl", {"LEFT",self.controls.poe2ExportPath,"RIGHT"}, {8, 0, 80, 20}, "Save", function()
+			self:DoPoE2Export(BuildExportPoE2, self.controls.poe2ExportPath.buf)
+		end)
+		self.controls.poe2ExportSave.enabled = function()
+			return self.controls.poe2ExportPath.buf and self.controls.poe2ExportPath.buf ~= ""
+		end
+		self.controls.poe2ExportStatusLabel = new("LabelControl", {"TOPLEFT",self.controls.poe2ExportPath,"BOTTOMLEFT"}, {0, 4, 0, 14}, function()
+			return self.poe2ExportStatus or ""
+		end)
 	end
-	self.controls.poe2ExportStatusLabel = new("LabelControl", {"TOPLEFT",self.controls.poe2ExportPath,"BOTTOMLEFT"}, {0, 4, 0, 14}, function()
-		return self.poe2ExportStatus or ""
-	end)
 
 	-- validate the status of the api the first time
 	self:RefreshAuthStatus()

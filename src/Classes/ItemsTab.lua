@@ -2273,14 +2273,18 @@ function ItemsTabClass:OpenItemSetManagePopup()
 
 	-- Level bracket inputs for the .build (PoE2 BuildPlanner) export.
 	-- Bound to the row currently selected in the local item-set list.
-	local function clampLvl(buf)
-		local n = tonumber(buf)
-		if not n then return nil end
-		n = m_floor(n)
-		if n < 0 then n = 0 end
-		if n > 100 then n = 100 end
-		return n
-	end
+	local clampLvl = (function()
+		local ok, mod = pcall(require, "Modules/BuildExportPoE2")
+		if ok then return mod.ClampLevel end
+		return function(buf)
+			local n = tonumber(buf)
+			if not n then return nil end
+			n = m_floor(n)
+			if n < 0 then n = 0 end
+			if n > 100 then n = 100 end
+			return n
+		end
+	end)()
 	local function selectedSet()
 		return self.itemSets[controls.setList.selValue]
 	end

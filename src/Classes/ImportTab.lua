@@ -347,9 +347,12 @@ local ImportTabClass = newClass("ImportTab", "ControlHost", "Control", function(
 
 	-- Path of Exile 2 BuildPlanner export
 	local ok, BuildExportPoE2 = pcall(require, "Modules/BuildExportPoE2")
+	if not ok then
+		ConPrintf("[PoE2Export] BuildExportPoE2 module not available: %s", tostring(BuildExportPoE2))
+	end
 	if ok then
 		self.controls.sectionPoE2Export = new("SectionControl", {"TOPLEFT",self.controls.sectionBuild,"BOTTOMLEFT",true}, {0, 18, 650, 112}, "Export to Path of Exile 2 BuildPlanner")
-		self.controls.poe2ExportDesc = new("LabelControl", {"TOPLEFT",self.controls.sectionPoE2Export,"TOPLEFT"}, {6, 14, 0, 16}, "^7Save this build as a .build file the in-game BuildPlanner can load.")
+		self.controls.poe2ExportDesc = new("LabelControl", {"TOPLEFT",self.controls.sectionPoE2Export,"TOPLEFT"}, {6, 14, 0, 16}, "^7Save this build as a .build file that the in-game BuildPlanner can load.")
 		self.controls.poe2ExportDesc2 = new("LabelControl", {"TOPLEFT",self.controls.poe2ExportDesc,"BOTTOMLEFT"}, {0, 2, 0, 14}, "^xAAAAAATree specs, item sets and skill sets are exported as level-bracketed loadouts.")
 		self.controls.poe2ExportDesc3 = new("LabelControl", {"TOPLEFT",self.controls.poe2ExportDesc2,"BOTTOMLEFT"}, {0, 2, 0, 14}, "^xAAAAAAEdit each set's level range in its Manage popup.")
 		self.poe2ExportStatus = ""

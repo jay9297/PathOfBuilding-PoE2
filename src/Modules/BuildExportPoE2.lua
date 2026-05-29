@@ -54,7 +54,7 @@ local presetBrackets = {
 	[4] = { {1, 30},  {30, 60},  {60, 90},  {90, 100} },
 }
 
-local function clampLevel(v)
+function M.ClampLevel(v)
 	v = tonumber(v)
 	if not v then return nil end
 	v = m_floor(v)
@@ -92,8 +92,8 @@ local function bracketsFor(orderList, getEntry)
 	local out = {}
 	for i, id in ipairs(orderList) do
 		local entry = getEntry(id)
-		local lo = entry and clampLevel(entry.levelMin)
-		local hi = entry and clampLevel(entry.levelMax)
+		local lo = entry and M.ClampLevel(entry.levelMin)
+		local hi = entry and M.ClampLevel(entry.levelMax)
 		if lo and hi then
 			if lo > hi then lo, hi = hi, lo end
 			out[i] = { lo, hi }
@@ -174,6 +174,11 @@ function M.PresetNextLevels(existingEntries, newEntry)
 	end
 end
 
+-- Default export directory for .build files.
+-- Uses USERPROFILE (Windows) or HOME (Linux/macOS). Under Wine the home
+-- directory is typically a Windows-style path, so USERPROFILE is preferred.
+-- The "Documents" sub-directory may not exist on all systems; callers should
+-- handle the case gracefully (MakeDir is used in WriteFile).
 function M.DefaultDir()
 	local home = os.getenv("USERPROFILE") or os.getenv("HOME") or ""
 	local sep = home:find("\\") and "\\" or "/"
@@ -195,6 +200,10 @@ local function buildAscendancy(build)
 	return asc.internalId
 end
 
+-- Nodes with numeric IDs >= this value are cluster-jewel synthetic subgraphs
+-- and should not be emitted into the PassiveSkills table the loader looks up.
+local MAX_NORMAL_NODE_ID = 65536
+
 local warnedNoStringId = false
 
 local function buildPassives(build, brackets)
@@ -214,7 +223,7 @@ local function buildPassives(build, brackets)
 		for nodeId, node in pairs(spec.allocNodes or {}) do
 			-- Skip cluster-jewel synthetic subgraph nodes; they aren't in the
 			-- vanilla PassiveSkills table the loader looks up.
-			if type(nodeId) == "number" and nodeId < 65536 then
+			if type(nodeId) == "number" and nodeId < MAX_NORMAL_NODE_ID then
 				local nodeTable = type(node) == "table" and node or nil
 				local note = notes[nodeId]
 				local existing = merged[nodeId]
@@ -520,7 +529,9 @@ function M.Export(build)
 	return json
 end
 
---- Writes the exported build to disk. Returns (path, nil) on success.
+-- Writes the exported build to disk. Caller should confirm overwrite with the
+-- user before calling this — no existing-file check is performed here.
+--- Returns (path, nil) on success.
 function M.WriteFile(build, path)
 	local json, err = M.Export(build)
 	if not json then return nil, err end

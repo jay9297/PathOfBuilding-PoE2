@@ -40,6 +40,9 @@ local PassiveSpecListClass = newClass("PassiveSpecListControl", "ListControl", f
 		newSpec:SelectAscendClass(treeTab.build.spec.curAscendClassId)
 		newSpec:SelectSecondaryAscendClass(treeTab.build.spec.curSecondaryAscendClassId)
 		local ok, BuildExportPoE2 = pcall(require, "Modules/BuildExportPoE2")
+		if not ok then
+			ConPrintf("[PoE2Export] BuildExportPoE2 module not available: %s", tostring(BuildExportPoE2))
+		end
 		if ok then
 			BuildExportPoE2.PresetNextLevels(treeTab.specList, newSpec)
 		end

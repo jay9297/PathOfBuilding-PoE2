@@ -52,6 +52,9 @@ local SkillSetListClass = newClass("SkillSetListControl", "ListControl", functio
 		end
 		local newSet = skillsTab:NewSkillSet()
 		local ok, BuildExportPoE2 = pcall(require, "Modules/BuildExportPoE2")
+		if not ok then
+			ConPrintf("[PoE2Export] BuildExportPoE2 module not available: %s", tostring(BuildExportPoE2))
+		end
 		if ok then
 			BuildExportPoE2.PresetNextLevels(existing, newSet)
 		end

@@ -1435,14 +1435,18 @@ function SkillsTabClass:OpenSkillSetManagePopup()
 	controls.setList = new("SkillSetListControl", nil, {0, 50, 350, 200}, self)
 
 	-- Level bracket inputs for the .build (PoE2 BuildPlanner) export.
-	local function clampLvl(buf)
-		local n = tonumber(buf)
-		if not n then return nil end
-		n = math.floor(n)
-		if n < 0 then n = 0 end
-		if n > 100 then n = 100 end
-		return n
-	end
+	local clampLvl = (function()
+		local ok, mod = pcall(require, "Modules/BuildExportPoE2")
+		if ok then return mod.ClampLevel end
+		return function(buf)
+			local n = tonumber(buf)
+			if not n then return nil end
+			n = math.floor(n)
+			if n < 0 then n = 0 end
+			if n > 100 then n = 100 end
+			return n
+		end
+	end)()
 	local function selectedSet()
 		return self.skillSets[controls.setList.selValue]
 	end

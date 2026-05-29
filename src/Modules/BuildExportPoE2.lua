@@ -174,16 +174,38 @@ function M.PresetNextLevels(existingEntries, newEntry)
 	end
 end
 
--- Default export directory for .build files.
--- Uses USERPROFILE (Windows) or HOME (Linux/macOS). Under Wine the home
--- directory is typically a Windows-style path, so USERPROFILE is preferred.
--- The "Documents" sub-directory may not exist on all systems; callers should
--- handle the case gracefully (MakeDir is used in WriteFile).
+local POE2_APP_ID = "2694490"
+local POE2_RELATIVE = "Documents" .. "/" .. "My Games" .. "/" .. "Path of Exile 2" .. "/" .. "BuildPlanner"
+
+local function dirExists(path)
+	local handle = io.popen('ls -d "' .. path .. '" 2>/dev/null')
+	if not handle then return false end
+	local result = handle:read("*a")
+	handle:close()
+	return result and result:match("%S") ~= nil
+end
+
+local function tryProtonPath(baseSteam)
+	local prefix = baseSteam .. "/steamapps/compatdata/" .. POE2_APP_ID
+	             .. "/pfx/drive_c/users/steamuser/" .. POE2_RELATIVE
+	if dirExists(prefix) then return prefix end
+	return nil
+end
+
 function M.DefaultDir()
-	local home = os.getenv("USERPROFILE") or os.getenv("HOME") or ""
-	local sep = home:find("\\") and "\\" or "/"
-	return home .. sep .. "Documents" .. sep .. "My Games" .. sep
-	     .. "Path of Exile 2" .. sep .. "BuildPlanner" .. sep
+	if os.getenv("USERPROFILE") then
+		return os.getenv("USERPROFILE") .. "\\" .. POE2_RELATIVE .. "\\"
+	end
+	local home = os.getenv("HOME") or ""
+	local nativePath = home .. "/" .. POE2_RELATIVE
+	if dirExists(nativePath) then return nativePath .. "/" end
+	local steamFlatpak = home .. "/.var/app/com.valvesoftware.Steam/.local/share/Steam"
+	local protonPath = tryProtonPath(steamFlatpak)
+	if protonPath then return protonPath .. "/" end
+	local steamNative = home .. "/.local/share/Steam"
+	protonPath = tryProtonPath(steamNative)
+	if protonPath then return protonPath .. "/" end
+	return nativePath .. "/"
 end
 
 function M.DefaultPath(build)

@@ -95,4 +95,8 @@ docker compose run --rm tests --coverage         # with luacov
 
 ## Fork rules
 
-- **NEVER open PRs against the upstream repo** (`PathOfBuildingCommunity/PathOfBuilding-PoE2`). All PRs must target the fork (`jay9297/PathOfBuilding-PoE2`). Upstream sync is done by merging `origin/dev` locally, not via PRs.
+1. **NEVER open PRs against the upstream repo** (`PathOfBuildingCommunity/PathOfBuilding-PoE2`). All PRs must target the fork (`jay9297/PathOfBuilding-PoE2`). Upstream sync is done by merging `origin/dev` locally, not via PRs.
+
+2. **Default push target is `fork`.** All `git push` and PR operations default to `fork/dev`. The git config enforces this via `remote.pushDefault=fork` and `branch.dev.remote=fork`.
+
+3. **Upstream sync is via local merge, not PR.** To sync with upstream: `git fetch origin && git merge origin/dev` on the local `dev` branch, then push to fork.

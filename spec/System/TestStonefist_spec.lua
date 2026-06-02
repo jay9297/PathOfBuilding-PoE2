@@ -3,10 +3,6 @@ describe("TestStonefist", function()
 		newBuild()
 	end)
 
-	teardown(function()
-		-- newBuild() takes care of resetting everything in setup()
-	end)
-
 	-- ModParser: flag parsing
 
 	it("GloveBaseTypeTransform flag is set from ascendancy mod string", function()

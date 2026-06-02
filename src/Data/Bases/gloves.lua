@@ -899,5 +899,3 @@ itemBases["Fists of Stone"] = {
 	armour = { Armour = 44, Evasion = 40, EnergyShield = 15, },
 	req = { },
 }
-
-

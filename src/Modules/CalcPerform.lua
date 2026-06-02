@@ -3189,11 +3189,13 @@ function calcs.perform(env, skipEHP)
 				local origArmour = gloveItem.armourData.Armour
 				local origEvasion = gloveItem.armourData.Evasion
 				local origES = gloveItem.armourData.EnergyShield
+				local origWard = gloveItem.armourData.Ward
 				gloveItem.base = fistsOfStone
 				gloveItem.baseName = "Fists of Stone"
-				gloveItem.armourData.Armour = m_floor((fistsOfStone.armour.Armour or 0) * qualityMult)
-				gloveItem.armourData.Evasion = m_floor((fistsOfStone.armour.Evasion or 0) * qualityMult)
-				gloveItem.armourData.EnergyShield = m_floor((fistsOfStone.armour.EnergyShield or 0) * qualityMult)
+				local foa = fistsOfStone.armour or {}
+				gloveItem.armourData.Armour = m_floor((foa.Armour or 0) * qualityMult)
+				gloveItem.armourData.Evasion = m_floor((foa.Evasion or 0) * qualityMult)
+				gloveItem.armourData.EnergyShield = m_floor((foa.EnergyShield or 0) * qualityMult)
 				-- Inject Fists of Stone implicit mods (per-level scaling); modDB is ephemeral per calc pass
 				modDB:NewMod("Evasion", "BASE", 2, "Fists of Stone Implicit", { type = "Multiplier", var = "Level" })
 				modDB:NewMod("EnergyShield", "BASE", 1, "Fists of Stone Implicit", { type = "Multiplier", var = "Level" })
@@ -3201,7 +3203,7 @@ function calcs.perform(env, skipEHP)
 				env.stonefistRestore = {
 					item = gloveItem,
 					base = origBase, baseName = origBaseName,
-					Armour = origArmour, Evasion = origEvasion, EnergyShield = origES
+					Armour = origArmour, Evasion = origEvasion, EnergyShield = origES, Ward = origWard
 				}
 			end
 		end
@@ -3470,6 +3472,7 @@ function calcs.perform(env, skipEHP)
 		r.item.armourData.Armour = r.Armour
 		r.item.armourData.Evasion = r.Evasion
 		r.item.armourData.EnergyShield = r.EnergyShield
+		r.item.armourData.Ward = r.Ward
 		env.stonefistRestore = nil
 	end
 end

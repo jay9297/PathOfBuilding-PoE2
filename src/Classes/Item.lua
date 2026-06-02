@@ -1799,7 +1799,20 @@ function ItemClass:BuildModListForSlotNum(baseList, slotNum)
 		local evasionEnergyShieldBase = calcLocal(modList, "EvasionAndEnergyShield", "BASE", 0)
 		local energyShieldBase = calcLocal(modList, "EnergyShield", "BASE", 0) + (self.base.armour.EnergyShield or 0)
 		local armourEnergyShieldBase = calcLocal(modList, "ArmourAndEnergyShield", "BASE", 0)
-		local wardBase = calcLocal(modList, "Ward", "BASE", 0) + (self.base.armour.Ward or 0)
+		-- wardIsAuthoritative: true when armourData.Ward was pre-set from a game property line
+		-- (paste or API import). That value is the final game-computed ward (already includes flat
+		-- rune mods, INC rune mods, and quality). We must consume the local ward mods from modList
+		-- to prevent them from being double-applied in CalcDefence, but we must NOT re-scale the
+		-- already-final value by wardInc, defencesInc, or qualityScalar.
+		local wardIsAuthoritative = armourData.Ward ~= nil
+		local wardBase
+		if wardIsAuthoritative then
+			calcLocal(modList, "Ward", "BASE", 0)  -- consume flat rune ward mods (discard result)
+			calcLocal(modList, "Ward", "INC", 0)   -- consume INC rune ward mods (discard result)
+			wardBase = armourData.Ward + (self.base.armour.Ward or 0)
+		else
+			wardBase = calcLocal(modList, "Ward", "BASE", 0) + (self.base.armour.Ward or 0)
+		end
 		local evasionPerLevel = calcLocal(modList, "EvasionPerLevel", "BASE", 0)
 		local energyShieldPerLevel = calcLocal(modList, "EnergyShieldPerLevel", "BASE", 0)
 		local wardPerLevel = calcLocal(modList, "WardPerLevel", "BASE", 0)
@@ -1808,7 +1821,7 @@ function ItemClass:BuildModListForSlotNum(baseList, slotNum)
 		local evasionInc = calcLocal(modList, "Evasion", "INC", 0)
 		local evasionEnergyShieldInc = calcLocal(modList, "EvasionAndEnergyShield", "INC", 0)
 		local energyShieldInc = calcLocal(modList, "EnergyShield", "INC", 0)
-		local wardInc = calcLocal(modList, "Ward", "INC", 0)
+		local wardInc = wardIsAuthoritative and 0 or calcLocal(modList, "Ward", "INC", 0)
 		local armourEnergyShieldInc = calcLocal(modList, "ArmourAndEnergyShield", "INC", 0)
 		local defencesInc = calcLocal(modList, "Defences", "INC", 0)
 		local qualityScalar = self.quality
@@ -1819,7 +1832,9 @@ function ItemClass:BuildModListForSlotNum(baseList, slotNum)
 		armourData.Armour = round((armourBase + armourEvasionBase + armourEnergyShieldBase) * (1 + (armourInc + armourEvasionInc + armourEnergyShieldInc + defencesInc) / 100) * (1 + (qualityScalar / 100)))
 		armourData.Evasion = round((evasionBase + armourEvasionBase + evasionEnergyShieldBase) * (1 + (evasionInc + armourEvasionInc + evasionEnergyShieldInc + defencesInc) / 100) * (1 + (qualityScalar / 100)))
 		armourData.EnergyShield = round((energyShieldBase + evasionEnergyShieldBase + armourEnergyShieldBase) * (1 + (energyShieldInc + armourEnergyShieldInc + evasionEnergyShieldInc + defencesInc) / 100) * (1 + (qualityScalar / 100)))
-		armourData.Ward = round((wardBase) * (1 + (wardInc + defencesInc) / 100) * (1 + (qualityScalar / 100)))
+		armourData.Ward = wardIsAuthoritative
+			and round(wardBase)  -- property line is final (game already applied quality+INC); do not re-scale
+			or round((wardBase) * (1 + (wardInc + defencesInc) / 100) * (1 + (qualityScalar / 100)))
 		armourData.EvasionPerLevel = evasionPerLevel * (1 + (evasionInc + armourEvasionInc + evasionEnergyShieldInc + defencesInc) / 100) * (1 + (qualityScalar / 100))
 		armourData.EnergyShieldPerLevel = energyShieldPerLevel * (1 + (energyShieldInc + armourEnergyShieldInc + evasionEnergyShieldInc + defencesInc) / 100) * (1 + (qualityScalar / 100))
 		armourData.WardPerLevel = wardPerLevel * (1 + (wardInc + defencesInc) / 100) * (1 + (qualityScalar / 100))

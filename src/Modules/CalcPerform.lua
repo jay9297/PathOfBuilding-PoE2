@@ -3180,31 +3180,37 @@ function calcs.perform(env, skipEHP)
 	-- Way of the Stonefist: transform glove base type for this calc pass only
 	if modDB:Flag(nil, "GloveBaseTypeTransform") then
 		local gloveItem = env.player.itemList["Gloves"]
-		if gloveItem and gloveItem.armourData and gloveItem.baseName ~= "Fists of Stone" then
+		if gloveItem and gloveItem.armourData then
 			local fistsOfStone = env.data.itemBases["Fists of Stone"]
 			if fistsOfStone then
-				local qualityMult = 1 + (gloveItem.quality or 0) / 100
-				local origBase = gloveItem.base
-				local origBaseName = gloveItem.baseName
-				local origArmour = gloveItem.armourData.Armour
-				local origEvasion = gloveItem.armourData.Evasion
-				local origES = gloveItem.armourData.EnergyShield
-				local origWard = gloveItem.armourData.Ward
-				gloveItem.base = fistsOfStone
-				gloveItem.baseName = "Fists of Stone"
-				local foa = fistsOfStone.armour or {}
-				gloveItem.armourData.Armour = m_floor((foa.Armour or 0) * qualityMult)
-				gloveItem.armourData.Evasion = m_floor((foa.Evasion or 0) * qualityMult)
-				gloveItem.armourData.EnergyShield = m_floor((foa.EnergyShield or 0) * qualityMult)
-				-- Inject Fists of Stone implicit mods (per-level scaling); modDB is ephemeral per calc pass
+				-- Implicits are always injected whenever the flag is active and gloves are equipped,
+				-- including when the player manually equips an actual Fists of Stone base.
+				-- modDB is ephemeral per calc pass so no restore is needed for these entries.
 				modDB:NewMod("Evasion", "BASE", 2, "Fists of Stone Implicit", { type = "Multiplier", var = "Level" })
 				modDB:NewMod("EnergyShield", "BASE", 1, "Fists of Stone Implicit", { type = "Multiplier", var = "Level" })
 				modDB:NewMod("Ward", "BASE", 1, "Fists of Stone Implicit", { type = "Multiplier", var = "Level" })
-				env.stonefistRestore = {
-					item = gloveItem,
-					base = origBase, baseName = origBaseName,
-					Armour = origArmour, Evasion = origEvasion, EnergyShield = origES, Ward = origWard
-				}
+				-- Only swap armourData values when the base is not already Fists of Stone.
+				if gloveItem.baseName ~= "Fists of Stone" then
+					local qualityMult = 1 + (gloveItem.quality or 0) / 100
+					local origBase = gloveItem.base
+					local origBaseName = gloveItem.baseName
+					local origArmour = gloveItem.armourData.Armour
+					local origEvasion = gloveItem.armourData.Evasion
+					local origES = gloveItem.armourData.EnergyShield
+					local origWard = gloveItem.armourData.Ward
+					gloveItem.base = fistsOfStone
+					gloveItem.baseName = "Fists of Stone"
+					local foa = fistsOfStone.armour or {}
+					gloveItem.armourData.Armour = m_floor((foa.Armour or 0) * qualityMult)
+					gloveItem.armourData.Evasion = m_floor((foa.Evasion or 0) * qualityMult)
+					gloveItem.armourData.EnergyShield = m_floor((foa.EnergyShield or 0) * qualityMult)
+					gloveItem.armourData.Ward = m_floor((foa.Ward or 0) * qualityMult)
+					env.stonefistRestore = {
+						item = gloveItem,
+						base = origBase, baseName = origBaseName,
+						Armour = origArmour, Evasion = origEvasion, EnergyShield = origES, Ward = origWard
+					}
+				end
 			end
 		end
 	end

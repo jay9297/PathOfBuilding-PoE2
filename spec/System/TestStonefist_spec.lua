@@ -109,6 +109,49 @@ describe("TestStonefist", function()
 			("expected evasion %d > base evasion %d after Fists of Stone transform"):format(transformedEvasion, baseEvasion))
 	end)
 
+	it("GloveBaseTypeTransform: Ward implicit is injected (Ward > 0 after transform)", function()
+		build.itemsTab:CreateDisplayItemFromRaw([[
+			New Item
+			Stocky Mitts
+			Armour: 10
+		]])
+		build.itemsTab:AddDisplayItem()
+		build.configTab.input.customMods = "\z
+		Gloves you equip have their base type transformed to fists of stone while equipped\n\z
+		"
+		build.configTab:BuildModList()
+		runCallback("OnFrame")
+
+		-- Implicit: +1 Ward per level; should be > 0 at any character level
+		local ward = build.calcsTab.calcsOutput.Ward or 0
+		assert.is_true(ward > 0,
+			("expected Ward > 0 from Fists of Stone implicit, got %d"):format(ward))
+	end)
+
+	it("GloveBaseTypeTransform: actual Fists of Stone base still receives per-level Evasion implicit", function()
+		-- Equip an actual Fists of Stone item (not a transformed base).
+		-- The guard must not skip implicit injection when baseName is already "Fists of Stone".
+		build.itemsTab:CreateDisplayItemFromRaw([[
+			New Item
+			Fists of Stone
+		]])
+		build.itemsTab:AddDisplayItem()
+		runCallback("OnFrame")
+
+		local baseEvasion = build.calcsTab.mainOutput.Evasion or 0
+
+		build.configTab.input.customMods = "\z
+		Gloves you equip have their base type transformed to fists of stone while equipped\n\z
+		"
+		build.configTab:BuildModList()
+		runCallback("OnFrame")
+
+		-- +2 Evasion per level implicit must fire; Evasion should increase above the bare base
+		local transformedEvasion = build.calcsTab.mainOutput.Evasion or 0
+		assert.is_true(transformedEvasion > baseEvasion,
+			("expected FoS implicit to increase Evasion from %d to >%d"):format(baseEvasion, baseEvasion))
+	end)
+
 	-- CalcPerform: scoped attribute requirement ignore
 
 	it("IgnoreAttributeRequirementsForGloves does not zero global attribute requirements", function()

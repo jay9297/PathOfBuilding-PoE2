@@ -1,0 +1,41 @@
+describe("TestModParser", function()
+	-- Low-level round-trip tests for specialModList entries added for Way of the Stonefist.
+	-- These verify that modLib.parseMod correctly maps modifier strings to their flag mods
+	-- without going through the full build pipeline.
+
+	it("parses 'ignore attribute requirements to equip gloves' to IgnoreAttributeRequirementsForGloves", function()
+		local mods, extra = modLib.parseMod("Ignore attribute requirements to equip gloves")
+		assert.is_nil(extra)
+		assert.is_not_nil(mods)
+		assert.are.equals(1, #mods)
+		assert.are.equals("IgnoreAttributeRequirementsForGloves", mods[1].name)
+		assert.are.equals("FLAG", mods[1].type)
+	end)
+
+	it("parses 'gloves you equip have their base type transformed to fists of stone while equipped' to GloveBaseTypeTransform", function()
+		local mods, extra = modLib.parseMod("Gloves you equip have their base type transformed to fists of stone while equipped")
+		assert.is_nil(extra)
+		assert.is_not_nil(mods)
+		assert.are.equals(1, #mods)
+		assert.are.equals("GloveBaseTypeTransform", mods[1].name)
+		assert.are.equals("FLAG", mods[1].type)
+	end)
+
+	it("parses 'their explicit modifiers are transformed into more powerful related modifiers' to GloveExplicitModTransform", function()
+		local mods, extra = modLib.parseMod("Their explicit modifiers are transformed into more powerful related modifiers")
+		assert.is_nil(extra)
+		assert.is_not_nil(mods)
+		assert.are.equals(1, #mods)
+		assert.are.equals("GloveExplicitModTransform", mods[1].name)
+		assert.are.equals("FLAG", mods[1].type)
+	end)
+
+	it("does not parse 'ignore attribute requirements' (global) as the gloves-scoped flag", function()
+		local mods, extra = modLib.parseMod("Ignore attribute requirements")
+		assert.is_nil(extra)
+		assert.is_not_nil(mods)
+		assert.are.equals(1, #mods)
+		assert.are.equals("IgnoreAttributeRequirements", mods[1].name)
+		assert.are_not.equals("IgnoreAttributeRequirementsForGloves", mods[1].name)
+	end)
+end)

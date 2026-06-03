@@ -28,9 +28,30 @@ jobs:
         with:
           ref: ${{ github.event_name == 'workflow_dispatch' && inputs.ref || '' }}
 
+      - name: Get current date for cache key
+        id: date
+        run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+
+      - name: Cache pob-dict files
+        id: dict-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            cspell.json
+            pob-dict.txt
+            poe-dict.txt
+            ignore-dict.txt
+            extra-en-dict.txt
+            contribs-dict.txt
+          # Cache key rotates daily so the dict stays reasonably fresh
+          # without fetching on every run.
+          key: pob-dict-${{ runner.os }}-${{ steps.date.outputs.date }}
+
       - name: Fetch config file and dictionaries
+        if: steps.dict-cache.outputs.cache-hit != 'true'
         run: |
-          curl --silent --show-error --fail --parallel --remote-name-all \
+          curl --silent --show-error --fail --retry 3 --retry-delay 5 --parallel \
+            --remote-name-all \
             "${{ env.CONFIG_URL }}/cspell.json" \
             "${{ env.CONFIG_URL }}/pob-dict.txt" \
             "${{ env.CONFIG_URL }}/poe-dict.txt" \

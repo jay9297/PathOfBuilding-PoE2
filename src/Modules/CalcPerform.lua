@@ -3217,7 +3217,7 @@ function calcs.perform(env, skipEHP)
 
 	-- Way of the Stonefist: explicit mod transformation (requires ModEquivalencies data)
 	-- GloveExplicitModTransform is not yet implemented; the mapping data must be generated
-	-- by running src/Export/Scripts/modequivalencies.lua via the PoB export tool first.
+	-- by running src/Export/Scripts/modequivalencies.lua via the PoB export tool first. -- cspell:ignore modequivalencies
 	-- When src/Data/ModEquivalencies.lua exists, load it here and remap glove explicit mods.
 
 	-- Defence/offence calculations

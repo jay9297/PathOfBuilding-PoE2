@@ -1809,7 +1809,7 @@ function ItemClass:BuildModListForSlotNum(baseList, slotNum)
 		if wardIsAuthoritative then
 			calcLocal(modList, "Ward", "BASE", 0)  -- consume flat rune ward mods (discard result)
 			calcLocal(modList, "Ward", "INC", 0)   -- consume INC rune ward mods (discard result)
-			wardBase = armourData.Ward + (self.base.armour.Ward or 0)
+			wardBase = armourData.Ward  -- property line is the final game value; base Ward is already baked in
 		else
 			wardBase = calcLocal(modList, "Ward", "BASE", 0) + (self.base.armour.Ward or 0)
 		end

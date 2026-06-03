@@ -203,4 +203,28 @@ describe("TestWard", function()
 
 		assert.are.equals(10, build.calcsTab.calcsOutput.WardCoverOnMinionDeath)
 	end)
+
+	it("Non-authoritative Ward path: plain Ward mods scale correctly (no property line)", function()
+		-- Test that when Ward comes only from customMods (no property line),
+		-- the non-authoritative path in Item.lua applies INC and quality correctly.
+		-- Use a Runeforged item without a Runic Ward property line:
+		-- wardBase comes from mods, wardInc from mods, quality from item.
+		local item = new("Item", [[
+			Rarity: Rare
+			Mock Runeforged Coat
+			Runeforged Serpentscale Coat
+			--------
+			Quality: 20
+			--------
+			+65 to maximum Ward
+			30% increased Ward
+		]])
+		item:BuildModList()
+		-- Non-authoritative: no "Runic Ward" property line → armourData.Ward was nil on entry
+		-- wardBase = calcLocal(Ward,BASE,0) + base.armour.Ward = 65 + 0 = 65
+		-- wardInc = calcLocal(Ward,INC,0) = 30
+		-- quality = 20
+		-- Expected: round(65 * (1 + 30/100) * (1 + 20/100)) = round(65 * 1.3 * 1.2) = round(101.4) = 101
+		assert.are.equals(101, item.armourData.Ward)
+	end)
 end)

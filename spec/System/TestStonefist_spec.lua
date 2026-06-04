@@ -211,7 +211,7 @@ describe("TestStonefist", function()
 		]])
 		build.itemsTab:AddDisplayItem()
 		runCallback("OnFrame")
-		-- Baseline: 100 * (1 + 150/100) = 250
+		-- Baseline: 100 * (1 + 150/100) = 250 (LOCAL INC baked into armourData)
 		local baseArmour = build.calcsTab.mainOutput.Armour or 0
 
 		build.configTab.input.customMods = "\z
@@ -219,7 +219,7 @@ describe("TestStonefist", function()
 		"
 		build.configTab:BuildModList()
 		runCallback("OnFrame")
-		-- After transform: cancel 150% + inject 300% → net 300% INC → 100 * (1+3) = 400
+		-- After transform: armourData adjusted to 300% INC → 100 * (1+3) = 400
 		local transformedArmour = build.calcsTab.mainOutput.Armour or 0
 		assert.is_near(400, transformedArmour, 2)
 
@@ -249,7 +249,7 @@ describe("TestStonefist", function()
 		"
 		build.configTab:BuildModList()
 		runCallback("OnFrame")
-		-- After transform: cancel resolved INC + inject 300% → net 300% INC → 100 * (1+3) = 400
+		-- After transform: armourData adjusted to 300% INC → 100 * (1+3) = 400
 		local transformedArmour = build.calcsTab.mainOutput.Armour or 0
 		assert.is_near(400, transformedArmour, 2)
 
@@ -279,7 +279,7 @@ describe("TestStonefist", function()
 		"
 		build.configTab:BuildModList()
 		runCallback("OnFrame")
-		-- Mapped Armour mod upgrades: cancel 150% + inject 300% → net 300% INC → 100 * (1+3) = 400
+		-- Mapped Armour mod upgrades: armourData adjusted to 300% INC → 100 * (1+3) = 400
 		local transformedArmour = build.calcsTab.mainOutput.Armour or 0
 		assert.is_near(400, transformedArmour, 2)
 
@@ -300,7 +300,7 @@ describe("TestStonefist", function()
 		build.itemsTab:AddDisplayItem()
 
 		-- Baseline: only base type transform active (no explicit mod upgrade)
-		-- FoS base armour + original 150% INC = ~110
+		-- LOCAL INC was consumed by calcLocal so modDB has none; armourData = FoS base = 44
 		build.configTab.input.customMods = "\z
 		Gloves you equip have their base type transformed to fists of stone while equipped\n\z
 		"
@@ -316,7 +316,7 @@ describe("TestStonefist", function()
 		build.configTab:BuildModList()
 		runCallback("OnFrame")
 		local fullyTransformedArmour = build.calcsTab.mainOutput.Armour or 0
-		-- Explicit upgrade: cancel 150% + inject 300% on FoS base (44) → 44 * (1+3) = 176
+		-- Explicit upgrade: armourData (raw FoS base 44) × (1+3) = 176
 		assert.is_near(176, fullyTransformedArmour, 10)
 		assert.is_true(fullyTransformedArmour > baseTypeOnlyArmour,
 			("expected fully-transformed armour %d > base-type-only armour %d"):format(fullyTransformedArmour, baseTypeOnlyArmour))

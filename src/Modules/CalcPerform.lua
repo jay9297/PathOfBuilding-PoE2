@@ -3217,32 +3217,83 @@ function calcs.perform(env, skipEHP)
 
 	-- Way of the Stonefist: explicit mod transformation
 	-- For each explicit mod line on the equipped gloves that has an entry in
-	-- data.modEquivalencies, cancel the original BASE/INC contribution and inject the
-	-- upgraded equivalent.  Both the cancellation and the new mod live in the ephemeral
-	-- per-pass modDB, so no explicit restore is needed.
+	-- data.modEquivalencies, upgrade the mod to the mapped equivalent.
+	--
+	-- LOCAL INC mods (armour/evasion/etc.) are consumed by calcLocal and baked into
+	-- armourData, not present in modDB.  For those, we adjust armourData directly so
+	-- that CalcDefence sees the upgraded value.  The adjustment is ephemeral: when
+	-- GloveBaseTypeTransform is also active, the existing env.stonefistRestore already
+	-- reverts armourData at end-of-pass; when only this flag is active we write
+	-- env.stonefistExplicitRestore for the same purpose.
+	-- GLOBAL mods (non-armour stats) still use the cancel+inject pattern in modDB.
+	-- FLAG and OVERRIDE mods are left unchanged because they cannot be cleanly negated.
 	if modDB:Flag(nil, "GloveExplicitModTransform") then
 		local gloveItem = env.player.itemList["Gloves"]
 		local equivalencies = env.data.modEquivalencies
 		if gloveItem and equivalencies and next(equivalencies) then
+			-- Was the base type already swapped to Fists of Stone this pass?
+			local baseWasTransformed = env.stonefistRestore ~= nil
 			for _, modLine in ipairs(gloveItem.explicitModLines or {}) do
 				if not modLine.extra and gloveItem:CheckModLineVariant(modLine) then
 					local equivText = equivalencies[modLine.line]
 					if equivText then
-						-- Parse upgraded equivalent first; only cancel+inject if parse succeeds
+						-- Parse upgraded equivalent first; only proceed if parse succeeds
 						-- (avoids silently removing a mod when the equivalency value is malformed).
-						-- FLAG and OVERRIDE mods are left active because they cannot be cleanly negated.
 						local newMods, parseExtra = modLib.parseMod(equivText)
 						if newMods and not parseExtra then
+							-- Track which stat names were handled via armourData so we skip
+							-- their corresponding new mods when injecting into modDB.
+							local locallyHandled = { }
 							for _, mod in ipairs(modLine.modList or {}) do
-								if mod.type == "BASE" or mod.type == "INC" then
+								-- LOCAL INC mods: no keyword flags, no condition tags except InSlot,
+								-- and the stat must exist in armourData (Armour, Evasion, ES, Ward).
+								if mod.type == "INC"
+									and mod.flags == 0
+									and mod.keywordFlags == 0
+									and (not mod[1] or mod[1].type == "InSlot")
+									and gloveItem.armourData
+									and gloveItem.armourData[mod.name] ~= nil
+								then
+									-- Find the matching new INC mod with the same stat name.
+									for _, newMod in ipairs(newMods) do
+										if newMod.name == mod.name and newMod.type == "INC" then
+											-- Save a snapshot of armourData before the first change
+											-- so we can restore it at end-of-pass (explicit-only case).
+											if not baseWasTransformed and not env.stonefistExplicitRestore then
+												local snap = { item = gloveItem, armourData = { } }
+												for k, v in pairs(gloveItem.armourData) do
+													snap.armourData[k] = v
+												end
+												env.stonefistExplicitRestore = snap
+											end
+											local armData = gloveItem.armourData
+											if baseWasTransformed then
+												-- armourData holds the raw FoS base (no old INC applied);
+												-- multiply by the new INC factor directly.
+												armData[mod.name] = m_floor(armData[mod.name] * (1 + newMod.value / 100))
+											else
+												-- Old INC is baked into armourData; swap old factor for new.
+												armData[mod.name] = m_floor(
+													armData[mod.name] / (1 + mod.value / 100) * (1 + newMod.value / 100)
+												)
+											end
+											locallyHandled[mod.name] = true
+											break
+										end
+									end
+								elseif mod.type == "BASE" or mod.type == "INC" then
+									-- GLOBAL mod: cancel its contribution in the ephemeral modDB.
 									local cancel = copyTable(mod)
 									cancel.value = -cancel.value
 									modDB:AddMod(cancel)
 								end
 							end
-							for _, mod in ipairs(newMods) do
-								mod.source = "Fists of Stone Transform"
-								modDB:AddMod(mod)
+							-- Inject new mods into modDB for any that were not handled via armourData.
+							for _, newMod in ipairs(newMods) do
+								if not locallyHandled[newMod.name] then
+									newMod.source = "Fists of Stone Transform"
+									modDB:AddMod(newMod)
+								end
 							end
 						end
 					end
@@ -3511,5 +3562,14 @@ function calcs.perform(env, skipEHP)
 		r.item.armourData.EnergyShield = r.EnergyShield
 		r.item.armourData.Ward = r.Ward
 		env.stonefistRestore = nil
+	end
+	-- Restore armourData modified by GloveExplicitModTransform (explicit-transform-only case;
+	-- when the base type was also swapped, stonefistRestore above already covers this).
+	if env.stonefistExplicitRestore then
+		local r = env.stonefistExplicitRestore
+		for k, v in pairs(r.armourData) do
+			r.item.armourData[k] = v
+		end
+		env.stonefistExplicitRestore = nil
 	end
 end

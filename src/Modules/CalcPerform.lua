@@ -3332,7 +3332,7 @@ function calcs.perform(env, skipEHP)
 					if equivText then
 						-- Parse upgraded equivalent first; only proceed if parse succeeds.
 						local newMods, parseExtra = modLib.parseMod(equivText)
-						if newMods and not parseExtra then
+						if newMods and #newMods > 0 and not parseExtra then
 							local locallyHandled = { }
 							for _, mod in ipairs(modLine.modList or {}) do
 								if mod.type == "BASE" or mod.type == "INC" then

@@ -12,7 +12,7 @@
 -- Only BASE and INC mod types are remapped; FLAG-type mods (e.g. "Culling Strike") are left
 -- active unchanged because they cannot be meaningfully negated.
 --
--- To regenerate from game data: run src/Export/Scripts/modequivalencies.lua via the PoB
+-- To regenerate from game data: run src/Export/Scripts/modequivalencies.lua via the PoB -- cspell:ignore modequivalencies
 -- export tool, then update this file with the resulting entries.
 return {
 }

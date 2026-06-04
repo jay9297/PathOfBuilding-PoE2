@@ -539,4 +539,40 @@ describe("TestStonefist", function()
 
 		data.modEquivalencies = origEquiv
 	end)
+
+	it("GloveExplicitModTransform: AlternateQualityArmour sets qualityMult=1 for BASE delta scaling", function()
+		-- When "quality does not increase defences" is present, Item.lua already set
+		-- qualityScalar=0 so armourData was computed without quality.  CalcPerform must
+		-- also use qualityMult=1 for the bDelta term, or the BASE upgrade is over-scaled.
+		-- With quality=20 and bDelta=25: correct=150, wrong=155 (1.2× instead of 1×).
+		local origEquiv = data.modEquivalencies
+		data.modEquivalencies = {
+			["+25 to Armour"] = "+50 to Armour",
+		}
+
+		-- "quality does not increase defences" as implicit; "+25 to Armour" as explicit.
+		-- Item.lua will see AlternateQualityArmour and set qualityScalar=0 → armourData=125.
+		build.itemsTab:CreateDisplayItemFromRaw([[
+			Rarity: Normal
+			Titan Mitts
+			Quality: 20
+			--------
+			quality does not increase defences
+			--------
+			+25 to Armour
+		]])
+		build.itemsTab:AddDisplayItem()
+
+		build.configTab.input.customMods = "\z
+		their explicit modifiers are transformed into more powerful related modifiers\n\z
+		"
+		build.configTab:BuildModList()
+		runCallback("OnFrame")
+		-- armourData = round(100+25)*1*1 = 125; bDelta=25; qualityMult=1
+		-- result = round(125 + 25*1*1) = 150; wrong (qualityMult=1.2) would give 155
+		local transformedArmour = build.calcsTab.mainOutput.Armour or 0
+		assert.is_near(150, transformedArmour, 2)
+
+		data.modEquivalencies = origEquiv
+	end)
 end)

@@ -3339,7 +3339,9 @@ function calcs.perform(env, skipEHP)
 									local isLocal = mod.flags == 0
 										and mod.keywordFlags == 0
 										and (not mod[1] or mod[1].type == "InSlot")
-									local statList = isLocal and armData and armStatMap[mod.name]
+									-- Check armData first: local defence mods are baked into armourData,
+									-- never in modDB; cancelling them without armData would create phantom entries.
+									local statList = armData and isLocal and armStatMap[mod.name]
 									if statList then
 										-- LOCAL defence mod: find matching new mod and record delta.
 										for _, newMod in ipairs(newMods) do

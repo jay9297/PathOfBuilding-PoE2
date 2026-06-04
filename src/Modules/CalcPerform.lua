@@ -17,6 +17,20 @@ local m_modf = math.modf
 local s_format = string.format
 local m_huge = math.huge
 
+-- Maps a local-defence mod.name to the armourData keys it contributes to.
+-- Mirrors the INC/BASE accumulation buckets in Item.lua:BuildModListForSlotNum.
+-- Module-level constant to avoid per-pass table allocation (CLAUDE.md rule 5).
+local armStatMap = {
+	Armour                 = { "Armour" },
+	Evasion                = { "Evasion" },
+	EnergyShield           = { "EnergyShield" },
+	Ward                   = { "Ward" },
+	ArmourAndEvasion       = { "Armour", "Evasion" },
+	ArmourAndEnergyShield  = { "Armour", "EnergyShield" },
+	EvasionAndEnergyShield = { "Evasion", "EnergyShield" },
+	Defences               = { "Armour", "Evasion", "EnergyShield", "Ward" },
+}
+
 --- getCachedOutputValue
 ---  retrieves a value specified by key from a cached version of skill
 ---  specified by @uuid or if not found in cache computes teh cache.
@@ -3219,14 +3233,12 @@ function calcs.perform(env, skipEHP)
 	-- For each explicit mod line on the equipped gloves that has an entry in
 	-- data.modEquivalencies, upgrade the mod to the mapped equivalent.
 	--
-	-- LOCAL INC mods (armour/evasion/etc.) are consumed by calcLocal and baked into
+	-- LOCAL INC/BASE mods (armour/evasion/etc.) are consumed by calcLocal and baked into
 	-- armourData, not present in modDB.  Adjusting one mod's contribution in isolation
-	-- is wrong because armourData is built from the SUM of all local INC contributions
-	-- (armourInc + armourEvasionInc + defencesInc + …).  The correct approach is a
-	-- three-phase algorithm:
-	--   Phase 1 — collect the total old local INC per armourData stat from all mod lines.
-	--   Phase 2 — for each matched line, accumulate the INC delta into incDelta; cancel+
-	--             inject GLOBAL mods in modDB as usual.
+	-- is wrong because armourData is built from the SUM of all local contributions.
+	-- The correct approach is a three-phase algorithm:
+	--   Phase 1 — collect total old local INC and BASE per armourData stat from ALL lines.
+	--   Phase 2 — for matched lines, accumulate INC/BASE deltas; cancel+inject GLOBAL mods.
 	--   Phase 3 — apply armourData adjustments once using the full old/new totals.
 	-- The armourData change is ephemeral: env.stonefistRestore (base type transform) or
 	-- env.stonefistExplicitRestore (explicit-only) reverts it at end-of-pass.
@@ -3237,19 +3249,7 @@ function calcs.perform(env, skipEHP)
 		if gloveItem and equivalencies and next(equivalencies) then
 			local baseWasTransformed = env.stonefistRestore ~= nil
 			local armData = gloveItem.armourData
-
-			-- Maps a local INC mod.name to the armourData keys it contributes to.
-			-- Mirrors the INC-sum buckets in Item.lua:BuildModListForSlotNum.
-			local armStatMap = {
-				Armour                 = { "Armour" },
-				Evasion                = { "Evasion" },
-				EnergyShield           = { "EnergyShield" },
-				Ward                   = { "Ward" },
-				ArmourAndEvasion       = { "Armour", "Evasion" },
-				ArmourAndEnergyShield  = { "Armour", "EnergyShield" },
-				EvasionAndEnergyShield = { "Evasion", "EnergyShield" },
-				Defences               = { "Armour", "Evasion", "EnergyShield", "Ward" },
-			}
+			local qualityMult = 1 + (gloveItem.quality or 0) / 100
 
 			-- Phase 1: sum ALL local INC contributions already baked into armourData.
 			-- Must cover every mod line (not just matched ones) so Phase 3 ratios are exact.
@@ -3258,11 +3258,10 @@ function calcs.perform(env, skipEHP)
 				for _, modLine in ipairs(gloveItem.explicitModLines or {}) do
 					if not modLine.extra and gloveItem:CheckModLineVariant(modLine) then
 						for _, mod in ipairs(modLine.modList or {}) do
-							local statList = mod.type == "INC"
-								and mod.flags == 0
+							local isLocal = mod.flags == 0
 								and mod.keywordFlags == 0
 								and (not mod[1] or mod[1].type == "InSlot")
-								and armStatMap[mod.name]
+							local statList = isLocal and mod.type == "INC" and armStatMap[mod.name]
 							if statList then
 								for _, stat in ipairs(statList) do
 									totalOldLocalINC[stat] = (totalOldLocalINC[stat] or 0) + mod.value
@@ -3274,9 +3273,10 @@ function calcs.perform(env, skipEHP)
 			end
 
 			-- Phase 2: process matched mod lines.
-			-- LOCAL INC: accumulate deltas (applied in Phase 3).
+			-- LOCAL INC/BASE: accumulate deltas (applied in Phase 3).
 			-- GLOBAL mods: cancel + inject immediately in the ephemeral modDB.
 			local incDelta = { }
+			local baseDelta = { }
 			for _, modLine in ipairs(gloveItem.explicitModLines or {}) do
 				if not modLine.extra and gloveItem:CheckModLineVariant(modLine) then
 					local equivText = equivalencies[modLine.line]
@@ -3287,19 +3287,23 @@ function calcs.perform(env, skipEHP)
 							local locallyHandled = { }
 							for _, mod in ipairs(modLine.modList or {}) do
 								if mod.type == "BASE" or mod.type == "INC" then
-									local statList = mod.type == "INC"
-										and mod.flags == 0
+									local isLocal = mod.flags == 0
 										and mod.keywordFlags == 0
 										and (not mod[1] or mod[1].type == "InSlot")
-										and armData
-										and armStatMap[mod.name]
+									local statList = isLocal and armData and armStatMap[mod.name]
 									if statList then
-										-- LOCAL INC: find the matching new mod and record delta.
+										-- LOCAL defence mod: find matching new mod and record delta.
 										for _, newMod in ipairs(newMods) do
-											if newMod.name == mod.name and newMod.type == "INC" then
+											if newMod.name == mod.name and newMod.type == mod.type then
 												local delta = newMod.value - mod.value
-												for _, stat in ipairs(statList) do
-													incDelta[stat] = (incDelta[stat] or 0) + delta
+												if mod.type == "INC" then
+													for _, stat in ipairs(statList) do
+														incDelta[stat] = (incDelta[stat] or 0) + delta
+													end
+												else
+													for _, stat in ipairs(statList) do
+														baseDelta[stat] = (baseDelta[stat] or 0) + delta
+													end
 												end
 												locallyHandled[mod.name] = true
 												break
@@ -3326,25 +3330,34 @@ function calcs.perform(env, skipEHP)
 				end
 			end
 
-			-- Phase 3: apply armourData adjustments using full old/new INC totals.
-			if armData and next(incDelta) then
+			-- Phase 3: apply armourData adjustments using full old/new totals.
+			local hasChanges = armData and (next(incDelta) or next(baseDelta))
+			if hasChanges then
 				-- Snapshot before first mutation for end-of-pass restore (explicit-only case).
 				if not baseWasTransformed and not env.stonefistExplicitRestore then
 					local snap = { item = gloveItem, armourData = { } }
 					for k, v in pairs(armData) do snap.armourData[k] = v end
 					env.stonefistExplicitRestore = snap
 				end
-				for stat, delta in pairs(incDelta) do
+				local affectedStats = { }
+				for stat in pairs(incDelta) do affectedStats[stat] = true end
+				for stat in pairs(baseDelta) do affectedStats[stat] = true end
+				for stat in pairs(affectedStats) do
 					if armData[stat] ~= nil then
 						local oldTotal = totalOldLocalINC[stat] or 0
-						local newTotal = oldTotal + delta
+						local bDelta = baseDelta[stat] or 0
+						local newTotal = oldTotal + (incDelta[stat] or 0)
+						local newIncFactor = 1 + newTotal / 100
 						if baseWasTransformed then
-							-- armourData holds the raw FoS base (no old INC applied);
-							-- multiply by the new total INC factor directly.
-							armData[stat] = m_floor(armData[stat] * (1 + newTotal / 100))
-						else
+							-- armourData = floor(FoS_rawBase × qualityMult); old INC was 0.
+							-- Apply new INC factor and add any BASE delta contribution.
+							armData[stat] = m_floor(armData[stat] * newIncFactor
+								+ bDelta * newIncFactor * qualityMult)
+						elseif oldTotal > -100 then
 							-- Old INC sum is baked in; swap old total factor for new.
-							armData[stat] = m_floor(armData[stat] * (1 + newTotal / 100) / (1 + oldTotal / 100))
+							local oldIncFactor = 1 + oldTotal / 100
+							armData[stat] = m_floor(armData[stat] * newIncFactor / oldIncFactor
+								+ bDelta * newIncFactor * qualityMult)
 						end
 					end
 				end

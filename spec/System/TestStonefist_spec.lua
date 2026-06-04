@@ -219,10 +219,9 @@ describe("TestStonefist", function()
 		"
 		build.configTab:BuildModList()
 		runCallback("OnFrame")
-		-- After transform: 100 * (1 + 300/100) = 400; cancel of 150% + new 300% net to 300%
+		-- After transform: cancel 150% + inject 300% → net 300% INC → 100 * (1+3) = 400
 		local transformedArmour = build.calcsTab.mainOutput.Armour or 0
-		assert.is_true(transformedArmour > baseArmour,
-			("expected transformed armour %d > base armour %d with upgraded INC mod"):format(transformedArmour, baseArmour))
+		assert.is_near(400, transformedArmour, 2)
 
 		data.modEquivalencies = origEquiv
 	end)
@@ -250,9 +249,9 @@ describe("TestStonefist", function()
 		"
 		build.configTab:BuildModList()
 		runCallback("OnFrame")
+		-- After transform: cancel resolved INC + inject 300% → net 300% INC → 100 * (1+3) = 400
 		local transformedArmour = build.calcsTab.mainOutput.Armour or 0
-		assert.is_true(transformedArmour > baseArmour,
-			("expected range-keyed equivalency to upgrade armour: %d > %d"):format(transformedArmour, baseArmour))
+		assert.is_near(400, transformedArmour, 2)
 
 		data.modEquivalencies = origEquiv
 	end)
@@ -280,10 +279,9 @@ describe("TestStonefist", function()
 		"
 		build.configTab:BuildModList()
 		runCallback("OnFrame")
-		-- The mapped Armour mod is upgraded; the presence of an unmapped mod must not block this
+		-- Mapped Armour mod upgrades: cancel 150% + inject 300% → net 300% INC → 100 * (1+3) = 400
 		local transformedArmour = build.calcsTab.mainOutput.Armour or 0
-		assert.is_true(transformedArmour > baseArmour,
-			("mapped Armour mod should transform even when item has additional unmapped mods: %d > %d"):format(transformedArmour, baseArmour))
+		assert.is_near(400, transformedArmour, 2)
 
 		data.modEquivalencies = origEquiv
 	end)
@@ -318,7 +316,8 @@ describe("TestStonefist", function()
 		build.configTab:BuildModList()
 		runCallback("OnFrame")
 		local fullyTransformedArmour = build.calcsTab.mainOutput.Armour or 0
-		-- Explicit mod upgrade (150% -> 300%) should increase armour beyond base-type-only result
+		-- Explicit upgrade: cancel 150% + inject 300% on FoS base (44) → 44 * (1+3) = 176
+		assert.is_near(176, fullyTransformedArmour, 10)
 		assert.is_true(fullyTransformedArmour > baseTypeOnlyArmour,
 			("expected fully-transformed armour %d > base-type-only armour %d"):format(fullyTransformedArmour, baseTypeOnlyArmour))
 

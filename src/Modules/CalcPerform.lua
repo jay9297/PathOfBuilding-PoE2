@@ -3235,7 +3235,7 @@ function calcs.perform(env, skipEHP)
 						if newMods and not parseExtra then
 							for _, mod in ipairs(modLine.modList or {}) do
 								if mod.type == "BASE" or mod.type == "INC" then
-									local cancel = copyTable(mod, true)
+									local cancel = copyTable(mod)
 									cancel.value = -cancel.value
 									modDB:AddMod(cancel)
 								end

@@ -286,6 +286,38 @@ describe("TestStonefist", function()
 		data.modEquivalencies = origEquiv
 	end)
 
+	it("GloveExplicitModTransform: multiple local INC mods on same stat use full INC sum for ratio", function()
+		local origEquiv = data.modEquivalencies
+		-- Only the 150% mod is in the equivalency table; the 50% mod is NOT mapped.
+		-- armourData bakes in both: 100 * (1+(150+50)/100) = 300.
+		-- After transform: only the 150% mod changes to 300%, so total INC becomes 350%.
+		-- Correct result: floor(300 * (1+3.5) / (1+2)) = floor(300*4.5/3) = 450.
+		-- Buggy single-mod ratio would give: floor(300 / 2.5 * 4) = 480 (wrong).
+		data.modEquivalencies = {
+			["150% increased Armour"] = "300% increased Armour",
+		}
+
+		build.itemsTab:CreateDisplayItemFromRaw([[
+			New Item
+			Titan Mitts
+			150% increased Armour
+			50% increased Armour
+		]])
+		build.itemsTab:AddDisplayItem()
+		runCallback("OnFrame")
+
+		build.configTab.input.customMods = "\z
+		their explicit modifiers are transformed into more powerful related modifiers\n\z
+		"
+		build.configTab:BuildModList()
+		runCallback("OnFrame")
+		local transformedArmour = build.calcsTab.mainOutput.Armour or 0
+		-- round(100*(1+(300+50)/100)) = 450
+		assert.is_near(450, transformedArmour, 2)
+
+		data.modEquivalencies = origEquiv
+	end)
+
 	it("GloveBaseTypeTransform and GloveExplicitModTransform work independently together", function()
 		local origEquiv = data.modEquivalencies
 		data.modEquivalencies = {

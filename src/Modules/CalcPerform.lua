@@ -3220,81 +3220,131 @@ function calcs.perform(env, skipEHP)
 	-- data.modEquivalencies, upgrade the mod to the mapped equivalent.
 	--
 	-- LOCAL INC mods (armour/evasion/etc.) are consumed by calcLocal and baked into
-	-- armourData, not present in modDB.  For those, we adjust armourData directly so
-	-- that CalcDefence sees the upgraded value.  The adjustment is ephemeral: when
-	-- GloveBaseTypeTransform is also active, the existing env.stonefistRestore already
-	-- reverts armourData at end-of-pass; when only this flag is active we write
-	-- env.stonefistExplicitRestore for the same purpose.
-	-- GLOBAL mods (non-armour stats) still use the cancel+inject pattern in modDB.
-	-- FLAG and OVERRIDE mods are left unchanged because they cannot be cleanly negated.
+	-- armourData, not present in modDB.  Adjusting one mod's contribution in isolation
+	-- is wrong because armourData is built from the SUM of all local INC contributions
+	-- (armourInc + armourEvasionInc + defencesInc + …).  The correct approach is a
+	-- three-phase algorithm:
+	--   Phase 1 — collect the total old local INC per armourData stat from all mod lines.
+	--   Phase 2 — for each matched line, accumulate the INC delta into incDelta; cancel+
+	--             inject GLOBAL mods in modDB as usual.
+	--   Phase 3 — apply armourData adjustments once using the full old/new totals.
+	-- The armourData change is ephemeral: env.stonefistRestore (base type transform) or
+	-- env.stonefistExplicitRestore (explicit-only) reverts it at end-of-pass.
+	-- GLOBAL mods and FLAG/OVERRIDE mods are handled via modDB cancel+inject unchanged.
 	if modDB:Flag(nil, "GloveExplicitModTransform") then
 		local gloveItem = env.player.itemList["Gloves"]
 		local equivalencies = env.data.modEquivalencies
 		if gloveItem and equivalencies and next(equivalencies) then
-			-- Was the base type already swapped to Fists of Stone this pass?
 			local baseWasTransformed = env.stonefistRestore ~= nil
+			local armData = gloveItem.armourData
+
+			-- Maps a local INC mod.name to the armourData keys it contributes to.
+			-- Mirrors the INC-sum buckets in Item.lua:BuildModListForSlotNum.
+			local armStatMap = {
+				Armour                 = { "Armour" },
+				Evasion                = { "Evasion" },
+				EnergyShield           = { "EnergyShield" },
+				Ward                   = { "Ward" },
+				ArmourAndEvasion       = { "Armour", "Evasion" },
+				ArmourAndEnergyShield  = { "Armour", "EnergyShield" },
+				EvasionAndEnergyShield = { "Evasion", "EnergyShield" },
+				Defences               = { "Armour", "Evasion", "EnergyShield", "Ward" },
+			}
+
+			-- Phase 1: sum ALL local INC contributions already baked into armourData.
+			-- Must cover every mod line (not just matched ones) so Phase 3 ratios are exact.
+			local totalOldLocalINC = { }
+			if armData then
+				for _, modLine in ipairs(gloveItem.explicitModLines or {}) do
+					if not modLine.extra and gloveItem:CheckModLineVariant(modLine) then
+						for _, mod in ipairs(modLine.modList or {}) do
+							local statList = mod.type == "INC"
+								and mod.flags == 0
+								and mod.keywordFlags == 0
+								and (not mod[1] or mod[1].type == "InSlot")
+								and armStatMap[mod.name]
+							if statList then
+								for _, stat in ipairs(statList) do
+									totalOldLocalINC[stat] = (totalOldLocalINC[stat] or 0) + mod.value
+								end
+							end
+						end
+					end
+				end
+			end
+
+			-- Phase 2: process matched mod lines.
+			-- LOCAL INC: accumulate deltas (applied in Phase 3).
+			-- GLOBAL mods: cancel + inject immediately in the ephemeral modDB.
+			local incDelta = { }
 			for _, modLine in ipairs(gloveItem.explicitModLines or {}) do
 				if not modLine.extra and gloveItem:CheckModLineVariant(modLine) then
 					local equivText = equivalencies[modLine.line]
 					if equivText then
-						-- Parse upgraded equivalent first; only proceed if parse succeeds
-						-- (avoids silently removing a mod when the equivalency value is malformed).
+						-- Parse upgraded equivalent first; only proceed if parse succeeds.
 						local newMods, parseExtra = modLib.parseMod(equivText)
 						if newMods and not parseExtra then
-							-- Track which stat names were handled via armourData so we skip
-							-- their corresponding new mods when injecting into modDB.
 							local locallyHandled = { }
 							for _, mod in ipairs(modLine.modList or {}) do
-								-- LOCAL INC mods: no keyword flags, no condition tags except InSlot,
-								-- and the stat must exist in armourData (Armour, Evasion, ES, Ward).
-								if mod.type == "INC"
-									and mod.flags == 0
-									and mod.keywordFlags == 0
-									and (not mod[1] or mod[1].type == "InSlot")
-									and gloveItem.armourData
-									and gloveItem.armourData[mod.name] ~= nil
-								then
-									-- Find the matching new INC mod with the same stat name.
-									for _, newMod in ipairs(newMods) do
-										if newMod.name == mod.name and newMod.type == "INC" then
-											-- Save a snapshot of armourData before the first change
-											-- so we can restore it at end-of-pass (explicit-only case).
-											if not baseWasTransformed and not env.stonefistExplicitRestore then
-												local snap = { item = gloveItem, armourData = { } }
-												for k, v in pairs(gloveItem.armourData) do
-													snap.armourData[k] = v
+								if mod.type == "BASE" or mod.type == "INC" then
+									local statList = mod.type == "INC"
+										and mod.flags == 0
+										and mod.keywordFlags == 0
+										and (not mod[1] or mod[1].type == "InSlot")
+										and armData
+										and armStatMap[mod.name]
+									if statList then
+										-- LOCAL INC: find the matching new mod and record delta.
+										for _, newMod in ipairs(newMods) do
+											if newMod.name == mod.name and newMod.type == "INC" then
+												local delta = newMod.value - mod.value
+												for _, stat in ipairs(statList) do
+													incDelta[stat] = (incDelta[stat] or 0) + delta
 												end
-												env.stonefistExplicitRestore = snap
+												locallyHandled[mod.name] = true
+												break
 											end
-											local armData = gloveItem.armourData
-											if baseWasTransformed then
-												-- armourData holds the raw FoS base (no old INC applied);
-												-- multiply by the new INC factor directly.
-												armData[mod.name] = m_floor(armData[mod.name] * (1 + newMod.value / 100))
-											else
-												-- Old INC is baked into armourData; swap old factor for new.
-												armData[mod.name] = m_floor(
-													armData[mod.name] / (1 + mod.value / 100) * (1 + newMod.value / 100)
-												)
-											end
-											locallyHandled[mod.name] = true
-											break
 										end
+									else
+										-- GLOBAL mod: cancel in ephemeral modDB.
+										local cancel = copyTable(mod)
+										cancel.value = -cancel.value
+										modDB:AddMod(cancel)
 									end
-								elseif mod.type == "BASE" or mod.type == "INC" then
-									-- GLOBAL mod: cancel its contribution in the ephemeral modDB.
-									local cancel = copyTable(mod)
-									cancel.value = -cancel.value
-									modDB:AddMod(cancel)
 								end
 							end
-							-- Inject new mods into modDB for any that were not handled via armourData.
+							-- Inject new mods for any that were not handled via armourData.
 							for _, newMod in ipairs(newMods) do
 								if not locallyHandled[newMod.name] then
-									newMod.source = "Fists of Stone Transform"
-									modDB:AddMod(newMod)
+									local copy = copyTable(newMod)
+									copy.source = "Fists of Stone Transform"
+									modDB:AddMod(copy)
 								end
 							end
+						end
+					end
+				end
+			end
+
+			-- Phase 3: apply armourData adjustments using full old/new INC totals.
+			if armData and next(incDelta) then
+				-- Snapshot before first mutation for end-of-pass restore (explicit-only case).
+				if not baseWasTransformed and not env.stonefistExplicitRestore then
+					local snap = { item = gloveItem, armourData = { } }
+					for k, v in pairs(armData) do snap.armourData[k] = v end
+					env.stonefistExplicitRestore = snap
+				end
+				for stat, delta in pairs(incDelta) do
+					if armData[stat] ~= nil then
+						local oldTotal = totalOldLocalINC[stat] or 0
+						local newTotal = oldTotal + delta
+						if baseWasTransformed then
+							-- armourData holds the raw FoS base (no old INC applied);
+							-- multiply by the new total INC factor directly.
+							armData[stat] = m_floor(armData[stat] * (1 + newTotal / 100))
+						else
+							-- Old INC sum is baked in; swap old total factor for new.
+							armData[stat] = m_floor(armData[stat] * (1 + newTotal / 100) / (1 + oldTotal / 100))
 						end
 					end
 				end

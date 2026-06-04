@@ -3269,12 +3269,35 @@ function calcs.perform(env, skipEHP)
 			local qualityMult = altQual and 1 or (1 + (gloveItem.quality or 0) / 100)
 
 			-- Phase 1: sum ALL local INC and BASE contributions already baked into armourData.
-			-- Must cover every mod line (not just matched ones) so Phase 3 ratios are exact.
+			-- Must scan BOTH implicit and explicit mod lines — Item.lua:BuildModListForSlotNum
+			-- processes both when computing armourData via calcLocal. Missing implicits here
+			-- would make the old-INC denominator too small and Phase 3 would over-correct.
 			-- totalOldLocalBASE is used in the baseWasTransformed branch where armourData holds
 			-- only the FoS raw base and the old explicit BASE mods were discarded.
 			local totalOldLocalINC = { }
 			local totalOldLocalBASE = { }
 			if armData then
+				for _, modLine in ipairs(gloveItem.implicitModLines or {}) do
+					if not modLine.extra and gloveItem:CheckModLineVariant(modLine) then
+						for _, mod in ipairs(modLine.modList or {}) do
+							local isLocal = mod.flags == 0
+								and mod.keywordFlags == 0
+								and (not mod[1] or mod[1].type == "InSlot")
+							local statList = isLocal and armStatMap[mod.name]
+							if statList then
+								if mod.type == "INC" then
+									for _, stat in ipairs(statList) do
+										totalOldLocalINC[stat] = (totalOldLocalINC[stat] or 0) + mod.value
+									end
+								elseif mod.type == "BASE" then
+									for _, stat in ipairs(statList) do
+										totalOldLocalBASE[stat] = (totalOldLocalBASE[stat] or 0) + mod.value
+									end
+								end
+							end
+						end
+					end
+				end
 				for _, modLine in ipairs(gloveItem.explicitModLines or {}) do
 					if not modLine.extra and gloveItem:CheckModLineVariant(modLine) then
 						for _, mod in ipairs(modLine.modList or {}) do

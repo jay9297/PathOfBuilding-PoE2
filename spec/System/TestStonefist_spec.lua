@@ -413,6 +413,41 @@ describe("TestStonefist", function()
 		data.modEquivalencies = origEquiv
 	end)
 
+	it("GloveExplicitModTransform: implicit local INC is included in Phase 1 ratio", function()
+		-- Phase 1 must scan both implicitModLines and explicitModLines.
+		-- If implicit INC is missed, oldTotal is under-counted and Phase 3 over-corrects.
+		-- armourData = round(100 * (1 + (50+150)/100)) = round(300) = 300
+		-- With fix   : oldTotal=200 → ratio 4.5/3 → round(300*4.5/3) = 450
+		-- Without fix: oldTotal=150 → ratio 4/2.5 → round(300*4/2.5) = 480 (wrong)
+		local origEquiv = data.modEquivalencies
+		data.modEquivalencies = {
+			["150% increased Armour"] = "300% increased Armour",
+		}
+
+		-- Item format with Rarity header: first mod block = implicit, second = explicit.
+		build.itemsTab:CreateDisplayItemFromRaw([[
+			Rarity: Normal
+			Titan Mitts
+			--------
+			50% increased Armour
+			--------
+			150% increased Armour
+		]])
+		build.itemsTab:AddDisplayItem()
+		runCallback("OnFrame")
+
+		build.configTab.input.customMods = "\z
+		their explicit modifiers are transformed into more powerful related modifiers\n\z
+		"
+		build.configTab:BuildModList()
+		runCallback("OnFrame")
+		-- Correct: round(300 * (1+3.5)/(1+2)) = round(450) = 450
+		local transformedArmour = build.calcsTab.mainOutput.Armour or 0
+		assert.is_near(450, transformedArmour, 2)
+
+		data.modEquivalencies = origEquiv
+	end)
+
 	it("GloveExplicitModTransform: compound ArmourAndEvasion INC mod fans out to both stats", function()
 		local origEquiv = data.modEquivalencies
 		-- "ArmourAndEvasion" maps to both Armour and Evasion in armStatMap.

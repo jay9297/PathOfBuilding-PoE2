@@ -3215,10 +3215,41 @@ function calcs.perform(env, skipEHP)
 		end
 	end
 
-	-- Way of the Stonefist: explicit mod transformation (requires ModEquivalencies data)
-	-- GloveExplicitModTransform is not yet implemented; the mapping data must be generated
-	-- by running src/Export/Scripts/modequivalencies.lua via the PoB export tool first. -- cspell:ignore modequivalencies
-	-- When src/Data/ModEquivalencies.lua exists, load it here and remap glove explicit mods.
+	-- Way of the Stonefist: explicit mod transformation
+	-- For each explicit mod line on the equipped gloves that has an entry in
+	-- data.modEquivalencies, cancel the original BASE/INC contribution and inject the
+	-- upgraded equivalent.  Both the cancellation and the new mod live in the ephemeral
+	-- per-pass modDB, so no explicit restore is needed.
+	if modDB:Flag(nil, "GloveExplicitModTransform") then
+		local gloveItem = env.player.itemList["Gloves"]
+		local equivalencies = env.data.modEquivalencies
+		if gloveItem and equivalencies and next(equivalencies) then
+			for _, modLine in ipairs(gloveItem.explicitModLines or {}) do
+				if not modLine.extra and gloveItem:CheckModLineVariant(modLine) then
+					local equivText = equivalencies[modLine.line]
+					if equivText then
+						-- Cancel the original BASE/INC contribution from this mod line.
+						-- FLAG and MORE mods are left active because they cannot be cleanly negated.
+						for _, mod in ipairs(modLine.modList or {}) do
+							if mod.type == "BASE" or mod.type == "INC" then
+								local cancel = copyTable(mod)
+								cancel.value = -cancel.value
+								modDB:AddMod(cancel)
+							end
+						end
+						-- Parse and inject the upgraded equivalent mods.
+						local newMods, parseExtra = modLib.parseMod(equivText)
+						if newMods and not parseExtra then
+							for _, mod in ipairs(newMods) do
+								mod.source = "Fists of Stone Transform"
+								modDB:AddMod(mod)
+							end
+						end
+					end
+				end
+			end
+		end
+	end
 
 	-- Defence/offence calculations
 	calcs.defence(env, env.player)

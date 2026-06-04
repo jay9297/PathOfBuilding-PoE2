@@ -167,4 +167,154 @@ describe("TestStonefist", function()
 		assert.is_falsy(globalFlag)
 		assert.is_true(build.calcsTab.mainEnv.modDB:Flag(nil, "IgnoreAttributeRequirementsForGloves"))
 	end)
+
+	-- CalcPerform: explicit mod transformation
+
+	it("GloveExplicitModTransform: empty equivalencies table is a no-op", function()
+		local origEquiv = data.modEquivalencies
+		data.modEquivalencies = {}
+
+		build.itemsTab:CreateDisplayItemFromRaw([[
+			New Item
+			Titan Mitts
+			150% increased Armour
+		]])
+		build.itemsTab:AddDisplayItem()
+		runCallback("OnFrame")
+		local baseArmour = build.calcsTab.mainOutput.Armour or 0
+
+		build.configTab.input.customMods = "\z
+		their explicit modifiers are transformed into more powerful related modifiers\n\z
+		"
+		build.configTab:BuildModList()
+		runCallback("OnFrame")
+
+		-- Armour should be unchanged because no equivalency is defined
+		local transformedArmour = build.calcsTab.mainOutput.Armour or 0
+		assert.are.equal(baseArmour, transformedArmour)
+
+		data.modEquivalencies = origEquiv
+	end)
+
+	it("GloveExplicitModTransform: INC mod is upgraded when a matching equivalency exists", function()
+		local origEquiv = data.modEquivalencies
+		-- Map the specific mod text used in the raw item below to a stronger version
+		data.modEquivalencies = {
+			["150% increased Armour"] = "300% increased Armour",
+		}
+
+		-- Titan Mitts: base Armour = 100 (no quality on a New Item)
+		build.itemsTab:CreateDisplayItemFromRaw([[
+			New Item
+			Titan Mitts
+			150% increased Armour
+		]])
+		build.itemsTab:AddDisplayItem()
+		runCallback("OnFrame")
+		-- Baseline: 100 * (1 + 150/100) = 250
+		local baseArmour = build.calcsTab.mainOutput.Armour or 0
+
+		build.configTab.input.customMods = "\z
+		their explicit modifiers are transformed into more powerful related modifiers\n\z
+		"
+		build.configTab:BuildModList()
+		runCallback("OnFrame")
+		-- After transform: 100 * (1 + 300/100) = 400; cancel of 150% + new 300% net to 300%
+		local transformedArmour = build.calcsTab.mainOutput.Armour or 0
+		assert.is_true(transformedArmour > baseArmour,
+			("expected transformed armour %d > base armour %d with upgraded INC mod"):format(transformedArmour, baseArmour))
+
+		data.modEquivalencies = origEquiv
+	end)
+
+	it("GloveExplicitModTransform: range-format mod text is matched and upgraded", function()
+		local origEquiv = data.modEquivalencies
+		-- Unique item data files use range text like "(150-200)% increased Armour".
+		-- Verify that the raw modLine.line (which retains the range text) is used as the key.
+		data.modEquivalencies = {
+			["(150-200)% increased Armour"] = "(250-350)% increased Armour",
+		}
+
+		build.itemsTab:CreateDisplayItemFromRaw([[
+			New Item
+			Titan Mitts
+			(150-200)% increased Armour
+		]])
+		build.itemsTab:AddDisplayItem()
+		runCallback("OnFrame")
+		local baseArmour = build.calcsTab.mainOutput.Armour or 0
+
+		build.configTab.input.customMods = "\z
+		their explicit modifiers are transformed into more powerful related modifiers\n\z
+		"
+		build.configTab:BuildModList()
+		runCallback("OnFrame")
+		local transformedArmour = build.calcsTab.mainOutput.Armour or 0
+		assert.is_true(transformedArmour > baseArmour,
+			("expected range-keyed equivalency to upgrade armour: %d > %d"):format(transformedArmour, baseArmour))
+
+		data.modEquivalencies = origEquiv
+	end)
+
+	it("GloveExplicitModTransform: mapped mod transforms when item also has unmapped mods", function()
+		local origEquiv = data.modEquivalencies
+		-- Only the Armour INC mod is mapped; the Strength BASE mod has no equivalency
+		data.modEquivalencies = {
+			["150% increased Armour"] = "300% increased Armour",
+		}
+
+		-- Item has both a mapped mod and an unmapped mod
+		build.itemsTab:CreateDisplayItemFromRaw([[
+			New Item
+			Titan Mitts
+			150% increased Armour
+			+25 to Strength
+		]])
+		build.itemsTab:AddDisplayItem()
+		runCallback("OnFrame")
+		local baseArmour = build.calcsTab.mainOutput.Armour or 0
+
+		build.configTab.input.customMods = "\z
+		their explicit modifiers are transformed into more powerful related modifiers\n\z
+		"
+		build.configTab:BuildModList()
+		runCallback("OnFrame")
+		-- The mapped Armour mod is upgraded; the presence of an unmapped mod must not block this
+		local transformedArmour = build.calcsTab.mainOutput.Armour or 0
+		assert.is_true(transformedArmour > baseArmour,
+			("mapped Armour mod should transform even when item has additional unmapped mods: %d > %d"):format(transformedArmour, baseArmour))
+
+		data.modEquivalencies = origEquiv
+	end)
+
+	it("GloveBaseTypeTransform and GloveExplicitModTransform work independently together", function()
+		local origEquiv = data.modEquivalencies
+		data.modEquivalencies = {
+			["150% increased Armour"] = "300% increased Armour",
+		}
+
+		build.itemsTab:CreateDisplayItemFromRaw([[
+			New Item
+			Titan Mitts
+			150% increased Armour
+		]])
+		build.itemsTab:AddDisplayItem()
+		runCallback("OnFrame")
+		local baseArmour = build.calcsTab.mainOutput.Armour or 0
+
+		-- Enable both transforms together (as Way of the Stonefist does in game)
+		build.configTab.input.customMods = "\z
+		Gloves you equip have their base type transformed to fists of stone while equipped\n\z
+		their explicit modifiers are transformed into more powerful related modifiers\n\z
+		"
+		build.configTab:BuildModList()
+		runCallback("OnFrame")
+		local fullyTransformedArmour = build.calcsTab.mainOutput.Armour or 0
+		-- Both transforms should stack: base type contributes Fists of Stone armour AND
+		-- the explicit INC is upgraded, so armour should exceed either transform alone
+		assert.is_true(fullyTransformedArmour > baseArmour,
+			("expected fully-transformed armour %d > base %d"):format(fullyTransformedArmour, baseArmour))
+
+		data.modEquivalencies = origEquiv
+	end)
 end)

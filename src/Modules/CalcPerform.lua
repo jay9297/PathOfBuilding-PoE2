@@ -3249,11 +3249,31 @@ function calcs.perform(env, skipEHP)
 		if gloveItem and equivalencies and next(equivalencies) then
 			local baseWasTransformed = env.stonefistRestore ~= nil
 			local armData = gloveItem.armourData
-			local qualityMult = 1 + (gloveItem.quality or 0) / 100
+			-- When "quality does not increase defences" is present, Item.lua sets qualityScalar=0;
+			-- replicate that here so the BASE delta term is scaled consistently.
+			local altQual = false
+			for _, modLine in ipairs(gloveItem.implicitModLines or {}) do
+				if not altQual and not modLine.extra and gloveItem:CheckModLineVariant(modLine) then
+					for _, mod in ipairs(modLine.modList or {}) do
+						if mod.name == "AlternateQualityArmour" then altQual = true; break end
+					end
+				end
+			end
+			for _, modLine in ipairs(gloveItem.explicitModLines or {}) do
+				if not altQual and not modLine.extra and gloveItem:CheckModLineVariant(modLine) then
+					for _, mod in ipairs(modLine.modList or {}) do
+						if mod.name == "AlternateQualityArmour" then altQual = true; break end
+					end
+				end
+			end
+			local qualityMult = altQual and 1 or (1 + (gloveItem.quality or 0) / 100)
 
-			-- Phase 1: sum ALL local INC contributions already baked into armourData.
+			-- Phase 1: sum ALL local INC and BASE contributions already baked into armourData.
 			-- Must cover every mod line (not just matched ones) so Phase 3 ratios are exact.
+			-- totalOldLocalBASE is used in the baseWasTransformed branch where armourData holds
+			-- only the FoS raw base and the old explicit BASE mods were discarded.
 			local totalOldLocalINC = { }
+			local totalOldLocalBASE = { }
 			if armData then
 				for _, modLine in ipairs(gloveItem.explicitModLines or {}) do
 					if not modLine.extra and gloveItem:CheckModLineVariant(modLine) then
@@ -3261,10 +3281,16 @@ function calcs.perform(env, skipEHP)
 							local isLocal = mod.flags == 0
 								and mod.keywordFlags == 0
 								and (not mod[1] or mod[1].type == "InSlot")
-							local statList = isLocal and mod.type == "INC" and armStatMap[mod.name]
+							local statList = isLocal and armStatMap[mod.name]
 							if statList then
-								for _, stat in ipairs(statList) do
-									totalOldLocalINC[stat] = (totalOldLocalINC[stat] or 0) + mod.value
+								if mod.type == "INC" then
+									for _, stat in ipairs(statList) do
+										totalOldLocalINC[stat] = (totalOldLocalINC[stat] or 0) + mod.value
+									end
+								elseif mod.type == "BASE" then
+									for _, stat in ipairs(statList) do
+										totalOldLocalBASE[stat] = (totalOldLocalBASE[stat] or 0) + mod.value
+									end
 								end
 							end
 						end
@@ -3351,16 +3377,24 @@ function calcs.perform(env, skipEHP)
 						local newTotal = oldTotal + (incDelta[stat] or 0)
 						local newIncFactor = 1 + newTotal / 100
 						if baseWasTransformed then
-							-- armourData = floor(FoS_rawBase × qualityMult); old INC was 0.
-							-- Apply new INC factor and add any BASE delta contribution.
-							armData[stat] = m_floor(armData[stat] * newIncFactor
-								+ bDelta * newIncFactor * qualityMult)
+							-- armourData = floor(FoS_rawBase × qualityMult) with no baked-in INC
+							-- or BASE from explicit mods (GloveBaseTypeTransform discards them).
+							-- newTotal = totalOldLocalINC + incDelta is the FULL new INC sum across
+							-- all explicit mods — not just the delta — because none of the old INC
+							-- was applied to the FoS base; newIncFactor handles it in one step.
+							-- totalOldLocalBASE + bDelta gives the full new flat BASE, since the
+							-- old explicit BASE mods were also discarded by the base type swap.
+							local totalNewBase = (totalOldLocalBASE[stat] or 0) + bDelta
+							armData[stat] = round(armData[stat] * newIncFactor
+								+ totalNewBase * newIncFactor * qualityMult)
 						elseif oldTotal > -100 then
 							-- oldTotal ≤ -100 gives a zero/negative denominator (1 + oldTotal/100 ≤ 0),
 							-- which is pathological and would corrupt armourData.  Skip silently;
 							-- the item already has an implausible negative-INC total in that case.
+							-- Old INC and BASE are baked into armData; swap the INC factor and
+							-- add only the BASE delta (old BASE already accounted for in armData).
 							local oldIncFactor = 1 + oldTotal / 100
-							armData[stat] = m_floor(armData[stat] * newIncFactor / oldIncFactor
+							armData[stat] = round(armData[stat] * newIncFactor / oldIncFactor
 								+ bDelta * newIncFactor * qualityMult)
 						end
 					end

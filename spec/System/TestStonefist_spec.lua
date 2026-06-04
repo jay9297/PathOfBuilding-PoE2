@@ -406,9 +406,68 @@ describe("TestStonefist", function()
 		"
 		build.configTab:BuildModList()
 		runCallback("OnFrame")
-		-- baseDelta = +25, no INC change: floor(125 + 25 * 1 * 1) = 150
+		-- baseDelta = +25, no INC change: round(125 + 25 * 1 * 1) = 150
 		local transformedArmour = build.calcsTab.mainOutput.Armour or 0
 		assert.is_near(150, transformedArmour, 2)
+
+		data.modEquivalencies = origEquiv
+	end)
+
+	it("GloveExplicitModTransform: compound ArmourAndEvasion INC mod fans out to both stats", function()
+		local origEquiv = data.modEquivalencies
+		-- "ArmourAndEvasion" maps to both Armour and Evasion in armStatMap.
+		data.modEquivalencies = {
+			["150% increased Armour and Evasion Rating"] = "300% increased Armour and Evasion Rating",
+		}
+
+		-- Titan Mitts base Armour=100, no base Evasion; both stats get Phase 1/3 fan-out.
+		build.itemsTab:CreateDisplayItemFromRaw([[
+			New Item
+			Titan Mitts
+			150% increased Armour and Evasion Rating
+		]])
+		build.itemsTab:AddDisplayItem()
+		runCallback("OnFrame")
+
+		build.configTab.input.customMods = "\z
+		their explicit modifiers are transformed into more powerful related modifiers\n\z
+		"
+		build.configTab:BuildModList()
+		runCallback("OnFrame")
+		-- oldTotal=150 for both; newTotal=300; Armour: round(250 * 4/2.5) = 400
+		local transformedArmour = build.calcsTab.mainOutput.Armour or 0
+		assert.is_near(400, transformedArmour, 2)
+
+		data.modEquivalencies = origEquiv
+	end)
+
+	it("GloveBaseTypeTransform + GloveExplicitModTransform: BASE delta uses totalOldLocalBASE + bDelta", function()
+		local origEquiv = data.modEquivalencies
+		-- When the base type was already swapped, armourData = FoS raw base with no baked-in
+		-- explicit mods.  The formula must use the FULL new flat BASE (old+delta), not just
+		-- the delta, or the old BASE contribution is silently dropped.
+		data.modEquivalencies = {
+			["+25 to Armour"] = "+50 to Armour",
+		}
+
+		-- Titan Mitts + +25 to Armour; base type will be swapped to Fists of Stone (Armour=44)
+		build.itemsTab:CreateDisplayItemFromRaw([[
+			New Item
+			Titan Mitts
+			+25 to Armour
+		]])
+		build.itemsTab:AddDisplayItem()
+
+		build.configTab.input.customMods = "\z
+		Gloves you equip have their base type transformed to fists of stone while equipped\n\z
+		their explicit modifiers are transformed into more powerful related modifiers\n\z
+		"
+		build.configTab:BuildModList()
+		runCallback("OnFrame")
+		-- FoS base Armour = 44; totalOldLocalBASE = 25; bDelta = 25; newTotal INC = 0
+		-- armourData = round(44 + (25+25) * 1 * 1) = round(94) = 94
+		local transformedArmour = build.calcsTab.mainOutput.Armour or 0
+		assert.is_near(94, transformedArmour, 5)
 
 		data.modEquivalencies = origEquiv
 	end)

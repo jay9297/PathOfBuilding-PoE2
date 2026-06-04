@@ -3228,18 +3228,18 @@ function calcs.perform(env, skipEHP)
 				if not modLine.extra and gloveItem:CheckModLineVariant(modLine) then
 					local equivText = equivalencies[modLine.line]
 					if equivText then
-						-- Cancel the original BASE/INC contribution from this mod line.
-						-- FLAG and MORE mods are left active because they cannot be cleanly negated.
-						for _, mod in ipairs(modLine.modList or {}) do
-							if mod.type == "BASE" or mod.type == "INC" then
-								local cancel = copyTable(mod)
-								cancel.value = -cancel.value
-								modDB:AddMod(cancel)
-							end
-						end
-						-- Parse and inject the upgraded equivalent mods.
+						-- Parse upgraded equivalent first; only cancel+inject if parse succeeds
+						-- (avoids silently removing a mod when the equivalency value is malformed).
+						-- FLAG and OVERRIDE mods are left active because they cannot be cleanly negated.
 						local newMods, parseExtra = modLib.parseMod(equivText)
 						if newMods and not parseExtra then
+							for _, mod in ipairs(modLine.modList or {}) do
+								if mod.type == "BASE" or mod.type == "INC" then
+									local cancel = copyTable(mod, true)
+									cancel.value = -cancel.value
+									modDB:AddMod(cancel)
+								end
+							end
 							for _, mod in ipairs(newMods) do
 								mod.source = "Fists of Stone Transform"
 								modDB:AddMod(mod)

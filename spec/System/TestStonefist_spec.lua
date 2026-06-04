@@ -231,8 +231,9 @@ describe("TestStonefist", function()
 		local origEquiv = data.modEquivalencies
 		-- Unique item data files use range text like "(150-200)% increased Armour".
 		-- Verify that the raw modLine.line (which retains the range text) is used as the key.
+		-- The VALUE must be a resolved numeric literal (parseMod cannot handle range notation).
 		data.modEquivalencies = {
-			["(150-200)% increased Armour"] = "(250-350)% increased Armour",
+			["(150-200)% increased Armour"] = "300% increased Armour",
 		}
 
 		build.itemsTab:CreateDisplayItemFromRaw([[
@@ -299,8 +300,15 @@ describe("TestStonefist", function()
 			150% increased Armour
 		]])
 		build.itemsTab:AddDisplayItem()
+
+		-- Baseline: only base type transform active (no explicit mod upgrade)
+		-- FoS base armour + original 150% INC = ~110
+		build.configTab.input.customMods = "\z
+		Gloves you equip have their base type transformed to fists of stone while equipped\n\z
+		"
+		build.configTab:BuildModList()
 		runCallback("OnFrame")
-		local baseArmour = build.calcsTab.mainOutput.Armour or 0
+		local baseTypeOnlyArmour = build.calcsTab.mainOutput.Armour or 0
 
 		-- Enable both transforms together (as Way of the Stonefist does in game)
 		build.configTab.input.customMods = "\z
@@ -310,10 +318,9 @@ describe("TestStonefist", function()
 		build.configTab:BuildModList()
 		runCallback("OnFrame")
 		local fullyTransformedArmour = build.calcsTab.mainOutput.Armour or 0
-		-- Both transforms should stack: base type contributes Fists of Stone armour AND
-		-- the explicit INC is upgraded, so armour should exceed either transform alone
-		assert.is_true(fullyTransformedArmour > baseArmour,
-			("expected fully-transformed armour %d > base %d"):format(fullyTransformedArmour, baseArmour))
+		-- Explicit mod upgrade (150% -> 300%) should increase armour beyond base-type-only result
+		assert.is_true(fullyTransformedArmour > baseTypeOnlyArmour,
+			("expected fully-transformed armour %d > base-type-only armour %d"):format(fullyTransformedArmour, baseTypeOnlyArmour))
 
 		data.modEquivalencies = origEquiv
 	end)

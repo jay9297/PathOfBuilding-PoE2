@@ -575,4 +575,39 @@ describe("TestStonefist", function()
 
 		data.modEquivalencies = origEquiv
 	end)
+
+	it("GloveExplicitModTransform: equivalency containing a FLAG mod is skipped entirely", function()
+		-- If an equivalency value parses to a non-BASE/INC mod (e.g. FLAG), the whole
+		-- line must be skipped.  FLAG mods cannot be cancelled by value negation; injecting
+		-- the upgraded FLAG while the original stays in modDB would double-activate it.
+		-- We verify that armour stays at baseline and no extra mods appear.
+		local origEquiv = data.modEquivalencies
+		-- "Culling Strike" parses to a FLAG mod, which must trigger the guard.
+		data.modEquivalencies = {
+			["150% increased Armour"] = "Culling Strike",
+		}
+
+		build.itemsTab:CreateDisplayItemFromRaw([[
+			New Item
+			Titan Mitts
+			150% increased Armour
+		]])
+		build.itemsTab:AddDisplayItem()
+
+		-- Baseline without transform
+		runCallback("OnFrame")
+		local baselineArmour = build.calcsTab.mainOutput.Armour or 0
+
+		build.configTab.input.customMods = "\z
+		their explicit modifiers are transformed into more powerful related modifiers\n\z
+		"
+		build.configTab:BuildModList()
+		runCallback("OnFrame")
+		local transformedArmour = build.calcsTab.mainOutput.Armour or 0
+
+		-- The FLAG equivalency must be a no-op: armour unchanged, no double-inject.
+		assert.is_near(baselineArmour, transformedArmour, 1)
+
+		data.modEquivalencies = origEquiv
+	end)
 end)

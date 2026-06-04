@@ -3333,49 +3333,60 @@ function calcs.perform(env, skipEHP)
 						-- Parse upgraded equivalent first; only proceed if parse succeeds.
 						local newMods, parseExtra = modLib.parseMod(equivText)
 						if newMods and #newMods > 0 and not parseExtra then
-							local locallyHandled = { }
-							for _, mod in ipairs(modLine.modList or {}) do
-								if mod.type == "BASE" or mod.type == "INC" then
-									local isLocal = mod.flags == 0
-										and mod.keywordFlags == 0
-										and (not mod[1] or mod[1].type == "InSlot")
-									-- Check armData first: local defence mods are baked into armourData,
-									-- never in modDB; cancelling them without armData would create phantom entries.
-									local statList = armData and isLocal and armStatMap[mod.name]
-									if statList then
-										-- LOCAL defence mod: find matching new mod and record delta.
-										for _, newMod in ipairs(newMods) do
-											if newMod.name == mod.name and newMod.type == mod.type then
-												local delta = newMod.value - mod.value
-												if mod.type == "INC" then
-													for _, stat in ipairs(statList) do
-														incDelta[stat] = (incDelta[stat] or 0) + delta
-													end
-												else
-													for _, stat in ipairs(statList) do
-														baseDelta[stat] = (baseDelta[stat] or 0) + delta
-													end
-												end
-												locallyHandled[mod.name .. ":" .. mod.type] = true
-												break
-											end
-										end
-									else
-										-- GLOBAL mod: cancel in ephemeral modDB.
-										local cancel = copyTable(mod)
-										cancel.value = -cancel.value
-										modDB:AddMod(cancel)
-									end
+							-- Reject equivalency if the upgraded value contains non-BASE/INC mods.
+							-- FLAG/OVERRIDE mods cannot be cancelled by negating their value; injecting
+							-- a new FLAG while the original remains in modDB would double-activate it.
+							local onlyBaseOrINC = true
+							for _, m in ipairs(newMods) do
+								if m.type ~= "BASE" and m.type ~= "INC" then
+									onlyBaseOrINC = false; break
 								end
 							end
-							-- Inject new mods for any that were not handled via armourData.
-							-- Key includes type so FLAG/OVERRIDE mods sharing a name with a
-							-- handled INC/BASE mod are not accidentally suppressed.
-							for _, newMod in ipairs(newMods) do
-								if not locallyHandled[newMod.name .. ":" .. newMod.type] then
-									local copy = copyTable(newMod)
-									copy.source = "Fists of Stone Transform"
-									modDB:AddMod(copy)
+							if onlyBaseOrINC then
+								local locallyHandled = { }
+								for _, mod in ipairs(modLine.modList or {}) do
+									if mod.type == "BASE" or mod.type == "INC" then
+										local isLocal = mod.flags == 0
+											and mod.keywordFlags == 0
+											and (not mod[1] or mod[1].type == "InSlot")
+										-- Check armData first: local defence mods are baked into armourData,
+										-- never in modDB; cancelling them without armData would create phantom entries.
+										local statList = armData and isLocal and armStatMap[mod.name]
+										if statList then
+											-- LOCAL defence mod: find matching new mod and record delta.
+											for _, newMod in ipairs(newMods) do
+												if newMod.name == mod.name and newMod.type == mod.type then
+													local delta = newMod.value - mod.value
+													if mod.type == "INC" then
+														for _, stat in ipairs(statList) do
+															incDelta[stat] = (incDelta[stat] or 0) + delta
+														end
+													else
+														for _, stat in ipairs(statList) do
+															baseDelta[stat] = (baseDelta[stat] or 0) + delta
+														end
+													end
+													locallyHandled[mod.name .. ":" .. mod.type] = true
+													break
+												end
+											end
+										else
+											-- GLOBAL mod: cancel in ephemeral modDB.
+											local cancel = copyTable(mod)
+											cancel.value = -cancel.value
+											modDB:AddMod(cancel)
+										end
+									end
+								end
+								-- Inject new mods for any that were not handled via armourData.
+								-- Key includes type so a new mod sharing a name with a handled
+								-- INC/BASE mod of a different type is not accidentally suppressed.
+								for _, newMod in ipairs(newMods) do
+									if not locallyHandled[newMod.name .. ":" .. newMod.type] then
+										local copy = copyTable(newMod)
+										copy.source = "Fists of Stone Transform"
+										modDB:AddMod(copy)
+									end
 								end
 							end
 						end

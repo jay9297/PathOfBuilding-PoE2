@@ -2,14 +2,18 @@
 -- Used by Way of the Stonefist (CalcPerform.lua) to transform glove explicit modifiers
 -- when the GloveExplicitModTransform flag is active.
 --
+-- INFRASTRUCTURE-ONLY: this table is intentionally empty until game-data exports are
+-- available.  While empty, CalcPerform's `next(equivalencies)` short-circuit makes the
+-- entire GloveExplicitModTransform block a confirmed no-op at runtime.
+--
 -- Keys: the exact text of an explicit mod line as it appears in src/Data/Uniques/gloves.lua
 --   (i.e. the range-format text such as "(80-100)% increased Armour").
 -- Values: the upgraded equivalent mod text (resolved numeric, no range notation).
 --
--- Only BASE and INC mod types are remapped; FLAG-type mods (e.g. "Culling Strike") are left
--- active unchanged because they cannot be meaningfully negated.
+-- IMPORTANT: values must parse to BASE or INC mods only.  FLAG/OVERRIDE mods (e.g.
+-- "Culling Strike") cannot be safely cancelled by value negation; CalcPerform enforces
+-- this at runtime and will silently skip any entry whose value parses to a non-BASE/INC mod.
 --
 -- cspell:ignore modequivalencies
--- Populate this table with entries from game data as unique glove mods become known.
 return {
 }

@@ -507,7 +507,7 @@ describe("TestStonefist", function()
 		data.modEquivalencies = origEquiv
 	end)
 
-	it("GloveExplicitModTransform: unparseable equivalency leaves stats unchanged", function()
+	it("GloveExplicitModTransform: invalid equivalency leaves stats unchanged", function()
 		-- If modLib.parseMod() returns nil (invalid equivalency string), the mod line
 		-- must be skipped entirely — stats must equal the pre-transform baseline.
 		local origEquiv = data.modEquivalencies
@@ -534,7 +534,7 @@ describe("TestStonefist", function()
 		runCallback("OnFrame")
 		local transformedArmour = build.calcsTab.mainOutput.Armour or 0
 
-		-- Stats must be unchanged: an unparseable equivalency is a no-op.
+		-- Stats must be unchanged: an invalid equivalency is a no-op.
 		assert.is_near(baselineArmour, transformedArmour, 1)
 
 		data.modEquivalencies = origEquiv

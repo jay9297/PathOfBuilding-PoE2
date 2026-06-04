@@ -3305,7 +3305,7 @@ function calcs.perform(env, skipEHP)
 														baseDelta[stat] = (baseDelta[stat] or 0) + delta
 													end
 												end
-												locallyHandled[mod.name] = true
+												locallyHandled[mod.name .. ":" .. mod.type] = true
 												break
 											end
 										end
@@ -3318,8 +3318,10 @@ function calcs.perform(env, skipEHP)
 								end
 							end
 							-- Inject new mods for any that were not handled via armourData.
+							-- Key includes type so FLAG/OVERRIDE mods sharing a name with a
+							-- handled INC/BASE mod are not accidentally suppressed.
 							for _, newMod in ipairs(newMods) do
-								if not locallyHandled[newMod.name] then
+								if not locallyHandled[newMod.name .. ":" .. newMod.type] then
 									local copy = copyTable(newMod)
 									copy.source = "Fists of Stone Transform"
 									modDB:AddMod(copy)
@@ -3354,7 +3356,9 @@ function calcs.perform(env, skipEHP)
 							armData[stat] = m_floor(armData[stat] * newIncFactor
 								+ bDelta * newIncFactor * qualityMult)
 						elseif oldTotal > -100 then
-							-- Old INC sum is baked in; swap old total factor for new.
+							-- oldTotal ≤ -100 gives a zero/negative denominator (1 + oldTotal/100 ≤ 0),
+							-- which is pathological and would corrupt armourData.  Skip silently;
+							-- the item already has an implausible negative-INC total in that case.
 							local oldIncFactor = 1 + oldTotal / 100
 							armData[stat] = m_floor(armData[stat] * newIncFactor / oldIncFactor
 								+ bDelta * newIncFactor * qualityMult)

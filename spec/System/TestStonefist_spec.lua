@@ -355,4 +355,61 @@ describe("TestStonefist", function()
 
 		data.modEquivalencies = origEquiv
 	end)
+
+	it("GloveExplicitModTransform: global (non-defence) mod is cancelled and upgraded in modDB", function()
+		local origEquiv = data.modEquivalencies
+		-- Map a global Life mod; Life is not in armStatMap so it follows the cancel+inject path.
+		data.modEquivalencies = {
+			["+25 to maximum Life"] = "+50 to maximum Life",
+		}
+
+		build.itemsTab:CreateDisplayItemFromRaw([[
+			New Item
+			Titan Mitts
+			+25 to maximum Life
+		]])
+		build.itemsTab:AddDisplayItem()
+		runCallback("OnFrame")
+		local baseLife = build.calcsTab.mainOutput.Life or 0
+
+		build.configTab.input.customMods = "\z
+		their explicit modifiers are transformed into more powerful related modifiers\n\z
+		"
+		build.configTab:BuildModList()
+		runCallback("OnFrame")
+		local transformedLife = build.calcsTab.mainOutput.Life or 0
+		-- Old +25 is cancelled; new +50 is injected.  Net: exactly +25 more Life.
+		assert.is_near(baseLife + 25, transformedLife, 2)
+
+		data.modEquivalencies = origEquiv
+	end)
+
+	it("GloveExplicitModTransform: flat BASE defence mod is upgraded via baseDelta path", function()
+		local origEquiv = data.modEquivalencies
+		-- +25 to Armour is a local BASE defence mod (consumed by calcLocal into armourData).
+		-- baseDelta = 25; with no INC, armourData goes from 125 to 150.
+		data.modEquivalencies = {
+			["+25 to Armour"] = "+50 to Armour",
+		}
+
+		-- Titan Mitts base Armour = 100 (New Item quality = 0); +25 flat → armourData = 125
+		build.itemsTab:CreateDisplayItemFromRaw([[
+			New Item
+			Titan Mitts
+			+25 to Armour
+		]])
+		build.itemsTab:AddDisplayItem()
+		runCallback("OnFrame")
+
+		build.configTab.input.customMods = "\z
+		their explicit modifiers are transformed into more powerful related modifiers\n\z
+		"
+		build.configTab:BuildModList()
+		runCallback("OnFrame")
+		-- baseDelta = +25, no INC change: floor(125 + 25 * 1 * 1) = 150
+		local transformedArmour = build.calcsTab.mainOutput.Armour or 0
+		assert.is_near(150, transformedArmour, 2)
+
+		data.modEquivalencies = origEquiv
+	end)
 end)

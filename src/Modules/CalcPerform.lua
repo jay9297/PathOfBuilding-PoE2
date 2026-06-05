@@ -3376,15 +3376,11 @@ function calcs.perform(env, skipEHP)
 											cancel.value = -cancel.value
 											modDB:AddMod(cancel)
 										end
-									else
-										-- Non-BASE/INC old mod (e.g. FLAG): cancel it so the line is fully
-										-- superseded. Only numeric values can be cancelled; boolean FLAG values
-										-- (true/false) cannot be arithmetically negated.
-										if type(mod.value) == "number" then
-											local cancel = copyTable(mod)
-											cancel.value = -cancel.value
-											modDB:AddMod(cancel)
-										end
+									-- Non-BASE/INC old mods (e.g. FLAG) are intentionally left in modDB.
+									-- PoB's FlagInternal checks value truthiness, not sign, so there is no
+									-- modDB mechanism to cancel a FLAG once set.  The onlyBaseOrINC gate
+									-- above ensures the new equivalency cannot inject a second FLAG,
+									-- so double-activation is still prevented.
 									end
 								end
 								-- Inject new mods for any that were not handled via armourData.

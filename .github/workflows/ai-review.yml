@@ -129,14 +129,22 @@ jobs:
           source scripts/agent-lib.sh
 
           case "${{ steps.verdict.outputs.result }}" in
-            APPROVE)         EVENT="APPROVE" ;;
-            REQUEST_CHANGES) EVENT="REQUEST_CHANGES" ;;
-            *)               EVENT="COMMENT" ;;
+            APPROVE)
+              retry_op 5 15 gh pr review ${{ github.event.pull_request.number }} \
+                -a \
+                --body "Verdict: **APPROVE**. See review comment above."
+              ;;
+            REQUEST_CHANGES)
+              retry_op 5 15 gh pr review ${{ github.event.pull_request.number }} \
+                -r \
+                --body "Verdict: **REQUEST_CHANGES**. See review comment above."
+              ;;
+            *)
+              retry_op 5 15 gh pr review ${{ github.event.pull_request.number }} \
+                -c \
+                --body "Verdict: **${{ steps.verdict.outputs.result }}**. See review comment above."
+              ;;
           esac
-
-          retry_op 5 15 gh pr review ${{ github.event.pull_request.number }} \
-            --event "$EVENT" \
-            --body "Verdict: **${{ steps.verdict.outputs.result }}**. See review comment above."
 
       - name: Post failure comment on total failure
         if: failure()

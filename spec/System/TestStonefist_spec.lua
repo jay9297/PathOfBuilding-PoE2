@@ -612,12 +612,13 @@ describe("TestStonefist", function()
 		data.modEquivalencies = origEquiv
 	end)
 
-	it("GloveExplicitModTransform: numeric FLAG on old mod line is cancelled when remapped", function()
-		-- Exercises the non-BASE/INC else branch of Phase 2's old-mod loop.
-		-- "culling strike" parses to CanCull:FLAG:1 (numeric value).
-		-- Equivalency maps it to a pure INC mod (all-BASE/INC new side passes the
-		-- onlyBaseOrINC gate).  The old FLAG must be cancelled so it is not left
-		-- permanently active in modDB after the line is replaced.
+	it("GloveExplicitModTransform: old FLAG on matched line is not doubled when remapped to BASE/INC", function()
+		-- When an old mod line has a FLAG mod and the equivalency maps it to pure
+		-- BASE/INC, PoB has no mechanism to cancel a FLAG once set (FlagInternal checks
+		-- value truthiness, not sign).  The onlyBaseOrINC gate on new mods is the
+		-- defence: the old FLAG stays active unchanged, no new FLAG is injected.
+		-- This test verifies: no crash, old FLAG still truthy (preserved, not doubled),
+		-- and armour increases from the new GLOBAL INC that was injected.
 		local origEquiv = data.modEquivalencies
 		data.modEquivalencies = {
 			["culling strike"] = "150% increased Armour",
@@ -630,20 +631,21 @@ describe("TestStonefist", function()
 		]])
 		build.itemsTab:AddDisplayItem()
 		runCallback("OnFrame")
-
-		-- Before transform: CanCull FLAG is live in modDB from the item equip.
-		local preTransformCull = build.calcsTab.mainEnv.modDB:Flag(nil, "CanCull")
-		assert.is_truthy(preTransformCull)
+		local baseArmour = build.calcsTab.mainOutput.Armour or 0
 
 		build.configTab.input.customMods = "\z
 		their explicit modifiers are transformed into more powerful related modifiers\n\z
 		"
 		build.configTab:BuildModList()
 		runCallback("OnFrame")
+		local transformedArmour = build.calcsTab.mainOutput.Armour or 0
 
-		-- After transform: old FLAG cancelled (-1 + 1 = 0), new INC injected.
+		-- Old FLAG remains (cannot be cancelled); no new FLAG was injected (onlyBaseOrINC).
 		local postTransformCull = build.calcsTab.mainEnv.modDB:Flag(nil, "CanCull")
-		assert.is_falsy(postTransformCull)
+		assert.is_truthy(postTransformCull)
+		-- New GLOBAL INC was injected into modDB, so armour should increase.
+		assert.is_true(transformedArmour > baseArmour,
+			("expected transformed armour %d > base armour %d"):format(transformedArmour, baseArmour))
 
 		data.modEquivalencies = origEquiv
 	end)

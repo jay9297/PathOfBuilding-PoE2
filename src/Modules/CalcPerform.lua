@@ -3376,6 +3376,12 @@ function calcs.perform(env, skipEHP)
 											cancel.value = -cancel.value
 											modDB:AddMod(cancel)
 										end
+									else
+										-- Non-BASE/INC old mod: cancel it so the line is fully superseded.
+										-- PoB's additive modDB clears a FLAG when the sum of values is 0.
+										local cancel = copyTable(mod)
+										cancel.value = -cancel.value
+										modDB:AddMod(cancel)
 									end
 								end
 								-- Inject new mods for any that were not handled via armourData.

@@ -349,7 +349,7 @@ describe("TestStonefist", function()
 		runCallback("OnFrame")
 		local fullyTransformedArmour = build.calcsTab.mainOutput.Armour or 0
 		-- Explicit upgrade: armourData (raw FoS base 44) × (1+3) = 176
-		assert.is_near(176, fullyTransformedArmour, 10)
+		assert.is_near(176, fullyTransformedArmour, 2)
 		assert.is_true(fullyTransformedArmour > baseTypeOnlyArmour,
 			("expected fully-transformed armour %d > base-type-only armour %d"):format(fullyTransformedArmour, baseTypeOnlyArmour))
 
@@ -455,7 +455,8 @@ describe("TestStonefist", function()
 			["150% increased Armour and Evasion Rating"] = "300% increased Armour and Evasion Rating",
 		}
 
-		-- Titan Mitts base Armour=100, no base Evasion; both stats get Phase 1/3 fan-out.
+		-- Titan Mitts base Armour=100, no base Evasion. Phase 3 skips Evasion because
+		-- armData["Evasion"] is nil; only Armour is actually modified.
 		build.itemsTab:CreateDisplayItemFromRaw([[
 			New Item
 			Titan Mitts

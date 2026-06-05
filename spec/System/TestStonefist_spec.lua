@@ -611,4 +611,40 @@ describe("TestStonefist", function()
 
 		data.modEquivalencies = origEquiv
 	end)
+
+	it("GloveExplicitModTransform: numeric FLAG on old mod line is cancelled when remapped", function()
+		-- Exercises the non-BASE/INC else branch of Phase 2's old-mod loop.
+		-- "culling strike" parses to CanCull:FLAG:1 (numeric value).
+		-- Equivalency maps it to a pure INC mod (all-BASE/INC new side passes the
+		-- onlyBaseOrINC gate).  The old FLAG must be cancelled so it is not left
+		-- permanently active in modDB after the line is replaced.
+		local origEquiv = data.modEquivalencies
+		data.modEquivalencies = {
+			["culling strike"] = "150% increased Armour",
+		}
+
+		build.itemsTab:CreateDisplayItemFromRaw([[
+			New Item
+			Titan Mitts
+			culling strike
+		]])
+		build.itemsTab:AddDisplayItem()
+		runCallback("OnFrame")
+
+		-- Before transform: CanCull FLAG is live in modDB from the item equip.
+		local preTransformCull = build.calcsTab.mainEnv.modDB:Flag(nil, "CanCull")
+		assert.is_truthy(preTransformCull)
+
+		build.configTab.input.customMods = "\z
+		their explicit modifiers are transformed into more powerful related modifiers\n\z
+		"
+		build.configTab:BuildModList()
+		runCallback("OnFrame")
+
+		-- After transform: old FLAG cancelled (-1 + 1 = 0), new INC injected.
+		local postTransformCull = build.calcsTab.mainEnv.modDB:Flag(nil, "CanCull")
+		assert.is_falsy(postTransformCull)
+
+		data.modEquivalencies = origEquiv
+	end)
 end)

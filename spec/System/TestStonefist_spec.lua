@@ -37,8 +37,10 @@ describe("TestStonefist", function()
 
 	-- CalcPerform: base type transform overwrites glove armour values
 
-	it("GloveBaseTypeTransform: equipping pure-evasion gloves gains Armour from Fists of Stone base", function()
-		-- Suede Bracers: Evasion only, no Armour stat
+	it("GloveBaseTypeTransform: pure-evasion gloves lose base Evasion and gain per-level Evasion from Fists of Stone", function()
+		-- Suede Bracers: Evasion=10 (×1.2 quality = 12 from glove). After FoS transform,
+		-- armourData.Evasion is zeroed (FoS armour={}) and only the +2-per-level implicit remains.
+		-- At level 1 that is 2, so total evasion DECREASES but stays > 0.
 		build.itemsTab:CreateDisplayItemFromRaw([[
 			New Item
 			Suede Bracers
@@ -47,7 +49,7 @@ describe("TestStonefist", function()
 		build.itemsTab:AddDisplayItem()
 		runCallback("OnFrame")
 
-		local baseArmour = build.calcsTab.mainOutput.Armour or 0
+		local baseEvasion = build.calcsTab.mainOutput.Evasion or 0
 
 		-- Apply transform flag
 		build.configTab.input.customMods = "\z
@@ -56,15 +58,17 @@ describe("TestStonefist", function()
 		build.configTab:BuildModList()
 		runCallback("OnFrame")
 
-		local transformedArmour = build.calcsTab.mainOutput.Armour or 0
-		-- Fists of Stone base armour is 44; should exceed the evasion-only baseline
-		assert.is_true(transformedArmour > baseArmour,
-			("expected transformed armour %d > base armour %d"):format(transformedArmour, baseArmour))
-		assert.is_near(44, transformedArmour, 10)
+		local transformedEvasion = build.calcsTab.mainOutput.Evasion or 0
+		-- Glove base evasion is removed; per-level implicit is small at low level → net decrease
+		assert.is_true(transformedEvasion < baseEvasion,
+			("expected transformed evasion %d < base evasion %d (glove base removed, only per-level implicit remains)"):format(transformedEvasion, baseEvasion))
+		assert.is_true(transformedEvasion > 0,
+			("expected evasion > 0 after transform, got %d"):format(transformedEvasion))
 	end)
 
-	it("GloveBaseTypeTransform: armour-only gloves take on Fists of Stone armour value (~44)", function()
-		-- Stocky Mitts base armour = 15; Fists of Stone base armour = 44
+	it("GloveBaseTypeTransform: armour-only gloves lose Armour and gain Evasion-per-level from Fists of Stone", function()
+		-- Stocky Mitts: Armour only. Fists of Stone has no base Armour (armour={}),
+		-- so after transform Armour drops to 0 and Evasion appears via per-level implicit.
 		build.itemsTab:CreateDisplayItemFromRaw([[
 			New Item
 			Stocky Mitts
@@ -73,6 +77,7 @@ describe("TestStonefist", function()
 		runCallback("OnFrame")
 
 		local baseArmour = build.calcsTab.mainOutput.Armour or 0
+		local baseEvasion = build.calcsTab.mainOutput.Evasion or 0
 
 		build.configTab.input.customMods = "\z
 		Gloves you equip have their base type transformed to fists of stone while equipped\n\z
@@ -81,9 +86,12 @@ describe("TestStonefist", function()
 		runCallback("OnFrame")
 
 		local transformedArmour = build.calcsTab.mainOutput.Armour or 0
-		-- Armour should change from Stocky Mitts base (~15) to Fists of Stone base (~44)
-		assert.are_not.equals(baseArmour, transformedArmour)
-		assert.is_near(44, transformedArmour, 10)
+		local transformedEvasion = build.calcsTab.mainOutput.Evasion or 0
+		-- Armour goes away (FoS has no base Armour); Evasion appears via +3 per level implicit
+		assert.is_true(transformedArmour < baseArmour,
+			("expected transformed armour %d < base armour %d"):format(transformedArmour, baseArmour))
+		assert.is_true(transformedEvasion > baseEvasion,
+			("expected transformed evasion %d > base evasion %d"):format(transformedEvasion, baseEvasion))
 	end)
 
 	it("GloveBaseTypeTransform: Fists of Stone implicit injects Evasion per level into modDB", function()

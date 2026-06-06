@@ -42,6 +42,25 @@ describe("TestItemParse", function()
 		assert.are.equals("40f9711d5bd7ad2bcbddaf71c705607aef0eecd3dcadaafec6c0192f79b82863", item.uniqueID)
 	end)
 
+	it("Unique ID line is not parsed as a modifier", function()
+		local item = new("Item", [[
+			Rarity: Unique
+			Evergrasping Ring
+			Pearl Ring
+			Unique ID: 5d96bc922c2ae073676c4149a2ecf0ebd0951f213ef894895bd2afe206845539
+			Item Level: 66
+			LevelReq: 32
+			Implicits: 1
+			7% increased Cast Speed
+			+91 to maximum Mana
+			Allies in your Presence Gain 22% of Damage as Extra Chaos Damage
+			Enemies in your Presence Gain 8% of Damage as Extra Chaos Damage
+		]])
+
+		assert.are.equals("5d96bc922c2ae073676c4149a2ecf0ebd0951f213ef894895bd2afe206845539", item.uniqueID)
+		assert.are.equals(3, #item.explicitModLines)
+	end)
+
 	it("Item Level", function()
 		local item = new("Item", raw("Item Level: 10"))
 		assert.are.equals(10, item.itemLevel)
@@ -310,6 +329,18 @@ describe("TestItemParse", function()
 		assert.truthy(item.explicitModLines[1].custom)
 	end)
 
+	it("crafted", function()
+		local item = new("Item", raw("{crafted}+8 to Strength"))
+		assert.truthy(item.explicitModLines[1].crafted)
+	end)
+
+	it("preserves crafted mod lines when rebuilding raw text", function()
+		local item = new("Item", raw("+8 to Strength"))
+		item.explicitModLines[1].crafted = true
+		item:BuildAndParseRaw()
+		assert.truthy(item.explicitModLines[1].crafted)
+	end)
+
 	it("enchant", function()
 		local item = new("Item", raw("+8 to Strength (enchant)"))
 		assert.are.equals(1, #item.enchantModLines)
@@ -419,7 +450,7 @@ describe("TestItemParse", function()
 		]])
 
 		assert.are.equals(3, item.itemSocketCount)
-		assert.are.same({ "Greater Glacial Rune", "Greater Body Rune" }, item.runes)
+		assert.are.same({ "Greater Glacial Rune", "Lesser Body Rune" }, item.runes)
 		assert.are.equals(1, item.runeModLines[1].runeCount)
 		assert.are.equals(1, item.runeModLines[2].runeCount)
 		assert.is_nil(item.runeModLines[3].runeCount)
@@ -427,6 +458,22 @@ describe("TestItemParse", function()
 		for _, rune in ipairs(item.runes) do
 			assert.are_not.equals("Lesser Glacial Rune", rune)
 		end
+	end)
+
+	it("keeps bonded rune stats separate from normal rune stats", function()
+		local item = new("Item", [[
+			Rarity: Rare
+			Test Body
+			Rusted Cuirass
+		]])
+		item.itemSocketCount = 1
+		item.runes = { "Lesser Body Rune" }
+		item:UpdateRunes()
+
+		assert.are.equals(3, #item.runeModLines)
+		assert.are.equals("+30 to maximum Life", item.runeModLines[1].line)
+		assert.are.equals("Bonded: +20 to maximum Life", item.runeModLines[2].line)
+		assert.are.equals("Bonded: +20 to maximum Mana", item.runeModLines[3].line)
 	end)
 
 	it("multi-line rune mod", function()
@@ -685,9 +732,9 @@ describe("TestAdvancedItemParse #item", function()
 		assert.are.equals(2, item.baseModList[1].value)
 		assert.are.equals(1, item.baseModList[2].value)
 		assert.are.equals(1, item.baseModList[3].value)
-		-- Check mod names map to correct stats
-		assert.are.equals("Evasion", item.baseModList[1].name)
-		assert.are.equals("EnergyShield", item.baseModList[2].name)
-		assert.are.equals("Ward", item.baseModList[3].name)
+		-- Check mod names map to correct per-level stats (consumed by Item.lua armour calc)
+		assert.are.equals("EvasionPerLevel", item.baseModList[1].name)
+		assert.are.equals("EnergyShieldPerLevel", item.baseModList[2].name)
+		assert.are.equals("WardPerLevel", item.baseModList[3].name)
 	end)
 end)

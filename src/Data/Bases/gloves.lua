@@ -1987,8 +1987,7 @@ itemBases["Fists of Stone"] = {
 	hidden = true,
 	socketLimit = 3,
 	tags = { armour = true, default = true, dex_int_armour = true, gloves = true, },
-	implicit = "Has +3 to Evasion Rating per player level
-Has +1 to maximum Energy Shield per player level",
+	implicit = "Has +3 to Evasion Rating per player level\nHas +1 to maximum Energy Shield per player level",
 	implicitModTypes = { {  }, {  }, },
 	armour = { },
 	req = { },
@@ -1999,9 +1998,7 @@ itemBases["Runeforged Fists of Stone"] = {
 	hidden = true,
 	socketLimit = 3,
 	tags = { armour = true, default = true, dex_int_armour = true, gloves = true, runeforged = true, },
-	implicit = "Has +2 to Evasion Rating per player level
-Has +1 to maximum Energy Shield per player level
-Has +1 to maximum Runic Ward per player level",
+	implicit = "Has +2 to Evasion Rating per player level\nHas +1 to maximum Energy Shield per player level\nHas +1 to maximum Runic Ward per player level",
 	implicitModTypes = { {  }, {  }, {  }, },
 	armour = { },
 	req = { },

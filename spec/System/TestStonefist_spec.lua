@@ -37,10 +37,10 @@ describe("TestStonefist", function()
 
 	-- CalcPerform: base type transform overwrites glove armour values
 
-	it("GloveBaseTypeTransform: pure-evasion gloves gain Evasion-per-level from Fists of Stone implicit", function()
-		-- Suede Bracers: Evasion only, no Armour stat
-		-- Fists of Stone has armour={} (all stats are per-level implicits), so Armour stays 0;
-		-- but the +3 Evasion per level implicit should raise Evasion above the base-item value.
+	it("GloveBaseTypeTransform: pure-evasion gloves lose base Evasion and gain per-level Evasion from Fists of Stone", function()
+		-- Suede Bracers: Evasion=10 (×1.2 quality = 12 from glove). After FoS transform,
+		-- armourData.Evasion is zeroed (FoS armour={}) and only the +2-per-level implicit remains.
+		-- At level 1 that is 2, so total evasion DECREASES but stays > 0.
 		build.itemsTab:CreateDisplayItemFromRaw([[
 			New Item
 			Suede Bracers
@@ -59,9 +59,11 @@ describe("TestStonefist", function()
 		runCallback("OnFrame")
 
 		local transformedEvasion = build.calcsTab.mainOutput.Evasion or 0
-		-- FoS armour table is empty; Armour stays 0; Evasion increases via per-level implicit
-		assert.is_true(transformedEvasion > baseEvasion,
-			("expected transformed evasion %d > base evasion %d"):format(transformedEvasion, baseEvasion))
+		-- Glove base evasion is removed; per-level implicit is small at low level → net decrease
+		assert.is_true(transformedEvasion < baseEvasion,
+			("expected transformed evasion %d < base evasion %d (glove base removed, only per-level implicit remains)"):format(transformedEvasion, baseEvasion))
+		assert.is_true(transformedEvasion > 0,
+			("expected evasion > 0 after transform, got %d"):format(transformedEvasion))
 	end)
 
 	it("GloveBaseTypeTransform: armour-only gloves lose Armour and gain Evasion-per-level from Fists of Stone", function()

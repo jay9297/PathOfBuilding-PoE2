@@ -1263,6 +1263,9 @@ function ImportTabClass:ImportItem(itemData, slotName)
 				for _, value in ipairs(property.values) do
 					item.armourData[armourKey] = (item.armourData[armourKey] or 0) + tonumber(value[1])
 				end
+				if armourKey == "Ward" then
+					item.wardFromPropertyLine = true
+				end
 			end
 		end
 	end

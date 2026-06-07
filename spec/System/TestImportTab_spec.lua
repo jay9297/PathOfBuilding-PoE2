@@ -21,7 +21,7 @@ describe("ImportTab", function()
 		}
 		-- Returns (item, slotName)
 		local item = importTab:ImportItem(mockItemData, "Body Armour")
-		assert.is_not_nil(item)
+		assert.is_not_nil(item, "ImportItem returned nil — ensure 'Serpentscale Coat' exists in data.itemBases")
 		assert.are.equals(104, item.armourData.Ward)
 	end)
 
@@ -47,7 +47,7 @@ describe("ImportTab", function()
 			},
 		}
 		local item = importTab:ImportItem(mockItemData, "Body Armour")
-		assert.is_not_nil(item)
+		assert.is_not_nil(item, "ImportItem returned nil — ensure 'Itinerant Jacket' exists in data.itemBases")
 		-- Property line value is authoritative for Ward; rune INC/flat mods must not be re-applied
 		assert.are.equals(104, item.armourData.Ward)
 		-- Rune mods should be parsed into runeModLines

@@ -543,10 +543,10 @@ describe("TestItemParse", function()
 		assert.are.equals(2, item.baseModList[1].value)
 		assert.are.equals(1, item.baseModList[2].value)
 		assert.are.equals(1, item.baseModList[3].value)
-		-- Check mod names map to correct stats
-		assert.are.equals("Evasion", item.baseModList[1].name)
-		assert.are.equals("EnergyShield", item.baseModList[2].name)
-		assert.are.equals("Ward", item.baseModList[3].name)
+		-- Check mod names map to correct per-level stats
+		assert.are.equals("EvasionPerLevel", item.baseModList[1].name)
+		assert.are.equals("EnergyShieldPerLevel", item.baseModList[2].name)
+		assert.are.equals("WardPerLevel", item.baseModList[3].name)
 	end)
 end)
 
@@ -749,6 +749,10 @@ describe("TestAdvancedItemParse #item", function()
 			Runic Ward: 83
 			--------
 			Item Level: 36
+			Implicits: 3
+			Has +2 to Evasion Rating per player level (implicit)
+			Has +1 to maximum Energy Shield per player level (implicit)
+			Has +1 to maximum Runic Ward per player level (implicit)
 		]])
 		-- All three implicit mod lines should be parsed (no extra/unsupported flag)
 		assert.are.equals(3, #item.implicitModLines)

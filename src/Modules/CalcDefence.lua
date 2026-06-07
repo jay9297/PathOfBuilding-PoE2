@@ -3645,9 +3645,9 @@ function calcs.buildDefenceEstimations(env, actor)
 			-- aegis
 			output[damageType.."TotalHitPool"] = output[damageType.."TotalHitPool"] + m_max(m_max(output[damageType.."Aegis"], output["sharedAegis"]), isElemental[damageType] and output[damageType.."AegisDisplay"] or 0)
 			-- guard skill
-			local GuardAbsorbRate = output["sharedGuardAbsorbRate"] or 0 + output[damageType.."GuardAbsorbRate"] or 0
+			local GuardAbsorbRate = (output["sharedGuardAbsorbRate"] or 0) + (output[damageType.."GuardAbsorbRate"] or 0)
 			if GuardAbsorbRate > 0 then
-				local GuardAbsorb = output["sharedGuardAbsorb"] or 0 + output[damageType.."GuardAbsorb"] or 0
+				local GuardAbsorb = (output["sharedGuardAbsorb"] or 0) + (output[damageType.."GuardAbsorb"] or 0)
 				if GuardAbsorbRate >= 100 then
 					output[damageType.."TotalHitPool"] = output[damageType.."TotalHitPool"] + GuardAbsorb
 				else

@@ -250,6 +250,28 @@ describe("TestWard", function()
 		assert.is_near(1.2, item.armourData.WardPerLevel, 0.01)
 	end)
 
+	it("WardPerLevel scales with defencesInc in authoritative path but Ward does not", function()
+		-- defencesInc should scale WardPerLevel (not yet baked into the property line) but
+		-- must NOT re-scale the authoritative Ward value itself.
+		-- WardPerLevel = 1 * (1 + 20/100) * (1 + 0/100) = 1.2
+		local item = new("Item", [[
+			Rarity: Rare
+			Empyrean Shelter
+			Runeforged Serpentscale Coat
+			--------
+			Runic Ward: 83
+			--------
+			Item Level: 36
+			Implicits: 1
+			Has +1 to maximum Runic Ward per player level (implicit)
+			--------
+			20% increased Defences
+		]])
+		item:BuildModList()
+		assert.are.equals(83, item.armourData.Ward)
+		assert.is_near(1.2, item.armourData.WardPerLevel, 0.01)
+	end)
+
 	it("Non-authoritative Ward path: plain Ward mods scale correctly (no property line)", function()
 		-- Test that when Ward comes only from customMods (no property line),
 		-- the non-authoritative path in Item.lua applies INC and quality correctly.

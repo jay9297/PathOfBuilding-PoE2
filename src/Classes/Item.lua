@@ -302,6 +302,7 @@ function ItemClass:ParseRaw(raw, rarity, highQuality)
 	self.spiritValue = nil
 	self.runicItem = nil
 	self.quality = nil
+	self.wardFromPropertyLine = false
 	self.rawLines = { }
 	-- Find non-blank lines and trim whitespace
 	for line in raw:gmatch("%s*([^\n]*%S)") do
@@ -601,6 +602,9 @@ function ItemClass:ParseRaw(raw, rarity, highQuality)
 					end
 					self.armourData = self.armourData or { }
 					self.armourData[specName] = specToNumber(specVal)
+					if specName == "Ward" then
+						self.wardFromPropertyLine = true
+					end
 				elseif specName == "Requires Level" then
 					self.requirements.level = specToNumber(specVal)
 					minimumReqLevel = minimumReqLevel or {}
@@ -1301,7 +1305,9 @@ function ItemClass:BuildRaw()
 	if self.armourData then
 		for _, type in ipairs({ "Armour", "Evasion", "EnergyShield", "Ward" }) do
 			if self.armourData[type] and self.armourData[type] > 0 then
-				t_insert(rawLines, type:gsub("EnergyShield", "Energy Shield") .. ": " .. self.armourData[type])
+				if type ~= "Ward" or self.wardFromPropertyLine then
+					t_insert(rawLines, type:gsub("EnergyShield", "Energy Shield") .. ": " .. self.armourData[type])
+				end
 			end
 		end
 	end
@@ -1799,12 +1805,13 @@ function ItemClass:BuildModListForSlotNum(baseList, slotNum)
 		local evasionEnergyShieldBase = calcLocal(modList, "EvasionAndEnergyShield", "BASE", 0)
 		local energyShieldBase = calcLocal(modList, "EnergyShield", "BASE", 0) + (self.base.armour.EnergyShield or 0)
 		local armourEnergyShieldBase = calcLocal(modList, "ArmourAndEnergyShield", "BASE", 0)
-		-- wardIsAuthoritative: true when armourData.Ward was pre-set from a game property line
-		-- (paste or API import). That value is the final game-computed ward (already includes flat
-		-- rune mods, INC rune mods, and quality). We must consume the local ward mods from modList
-		-- to prevent them from being double-applied in CalcDefence, but we must NOT re-scale the
-		-- already-final value by wardInc, defencesInc, or qualityScalar.
-		local wardIsAuthoritative = armourData.Ward ~= nil
+		-- wardIsAuthoritative: true when armourData.Ward was set by a property line in the original
+		-- user-provided paste or API import (tracked by self.wardFromPropertyLine, which BuildRaw
+		-- preserves only for authoritative items, so the flag survives BuildAndParseRaw round-trips).
+		-- That value is the final game-computed ward (already includes flat rune mods, INC rune mods,
+		-- and quality). We must consume the local ward mods from modList to prevent double-application
+		-- in CalcDefence, but we must NOT re-scale the already-final value.
+		local wardIsAuthoritative = self.wardFromPropertyLine
 		local wardBase
 		if wardIsAuthoritative then
 			calcLocal(modList, "Ward", "BASE", 0)  -- consume flat rune ward mods (discard result)

@@ -171,7 +171,7 @@ describe("TestWard", function()
 		assert.are.equals(225, build.calcsTab.calcsOutput.Ward)
 	end)
 
-	it("Runeforged Ward from item with rune mods does not double-count (import path regression)", function()
+	it("Runeforged Ward from item with rune mods does not double-count (paste path regression)", function()
 		-- Create an item through the build (paste a Runeforged item with rune-like Ward mod)
 		local item = new("Item", [[
 			Rarity: Rare
@@ -202,6 +202,28 @@ describe("TestWard", function()
 		runCallback("OnFrame")
 
 		assert.are.equals(10, build.calcsTab.calcsOutput.WardCoverOnMinionDeath)
+	end)
+
+	it("Authoritative Ward is not re-scaled by local defencesInc mod", function()
+		-- When a Runeforged item has a 'Runic Ward: X' property line AND a local
+		-- '% increased Defences' mod, the authoritative Ward must stay at X.
+		-- defencesInc should apply to Armour/Evasion/ES but not to the baked-in Ward value.
+		local item = new("Item", [[
+			Rarity: Rare
+			Mock Runeforged Coat
+			Runeforged Serpentscale Coat
+			--------
+			Runic Ward: 83
+			--------
+			Item Level: 67
+			--------
+			20% increased Defences
+		]])
+		item:BuildModList()
+		-- Authoritative path: Ward must equal the property line value verbatim.
+		-- Without fix: round(83 * (1 + 20/100)) = 100 (defencesInc wrongly re-applied)
+		-- With fix: 83 (property line is final; defencesInc excluded from Ward)
+		assert.are.equals(83, item.armourData.Ward)
 	end)
 
 	it("Non-authoritative Ward path: plain Ward mods scale correctly (no property line)", function()

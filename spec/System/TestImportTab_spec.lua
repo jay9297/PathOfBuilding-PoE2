@@ -54,7 +54,7 @@ describe("ImportTab", function()
 		assert.are.equals(2, #item.runeModLines)
 	end)
 
-	it("ImportItem returns nil (not crash) for Mace Strike with empty weapon slots", function()
+	it("ImportItem does not crash for Mace Strike with empty weapon slots", function()
 		local importTab = build.importTab
 		-- Simulate a character skill with typeLine "Mace Strike" but no weapon equipped
 		-- activeItemSet slots exist but have selItemId == 0 (nothing equipped)

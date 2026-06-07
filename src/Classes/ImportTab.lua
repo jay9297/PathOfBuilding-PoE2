@@ -1239,9 +1239,9 @@ function ImportTabClass:ImportItem(itemData, slotName)
 			local escapedPropertyName = escapeGGGString(property.name)
 			if escapedPropertyName == "Quality" then
 				item.quality = tonumber(property.values[1][1]:match("%d+"))
-			elseif property.name == "Radius" then
+			elseif escapedPropertyName == "Radius" then
 				item.jewelRadiusLabel = property.values[1][1]
-			elseif property.name == "Limited to" then
+			elseif escapedPropertyName == "Limited to" then
 				item.limit = tonumber(property.values[1][1])
 			elseif escapedPropertyName == "Evasion Rating" then
 				if item.baseName == "Two-Toned Boots (Armour/Energy Shield)" then

@@ -226,11 +226,13 @@ describe("TestWard", function()
 		assert.are.equals(83, item.armourData.Ward)
 	end)
 
-	it("WardPerLevel in authoritative path scales with quality but ignores consumed wardInc", function()
+	it("WardPerLevel in authoritative path scales with wardInc and quality but Ward stays authoritative", function()
 		-- Authoritative Ward: the property line value is final; the local 112% INC Ward mod is
-		-- consumed (discarded) so it does NOT re-scale Ward.  WardPerLevel however still scales
-		-- with qualityScalar (and defencesInc if present), but NOT with wardInc.
-		-- WardPerLevel = 1 * (1 + (wardInc=0 + defencesInc=0) / 100) * (1 + quality=20 / 100) = 1.2
+		-- consumed to prevent double-application in CalcDefence, but WardPerLevel is NOT baked
+		-- into the property line, so wardInc must still be applied to it — same as EvasionPerLevel
+		-- and EnergyShieldPerLevel which both scale with their respective local INC mods.
+		-- Ward    = 83 (authoritative; INC does not re-scale it)
+		-- WardPerLevel = 1 * (1 + 112/100) * (1 + 20/100) = 2.12 * 1.2 = 2.544
 		local item = new("Item", [[
 			Rarity: Rare
 			Empyrean Shelter
@@ -247,7 +249,7 @@ describe("TestWard", function()
 		]])
 		item:BuildModList()
 		assert.are.equals(83, item.armourData.Ward)
-		assert.is_near(1.2, item.armourData.WardPerLevel, 0.01)
+		assert.is_near(2.544, item.armourData.WardPerLevel, 0.01)
 	end)
 
 	it("WardPerLevel scales with defencesInc in authoritative path but Ward does not", function()

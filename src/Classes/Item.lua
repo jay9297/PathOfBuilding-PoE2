@@ -1798,7 +1798,7 @@ function ItemClass:BuildModListForSlotNum(baseList, slotNum)
 			weaponData.TotalDPS = weaponData.TotalDPS + (weaponData[dmgType.."DPS"] or 0)
 		end
 	elseif self.base.armour then
-		local armourData = self.armourData
+		local armourData = self.armourData  -- same object populated by ParseRaw/ImportItem; Ward read at line 1819 relies on this
 		local armourBase = calcLocal(modList, "Armour", "BASE", 0) + (self.base.armour.Armour or 0)
 		local armourEvasionBase = calcLocal(modList, "ArmourAndEvasion", "BASE", 0)
 		local evasionBase = calcLocal(modList, "Evasion", "BASE", 0) + (self.base.armour.Evasion or 0)

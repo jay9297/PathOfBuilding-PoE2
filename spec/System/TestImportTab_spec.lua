@@ -22,8 +22,8 @@ describe("ImportTab", function()
 		-- Returns (item, slotName)
 		local item = importTab:ImportItem(mockItemData, "Body Armour")
 		assert.is_not_nil(item, "ImportItem returned nil — ensure 'Serpentscale Coat' exists in data.itemBases")
-		assert.is_not_nil(item.armourData, "armourData is nil — Ward property was not parsed")
-		assert.are.equals(104, item.armourData.Ward)
+		assert.is_not_nil(item and item.armourData, "armourData is nil — Ward property was not parsed")
+		assert.are.equals(104, item and item.armourData and item.armourData.Ward)
 	end)
 
 	it("parses [Ward|Runic Ward] property with a Ward rune mod without double-counting", function()
@@ -49,11 +49,11 @@ describe("ImportTab", function()
 		}
 		local item = importTab:ImportItem(mockItemData, "Body Armour")
 		assert.is_not_nil(item, "ImportItem returned nil — ensure 'Itinerant Jacket' exists in data.itemBases")
-		assert.is_not_nil(item.armourData, "armourData is nil — Ward property was not parsed")
+		assert.is_not_nil(item and item.armourData, "armourData is nil — Ward property was not parsed")
 		-- Property line value is authoritative for Ward; rune INC/flat mods must not be re-applied
-		assert.are.equals(104, item.armourData.Ward)
+		assert.are.equals(104, item and item.armourData and item.armourData.Ward)
 		-- Rune mods should be parsed into runeModLines
-		assert.are.equals(2, #item.runeModLines)
+		assert.are.equals(2, item and #item.runeModLines)
 	end)
 
 	it("ImportItem does not crash for Mace Strike with empty weapon slots", function()

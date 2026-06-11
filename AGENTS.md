@@ -73,9 +73,11 @@ Notes:
   bind-mounts only the report file writable (see `.github/workflows/ci.yml`).
 - Busted config is in `.busted`: it runs from `src/` with
   `HeadlessWrapper.lua` as the helper and discovers specs in `spec/`.
-- Baseline on `dev`: **370 successes**, plus two known failures in
-  `spec/System/TestWard_spec.lua` (Ward regen/bypass not yet implemented).
-  Don't "fix" those by weakening assertions.
+- Baseline on `dev`: the full suite is **green — there are no known failures**.
+  (Ward regen/bypass, formerly the two known failures, were implemented in
+  0.20.0.) If a test fails, treat it as a regression: verify it also fails on
+  unmodified `dev` before assuming it is pre-existing, and never "fix" a
+  failure by weakening assertions.
 
 ## How to validate before opening a PR
 
@@ -90,8 +92,10 @@ Notes:
 - `src/Modules/Calc*.lua` — the calculation engine, flat files (there is **no** `Calcs/` subdirectory): `Calcs.lua` (public entry), `CalcSetup.lua`, `CalcPerform.lua`, `CalcOffence.lua`, `CalcDefence.lua`, `CalcActiveSkill.lua`, `CalcTriggers.lua`, `CalcMirages.lua`, plus `CalcSections.lua`/`CalcBreakdown.lua` for the breakdown UI.
 - `src/Modules/ModParser.lua` — converts modifier text into structured mods; `src/Modules/ModTools.lua` has the `mod()`/`flag()` constructors.
 - `src/Classes/` — UI tab classes and the mod storage classes (`ModDB.lua`, `ModList.lua`, `ModStore.lua`).
-- `src/Data/` — game data: gems, item bases, uniques, crafting mods. Largely **generated** by `src/Export/` from GGPK files — prefer fixing the exporter over hand-editing structure.
-- `src/TreeData/` — passive tree data per game version.
+- `src/Data/` — game data: gems, item bases, uniques, crafting mods. Largely **generated** by `src/Export/` from GGPK files — prefer fixing the exporter over hand-editing structure. The exporter itself cannot run in CI or agent sessions (GUI-only, needs a local PoE2 install and a Windows-only extractor), so the committed generated files are the source of truth for agents.
+- `src/Data/SkillStatMap.lua` is **hand-maintained**: a new gem stat with no entry here (and no local `statMap` in its `src/Data/Skills/*.lua` file) silently contributes nothing.
+- `src/Data/ModCache.lua` — generated cache of `parseMod` results (`c["line"] = {modList, extra}`; `nil` modList or non-empty `extra` ⇒ line is (partially) unsupported). Never hand-edit; regenerate with `REGENERATE_MOD_CACHE=1` (CI's `check_modcache` job also does this) and commit it with any ModParser or data change.
+- `src/TreeData/` — passive tree data per game version. **Current game version is 0.5** — the live tree is `src/TreeData/0_5/tree.lua`; `0_1`–`0_4` exist only for loading legacy builds.
 - `spec/System/` — Busted test suite (`*_spec.lua`).
 - `runtime/lua/` — bundled Lua libraries available at runtime.
 - `docs/` — read `rundown.md`, `calcOffence.md`, `modSyntax.md`, `addingMods.md`, `addingSkills.md` before non-trivial changes.

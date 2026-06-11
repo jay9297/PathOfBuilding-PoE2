@@ -1,5 +1,7 @@
 # CLAUDE.md
 
+<!-- cspell:ignore callees pathofbuildingcommunity pathofbuilding -->
+
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## MCP Tools: code-review-graph

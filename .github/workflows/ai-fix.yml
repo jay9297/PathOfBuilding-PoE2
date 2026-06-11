@@ -103,10 +103,12 @@ jobs:
           git add -A
 
           if git diff --cached --quiet; then
-            # Agent made no new changes — check if prior work already exists on the branch
+            # Agent may have committed directly — check if branch is ahead of dev
             AHEAD=$(git rev-list --count "origin/dev..HEAD" 2>/dev/null || echo "0")
-            if [[ "${{ steps.branch_setup.outputs.is_retry }}" == "true" && "$AHEAD" -gt 0 ]]; then
-              echo "Agent made no new changes but branch has $AHEAD existing commit(s) — proceeding with existing work"
+            if [[ "$AHEAD" -gt 0 ]]; then
+              echo "Agent committed directly — branch has $AHEAD commit(s) ahead of dev, pushing"
+              source scripts/agent-lib.sh
+              retry_op 5 10 git push -u origin "$BRANCH"
               echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
               exit 0
             fi

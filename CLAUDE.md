@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-<!-- cspell:ignore callees pathofbuildingcommunity pathofbuilding -->
+<!-- cspell:ignore callees pathofbuildingcommunity pathofbuilding modcache -->
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -49,9 +49,11 @@ Notes:
   `.github/workflows/ci.yml`).
 - Busted config is in `.busted`: it runs from `src/` with
   `HeadlessWrapper.lua` as the helper and discovers specs in `spec/`.
-- Baseline on `dev`: **370 successes**, plus two known failures in
-  `spec/System/TestWard_spec.lua` (Ward regen/bypass not yet implemented).
-  Don't "fix" those by weakening assertions.
+- Baseline on `dev`: the full suite is **green — there are no known failures**.
+  (Ward regen/bypass, formerly the two known failures, were implemented in
+  0.20.0.) If a test fails, treat it as a regression: verify it also fails on
+  unmodified `dev` before assuming it is pre-existing, and never "fix" a
+  failure by weakening assertions.
 
 CI (`.github/workflows/ci.yml`) runs three matrix suites on PRs to `dev`:
 unit (`--exclude-tags builds,data`), builds, and data — plus a coverage job.
@@ -79,8 +81,17 @@ Everything a character "has" is a **mod**: `mod(Name, Type, Value, source, modFl
   for mods, with summing/flag-matching semantics (`BASE`, `INC`, `MORE`,
   `OVERRIDE`, `FLAG` mod types).
 - `src/Data/SkillStatMap.lua` — maps skill gem stats onto mods (same syntax,
-  source auto-filled).
+  source auto-filled). **Hand-maintained**: a new gem stat with no entry here
+  (and no local `statMap` in its `src/Data/Skills/*.lua` file) silently
+  contributes nothing.
 - `src/Data/Global.lua` — `ModFlag`/`KeywordFlag` bitflag definitions.
+- `src/Data/ModCache.lua` — generated cache of `parseMod` results for every
+  mod line in the data files. Entry format: `c["line"] = {modList, extra}`;
+  `nil` modList or non-empty `extra` text means the line is (partially)
+  unsupported. Never hand-edit it — regenerate with `REGENERATE_MOD_CACHE=1`
+  (CI's `check_modcache` job in `.github/workflows/test.yml` does this too,
+  see `src/Modules/Main.lua:122`). Commit the regenerated file with any
+  ModParser or data change.
 
 Read `docs/modSyntax.md` and `docs/addingMods.md` before touching any of this.
 
@@ -104,11 +115,21 @@ subdirectory):
 
 - `src/Data/` — gems (`Gems.lua`, `Skills/`), item bases (`Bases/`), uniques,
   mods for crafting (`Mod*.lua`), bosses, minions.
-- `src/TreeData/` — passive tree data per game version.
+- `src/TreeData/` — passive tree data per game version. **Current game version
+  is 0.5** — the live tree is `src/TreeData/0_5/tree.lua`; older `0_1`–`0_4`
+  directories exist only for loading legacy builds. Don't validate new-mechanic
+  work against pre-0_5 tree data.
 - `src/Export/` — scripts that regenerate `src/Data/` from the game's GGPK
   files. Data files are largely **generated** — prefer fixing the exporter or
   following the existing generated format over hand-editing structure.
-- `src/GameVersions.lua` — supported game version constants.
+  The exporter **cannot run in CI or agent sessions**: it is GUI-only
+  (launched via `src/Export/Launch.lua` through the SimpleGraphic runtime),
+  needs a local PoE2 install, and uses a Windows-only extractor
+  (`bun_extract_file.exe`, see `CONTRIBUTING.md`). The generated files
+  committed under `src/Data/` and `src/TreeData/` are therefore the source of
+  truth for agents — work from them, never try to re-export.
+- `src/GameVersions.lua` — supported game version constants
+  (`latestTreeVersion`, `treeVersionList`, …).
 
 ### Documentation worth reading before non-trivial changes
 

@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-<!-- cspell:ignore callees pathofbuildingcommunity pathofbuilding -->
+<!-- cspell:ignore callees pathofbuildingcommunity pathofbuilding modcache -->
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 

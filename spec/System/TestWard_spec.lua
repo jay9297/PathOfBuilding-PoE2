@@ -171,6 +171,29 @@ describe("TestWard", function()
 		assert.are.equals(225, build.calcsTab.calcsOutput.Ward)
 	end)
 
+	it("Runeforged Ward from item with rune mods does not double-count (paste path regression)", function()
+		-- Create an item through the build (paste a Runeforged item with rune-like Ward mod)
+		local item = new("Item", [[
+			Rarity: Rare
+			Mock Runeforged Coat
+			Runeforged Serpentscale Coat
+			--------
+			Runic Ward: 104
+			--------
+			Item Level: 67
+			--------
+			+65 to maximum Ward
+		]])
+		-- The game displays the FINAL ward value in the property line (post-quality, post-all-mods).
+		-- "Runic Ward: 104" means 104 is the game-computed final value.
+		-- PoB must NOT re-apply quality or add the +65 mod on top of the authoritative value.
+		-- Without fix: Ward = round((104+65) * 1.2) = 203 (double-counts flat mod and quality)
+		-- With fix (property line authoritative): Ward = 104 (no re-scaling)
+		item:BuildModList()
+		-- 104 = property line verbatim; the +65 mod is consumed (not re-applied) and quality is already baked in
+		assert.are.equals(104, item.armourData.Ward)
+	end)
+
 	it("WardCoverOnMinionDeath stat ID parses correctly", function()
 		build.configTab.input.customMods = "\z
 		recover 10% of maximum ward on persistent minion death\n\z
@@ -179,5 +202,99 @@ describe("TestWard", function()
 		runCallback("OnFrame")
 
 		assert.are.equals(10, build.calcsTab.calcsOutput.WardCoverOnMinionDeath)
+	end)
+
+	it("Authoritative Ward is not re-scaled by local defencesInc mod", function()
+		-- When a Runeforged item has a 'Runic Ward: X' property line AND a local
+		-- '% increased Defences' mod, the authoritative Ward must stay at X.
+		-- defencesInc should apply to Armour/Evasion/ES but not to the baked-in Ward value.
+		local item = new("Item", [[
+			Rarity: Rare
+			Mock Runeforged Coat
+			Runeforged Serpentscale Coat
+			--------
+			Runic Ward: 83
+			--------
+			Item Level: 67
+			--------
+			20% increased Defences
+		]])
+		item:BuildModList()
+		-- Authoritative path: Ward must equal the property line value verbatim.
+		-- Without fix: round(83 * (1 + 20/100)) = 100 (defencesInc wrongly re-applied)
+		-- With fix: 83 (property line is final; defencesInc excluded from Ward)
+		assert.are.equals(83, item.armourData.Ward)
+	end)
+
+	it("WardPerLevel in authoritative path scales with wardInc and quality but Ward stays authoritative", function()
+		-- Authoritative Ward: the property line value is final; the local 112% INC Ward mod is
+		-- consumed to prevent double-application in CalcDefence, but WardPerLevel is NOT baked
+		-- into the property line, so wardInc must still be applied to it — same as EvasionPerLevel
+		-- and EnergyShieldPerLevel which both scale with their respective local INC mods.
+		-- Ward    = 83 (authoritative; INC does not re-scale it)
+		-- WardPerLevel = 1 * (1 + 112/100) * (1 + 20/100) = 2.12 * 1.2 = 2.544
+		local item = new("Item", [[
+			Rarity: Rare
+			Empyrean Shelter
+			Runeforged Serpentscale Coat
+			--------
+			Quality: 20
+			Runic Ward: 83
+			--------
+			Item Level: 36
+			Implicits: 1
+			Has +1 to maximum Runic Ward per player level (implicit)
+			--------
+			112% increased Ward
+		]])
+		item:BuildModList()
+		assert.are.equals(83, item.armourData.Ward)
+		assert.is_near(2.544, item.armourData.WardPerLevel, 0.01)
+	end)
+
+	it("WardPerLevel scales with defencesInc in authoritative path but Ward does not", function()
+		-- defencesInc should scale WardPerLevel (not yet baked into the property line) but
+		-- must NOT re-scale the authoritative Ward value itself.
+		-- WardPerLevel = 1 * (1 + 20/100) * (1 + 0/100) = 1.2
+		local item = new("Item", [[
+			Rarity: Rare
+			Empyrean Shelter
+			Runeforged Serpentscale Coat
+			--------
+			Runic Ward: 83
+			--------
+			Item Level: 36
+			Implicits: 1
+			Has +1 to maximum Runic Ward per player level (implicit)
+			--------
+			20% increased Defences
+		]])
+		item:BuildModList()
+		assert.are.equals(83, item.armourData.Ward)
+		assert.is_near(1.2, item.armourData.WardPerLevel, 0.01)
+	end)
+
+	it("Non-authoritative Ward path: plain Ward mods scale correctly (no property line)", function()
+		-- Test that when Ward comes only from customMods (no property line),
+		-- the non-authoritative path in Item.lua applies INC and quality correctly.
+		-- Use a Runeforged item without a Runic Ward property line:
+		-- wardBase comes from mods, wardInc from mods, quality from item.
+		local item = new("Item", [[
+			Rarity: Rare
+			Mock Runeforged Coat
+			Runeforged Serpentscale Coat
+			--------
+			Quality: 20
+			--------
+			+65 to maximum Ward
+			30% increased Ward
+		]])
+		item:BuildModList()
+		-- Non-authoritative: no "Runic Ward" property line → armourData.Ward was nil on entry
+		-- wardBase = calcLocal(Ward,BASE,0) + base.armour.Ward = 65 + 0 = 65
+		-- wardInc = calcLocal(Ward,INC,0) = 30
+		-- quality = 20
+		-- Expected: round(65 * (1 + 30/100) * (1 + 20/100)) = round(65 * 1.3 * 1.2) = round(101.4) = 101
+		assert.are.equals(101, item.armourData.Ward)
 	end)
 end)

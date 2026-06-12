@@ -3,6 +3,80 @@ describe("ImportTab", function()
 		newBuild()
 	end)
 
+	it("parses [Ward|Runic Ward] property from GGG API data and sets armourData.Ward (import path)", function()
+		local importTab = build.importTab
+		-- Simulate a GGG API item with localized Ward property name
+		local mockItemData = {
+			typeLine = "Runeforged Serpentscale Coat",
+			name = "Empyrean Shelter",
+			frameType = 2,
+			inventoryId = "BodyArmour",
+			id = "body1",
+			ilvl = 36,
+			mirrored = false,
+			corrupted = false,
+			properties = {
+				{ name = "[Ward|Runic Ward]", values = {{"104", 0}}, type = 104 },
+			},
+		}
+		-- Returns (item, slotName)
+		local item = importTab:ImportItem(mockItemData, "Body Armour")
+		assert.is_not_nil(item, "ImportItem returned nil — ensure 'Serpentscale Coat' exists in data.itemBases")
+		assert.is_not_nil(item and item.armourData, "armourData is nil — Ward property was not parsed")
+		assert.are.equals(104, item and item.armourData and item.armourData.Ward)
+	end)
+
+	it("parses [Ward|Runic Ward] property with a Ward rune mod without double-counting", function()
+		local importTab = build.importTab
+		-- GGG API item data that includes rune mods adding Ward
+		local mockItemData = {
+			typeLine = "Runeforged Itinerant Jacket",
+			name = "Loath Coat",
+			frameType = 2,
+			inventoryId = "BodyArmour",
+			id = "body2",
+			ilvl = 67,
+			mirrored = false,
+			corrupted = false,
+			properties = {
+				{ name = "[Ward|Runic Ward]", values = {{"104", 0}}, type = 104 },
+				{ name = "[Evasion|Evasion Rating]", values = {{"157", 0}}, type = 4 },
+				{ name = "[EnergyShield|Energy Shield]", values = {{"61", 0}}, type = 6 },
+			},
+			runeMods = {
+				"{rune}{enchant}112% increased Ward\n+65 to maximum Ward",
+			},
+		}
+		local item = importTab:ImportItem(mockItemData, "Body Armour")
+		assert.is_not_nil(item, "ImportItem returned nil — ensure 'Itinerant Jacket' exists in data.itemBases")
+		assert.is_not_nil(item and item.armourData, "armourData is nil — Ward property was not parsed")
+		-- Property line value is authoritative for Ward; rune INC/flat mods must not be re-applied
+		assert.are.equals(104, item and item.armourData and item.armourData.Ward)
+		-- Rune mods should be parsed into runeModLines
+		assert.are.equals(2, item and #item.runeModLines)
+	end)
+
+	it("ImportItem does not crash for Mace Strike with empty weapon slots", function()
+		local importTab = build.importTab
+		-- Simulate a character skill with typeLine "Mace Strike" but no weapon equipped
+		-- activeItemSet slots exist but have selItemId == 0 (nothing equipped)
+		local mockItemData = {
+			typeLine = "Mace Strike",
+			name = "",
+			frameType = 4,
+			inventoryId = "Flask",
+			x = 3,
+			id = "flask1",
+			ilvl = 1,
+			mirrored = false,
+			corrupted = false,
+		}
+		-- Should not crash even when Weapon 1/2 slots are empty (selItemId == 0)
+		assert.has_no.errors(function()
+			importTab:ImportItem(mockItemData, "Flask 3")
+		end)
+	end)
+
 	it("builds character lists for private Ruthless league names without a Ruthless tree", function()
 		local importTab = build.importTab
 		importTab.lastCharList = {
@@ -42,5 +116,199 @@ describe("ImportTab", function()
 		assert.True(ok, err)
 		assert.are.equals(1, #importTab.controls.charSelect.list)
 		assert.True(importTab.controls.charSelect.list[1].detail:match("Future Ascendancy") ~= nil)
+	end)
+
+	it("imports Split Personality alternate class start from character JSON", function()
+		local spec = build.spec
+		local socketNode = spec.nodes[60735]
+		local rangerStartPassive = spec.nodes[56651]
+		assert.is_not_nil(socketNode)
+		assert.is_not_nil(rangerStartPassive)
+
+		local hashes = { socketNode.id, rangerStartPassive.id }
+		for _, pathNode in ipairs(socketNode.path or { }) do
+			table.insert(hashes, pathNode.id)
+		end
+
+		local rangerStart = spec.nodes[spec.tree.classes[spec.tree.classNameMap.Ranger].startNodeId]
+		local importPayload = {
+			name = "Split Import Test",
+			class = "Witch2",
+			league = "Test",
+			level = 90,
+			jewels = {
+				{
+					id = "split-personality-test",
+					frameType = 3,
+					name = "Split Personality",
+					typeLine = "Ruby",
+					inventoryId = "PassiveJewels",
+					x = 4,
+					ilvl = 84,
+					properties = { },
+					explicitMods = {
+						"Can Allocate Passive Skills from the Ranger's starting point",
+					},
+				},
+			},
+			passives = {
+				hashes = hashes,
+				specialisations = { },
+				skill_overrides = { },
+				jewel_data = { },
+				quest_stats = { },
+			},
+		}
+
+		build.importTab:ImportPassiveTreeAndJewels(importPayload)
+
+		local importedSpec = build.spec
+		local importedJewel = build.itemsTab.items[importedSpec.jewels[socketNode.id]]
+		assert.are.equals("Ranger", importedJewel.jewelData.alternateClassStart)
+
+		assert.are.equals(0, importedSpec.nodes[rangerStart.id].pathDist)
+		assert.True(importedSpec.nodes[rangerStartPassive.id].alloc)
+		assert.True(importedSpec.nodes[rangerStartPassive.id].connectedToStart)
+	end)
+end)
+
+describe("ImportTab quest reward import", function()
+	before_each(function()
+		newBuild()
+	end)
+
+	local function findQuest(info)
+		for _, quest in ipairs(data.questRewards) do
+			if quest.Info == info then
+				return "quest" .. quest.Description .. quest.Area .. quest.Info, quest
+			end
+		end
+		error("quest reward not found for Info: " .. info)
+	end
+
+	local function importStats(questStats)
+		build.importTab:ImportQuestRewardConfig(questStats)
+		return build.configTab.input
+	end
+
+	it("decomposes 0.5 rolled-up totals across the contributing quests", function()
+		local input = importStats({
+			"+20 to maximum Life",
+			"+60 to [Spirit|Spirit]",
+			"+15% to [Resistances|Cold Resistance]",
+			"+15% to [Resistances|Fire Resistance]",
+			"+15% to [Resistances|Lightning Resistance]",
+		})
+
+		assert.is_true(input[(findQuest("Candlemass"))])
+		assert.is_true(input[(findQuest("King In The Mists"))])
+		assert.is_true(input[(findQuest("Ignagduk"))])
+		assert.is_true(input[(findQuest("Beira"))])
+		assert.is_true(input[(findQuest("Blackjaw"))])
+		assert.is_true(input[(findQuest("Sisters of Garukhan Shrine"))])
+
+		local tasalioVar, tasalio = findQuest("Tasalio's Test")
+		assert.are.equals(tasalio.Options[2], input[tasalioVar])
+		local ngamahuVar, ngamahu = findQuest("Ngamahu's Test")
+		assert.are.equals(ngamahu.Options[2], input[ngamahuVar])
+		local tawhoaVar, tawhoa = findQuest("Tawhoa's Test")
+		assert.are.equals(tawhoa.Options[2], input[tawhoaVar])
+
+		assert.is_false(input[(findQuest("Lythara"))])
+	end)
+
+	it("sums duplicate 0.4 per-line Spirit rewards the same as the 0.5 summed total", function()
+		local input = importStats({
+			"+30 to [Spirit|Spirit]",
+			"+30 to [Spirit|Spirit]",
+			"+40 to [Spirit|Spirit]",
+		})
+		assert.is_true(input[(findQuest("King In The Mists"))])
+		assert.is_true(input[(findQuest("Ignagduk"))])
+		assert.is_true(input[(findQuest("Lythara"))])
+	end)
+
+	it("ticks exactly one of the interchangeable +30 Spirit quests when only one is claimed", function()
+		local input = importStats({ "+30 to [Spirit|Spirit]" })
+		local king = input[(findQuest("King In The Mists"))]
+		local ignagduk = input[(findQuest("Ignagduk"))]
+		assert.is_false(input[(findQuest("Lythara"))])
+		assert.are.equals(1, (king and 1 or 0) + (ignagduk and 1 or 0))
+	end)
+
+	it("disambiguates Spirit total 70 to one +30 plus Lythara, not 30+30", function()
+		local input = importStats({ "+70 to [Spirit|Spirit]" })
+		assert.is_true(input[(findQuest("Lythara"))])
+		local king = input[(findQuest("King In The Mists"))]
+		local ignagduk = input[(findQuest("Ignagduk"))]
+		assert.are.equals(1, (king and 1 or 0) + (ignagduk and 1 or 0))
+	end)
+
+	it("disambiguates Spirit total 40 to Lythara alone, not a +30", function()
+		local input = importStats({ "+40 to [Spirit|Spirit]" })
+		assert.is_true(input[(findQuest("Lythara"))])
+		assert.is_false(input[(findQuest("King In The Mists"))])
+		assert.is_false(input[(findQuest("Ignagduk"))])
+	end)
+
+	it("selects the correct multi-line option and leaves unclaimed option quests at None", function()
+		local medallionVar, medallion = findQuest("Medallion")
+		local input = importStats({
+			"30% increased [Charm] Effect Duration",
+			"+1 [Charm] Slot",
+		})
+		assert.are.equals(medallion.Options[2], input[medallionVar])
+		assert.are.equals("None", input[(findQuest("Seven Pillars"))])
+		assert.is_false(input[(findQuest("Beira"))])
+	end)
+
+	it("credits Tribal Medicine's Kaom option, not Seven Pillars which shares the stat at 15%", function()
+		local tribalVar, tribal = findQuest("Tribal Medicine")
+		local input = importStats({ "30% increased Global [Armour], [Evasion] and [EnergyShield|Energy Shield]" })
+		assert.are.equals(tribal.Options[1], input[tribalVar])
+		assert.are.equals("None", input[(findQuest("Seven Pillars"))])
+	end)
+
+	it("selects Tribal Medicine's Rakiata multi-stat option", function()
+		local tribalVar, tribal = findQuest("Tribal Medicine")
+		local input = importStats({
+			"+15% of [Armour|Armour] also applies to [ElementalDamage|Elemental Damage]",
+			"Gain [Deflect|Deflection Rating] equal to 12% of [Evasion|Evasion Rating]",
+			"12% [FasterESRechargeStart|faster start of Energy Shield Recharge]",
+		})
+		assert.are.equals(tribal.Options[2], input[tribalVar])
+	end)
+
+	it("decomposes Global Armour, Evasion and Energy Shield shared by Tribal Medicine (30%) and Seven Pillars (15%)", function()
+		local tribalVar, tribal = findQuest("Tribal Medicine")
+		local sevenVar, seven = findQuest("Seven Pillars")
+		local input = importStats({ "45% increased Global [Armour], [Evasion] and [EnergyShield|Energy Shield]" })
+		assert.are.equals(tribal.Options[1], input[tribalVar])
+		assert.are.equals(seven.Options[3], input[sevenVar])
+	end)
+
+	it("imports Boss's Faces Broken without affecting quest reward matching", function()
+		local sevenVar, seven = findQuest("Seven Pillars")
+		local input = importStats({
+			"+20 to maximum Life",
+			"5% increased maximum Life",
+			"5% increased maximum Mana",
+			"+100 to [Spirit|Spirit]",
+			"30% increased [Charm] Effect Duration",
+			"+5% to [Resistances|Fire Resistance]",
+			"+15% to [Resistances|Cold Resistance]",
+			"+15% to [Resistances|Lightning Resistance]",
+			"30% increased Life Recovery from [Flask|Flasks]",
+			"45% increased Global [Armour], [Evasion] and [EnergyShield|Energy Shield]",
+			"25% increased [StunThreshold|Stun Threshold]",
+			"+1 [Charm] Slot",
+			"58 [BrokenFace|Broken Boss Faces]",
+		})
+
+		assert.is_nil(input.configBossFaceBroken)
+		assert.are.equals(58, build.configTab.placeholder.configBossFaceBroken)
+		assert.are.equals(seven.Options[3], input[sevenVar])
+		runCallback("OnFrame")
+		assert.is_false(build.configTab.varControls.configBossFaceBroken.shown())
 	end)
 end)

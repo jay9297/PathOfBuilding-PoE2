@@ -54,19 +54,22 @@ jobs:
       - name: Build review prompt
         run: |
           cat > /tmp/review-prompt.txt << 'PROMPT_EOF'
-          You are a senior Lua developer performing a thorough code review on a
-          Path of Building 2 PR. Follow CLAUDE.md.
+          You are a senior Lua developer reviewing a Path of Building 2 PR. Follow CLAUDE.md.
 
-          Review checklist — address each item explicitly:
-          1. Calculation correctness: does the math match PoE2 mechanics?
-          2. Modifier parsing: ModParser.lua changes need new test cases — present?
-          3. Nil safety: any unguarded table accesses introduced?
-          4. Data integrity: data file changes parse cleanly?
-          5. Performance: new allocations in hot loops?
-          6. Test coverage: which new code paths lack coverage?
-          7. Style: matches surrounding conventions?
+          Report ONLY findings that require action or discussion:
+          - Bugs or incorrect math (cite line numbers)
+          - Nil-safety issues (unguarded table access)
+          - Missing test coverage for new code paths
+          - Performance regressions in hot loops
+          - Modifier parsing gaps (ModParser.lua changes without new test cases)
 
-          Be specific. Cite line numbers. Format as Markdown matching the checklist.
+          Rules:
+          - Omit any category where the diff is clean — do NOT write "looks good" or
+            confirmation sentences. Silence means no issue.
+          - If there are no findings at all, output only the VERDICT line.
+          - Be terse. One sentence per finding. Cite file:line.
+          - Do not summarize what the PR does.
+
           On the very last line output exactly one of:
           VERDICT:APPROVE
           VERDICT:REQUEST_CHANGES
@@ -123,28 +126,22 @@ jobs:
           fi
 
       - name: Submit formal review
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           source scripts/agent-lib.sh
 
           case "${{ steps.verdict.outputs.result }}" in
-            APPROVE)
-              retry_op 5 15 gh pr review ${{ github.event.pull_request.number }} \
-                -a \
-                --body "Verdict: **APPROVE**. See review comment above."
-              ;;
-            REQUEST_CHANGES)
-              retry_op 5 15 gh pr review ${{ github.event.pull_request.number }} \
-                -r \
-                --body "Verdict: **REQUEST_CHANGES**. See review comment above."
-              ;;
-            *)
-              retry_op 5 15 gh pr review ${{ github.event.pull_request.number }} \
-                -c \
-                --body "Verdict: **${{ steps.verdict.outputs.result }}**. See review comment above."
-              ;;
+            APPROVE)         FLAG="--approve" ;;
+            REQUEST_CHANGES) FLAG="--request-changes" ;;
+            *)               FLAG="--comment" ;;
           esac
+
+          retry_op 5 15 gh pr review ${{ github.event.pull_request.number }} \
+            $FLAG \
+            --body "Verdict: **${{ steps.verdict.outputs.result }}**. See review comment above."
+
 
       - name: Post failure comment on total failure
         if: failure()

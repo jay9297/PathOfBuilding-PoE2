@@ -186,6 +186,7 @@ local function dirExists(path)
 end
 
 local function tryProtonPath(baseSteam)
+	-- cspell:ignore compatdata steamuser
 	local prefix = baseSteam .. "/steamapps/compatdata/" .. POE2_APP_ID
 	             .. "/pfx/drive_c/users/steamuser/" .. POE2_RELATIVE
 	if dirExists(prefix) then return prefix end
@@ -199,7 +200,7 @@ function M.DefaultDir()
 	local home = os.getenv("HOME") or ""
 	local nativePath = home .. "/" .. POE2_RELATIVE
 	if dirExists(nativePath) then return nativePath .. "/" end
-	local steamFlatpak = home .. "/.var/app/com.valvesoftware.Steam/.local/share/Steam"
+	local steamFlatpak = home .. "/.var/app/com.valvesoftware.Steam/.local/share/Steam" -- cspell:ignore valvesoftware
 	local protonPath = tryProtonPath(steamFlatpak)
 	if protonPath then return protonPath .. "/" end
 	local steamNative = home .. "/.local/share/Steam"
@@ -231,7 +232,7 @@ local warnedNoStringId = false
 local function buildPassives(build, brackets)
 	local specList = build.treeTab and build.treeTab.specList
 	if not specList then return {} end
-	-- Dedupe by node id: collect contributing intervals + node refs across specs.
+	-- Dedupe by node id: collect contributing intervals + node refs across specs. -- cspell:ignore Dedupe
 	-- "Always" (no interval) wins — if any contributing spec is untagged, the
 	-- merged entry has no level_interval. Otherwise the merged interval covers
 	-- the union span (min lo, max hi) of all contributing specs.
@@ -279,7 +280,7 @@ local function buildPassives(build, brackets)
 	end
 	-- The PoE2 BuildPlanner expects PassiveSkills.Id strings (e.g. "projectiles18",
 	-- "AscendancyMercenary2Notable5"). PoB's tree.lua only carries numeric ids
-	-- until src/Export/Scripts/passivetree.lua is re-run against GGPK to emit
+	-- until src/Export/Scripts/passivetree.lua is re-run against GGPK to emit -- cspell:ignore passivetree
 	-- the stringId field. Warn once when that hasn't happened — the file will
 	-- still write but the loader probably won't recognise the passive ids.
 	if sawMissingStringId and not sawStringId and not warnedNoStringId then
@@ -319,7 +320,7 @@ end
 --
 -- Support gems get the trivial "Level 1, 0% Quality" hint suppressed - that's
 -- the default PoB assigns when a support is first placed and showing it on
--- every uncustomised support is just noise. Custom level/quality and notes
+-- every uncustomised support is just noise. Custom level/quality and notes -- cspell:ignore uncustomised
 -- still come through.
 local function gemAdditionalText(gem, isSupport)
 	if not gem then return nil end
@@ -560,8 +561,8 @@ function M.WriteFile(build, path)
 	-- Best-effort: ensure the target directory exists.
 	local dir = path:match("^(.*[/\\])")
 	if dir then MakeDir(dir) end
-	local f, ferr = io.open(path, "w")
-	if not f then return nil, "Couldn't open '" .. path .. "': " .. tostring(ferr) end
+	local f, fileErr = io.open(path, "w")
+	if not f then return nil, "Couldn't open '" .. path .. "': " .. tostring(fileErr) end
 	f:write(json)
 	f:close()
 	return path

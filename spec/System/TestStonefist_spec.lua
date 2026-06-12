@@ -211,7 +211,7 @@ describe("TestStonefist", function()
 			["150% increased Armour"] = "300% increased Armour",
 		}
 
-		-- Titan Mitts: base Armour = 100 (no quality on a New Item)
+		-- Titan Mitts: base Armour = 132 (no quality on a New Item)
 		build.itemsTab:CreateDisplayItemFromRaw([[
 			New Item
 			Titan Mitts
@@ -219,7 +219,7 @@ describe("TestStonefist", function()
 		]])
 		build.itemsTab:AddDisplayItem()
 		runCallback("OnFrame")
-		-- Baseline: 100 * (1 + 150/100) = 250 (LOCAL INC baked into armourData)
+		-- Baseline: 132 * (1 + 150/100) = 330 (LOCAL INC baked into armourData)
 		local baseArmour = build.calcsTab.mainOutput.Armour or 0
 
 		build.configTab.input.customMods = "\z
@@ -227,9 +227,9 @@ describe("TestStonefist", function()
 		"
 		build.configTab:BuildModList()
 		runCallback("OnFrame")
-		-- After transform: armourData adjusted to 300% INC → 100 * (1+3) = 400
+		-- After transform: armourData adjusted to 300% INC → 132 * (1+3) = 528
 		local transformedArmour = build.calcsTab.mainOutput.Armour or 0
-		assert.is_near(400, transformedArmour, 2)
+		assert.is_near(528, transformedArmour, 2)
 
 		data.modEquivalencies = origEquiv
 	end)
@@ -257,9 +257,9 @@ describe("TestStonefist", function()
 		"
 		build.configTab:BuildModList()
 		runCallback("OnFrame")
-		-- After transform: armourData adjusted to 300% INC → 100 * (1+3) = 400
+		-- After transform: armourData adjusted to 300% INC → 132 * (1+3) = 528
 		local transformedArmour = build.calcsTab.mainOutput.Armour or 0
-		assert.is_near(400, transformedArmour, 2)
+		assert.is_near(528, transformedArmour, 2)
 
 		data.modEquivalencies = origEquiv
 	end)
@@ -287,9 +287,9 @@ describe("TestStonefist", function()
 		"
 		build.configTab:BuildModList()
 		runCallback("OnFrame")
-		-- Mapped Armour mod upgrades: armourData adjusted to 300% INC → 100 * (1+3) = 400
+		-- Mapped Armour mod upgrades: armourData adjusted to 300% INC → 132 * (1+3) = 528
 		local transformedArmour = build.calcsTab.mainOutput.Armour or 0
-		assert.is_near(400, transformedArmour, 2)
+		assert.is_near(528, transformedArmour, 2)
 
 		data.modEquivalencies = origEquiv
 	end)
@@ -297,10 +297,10 @@ describe("TestStonefist", function()
 	it("GloveExplicitModTransform: multiple local INC mods on same stat use full INC sum for ratio", function()
 		local origEquiv = data.modEquivalencies
 		-- Only the 150% mod is in the equivalency table; the 50% mod is NOT mapped.
-		-- armourData bakes in both: 100 * (1+(150+50)/100) = 300.
+		-- armourData bakes in both: 132 * (1+(150+50)/100) = 396.
 		-- After transform: only the 150% mod changes to 300%, so total INC becomes 350%.
-		-- Correct result: floor(300 * (1+3.5) / (1+2)) = floor(300*4.5/3) = 450.
-		-- Buggy single-mod ratio would give: floor(300 / 2.5 * 4) = 480 (wrong).
+		-- Correct result: round(396 * (1+3.5) / (1+2)) = round(396*4.5/3) = 594.
+		-- Buggy single-mod ratio would give: round(396 / 2.5 * 4) = 634 (wrong).
 		data.modEquivalencies = {
 			["150% increased Armour"] = "300% increased Armour",
 		}
@@ -320,27 +320,30 @@ describe("TestStonefist", function()
 		build.configTab:BuildModList()
 		runCallback("OnFrame")
 		local transformedArmour = build.calcsTab.mainOutput.Armour or 0
-		-- round(100*(1+(300+50)/100)) = 450
-		assert.is_near(450, transformedArmour, 2)
+		-- round(132*(1+(300+50)/100)) = 594
+		assert.is_near(594, transformedArmour, 2)
 
 		data.modEquivalencies = origEquiv
 	end)
 
 	it("GloveBaseTypeTransform and GloveExplicitModTransform work independently together", function()
+		-- FoS has no base Armour (armour={}); use a flat BASE equivalency so both transforms
+		-- produce a non-zero result we can compare:
+		-- base-type-only: FoS with "+25 to Armour" explicit → armourData = round(0+25) = 25
+		-- fully-transformed: bDelta=25 → round(0 + (25+25)*1*1) = 50; must exceed base-type-only.
 		local origEquiv = data.modEquivalencies
 		data.modEquivalencies = {
-			["150% increased Armour"] = "300% increased Armour",
+			["+25 to Armour"] = "+50 to Armour",
 		}
 
 		build.itemsTab:CreateDisplayItemFromRaw([[
 			New Item
 			Titan Mitts
-			150% increased Armour
+			+25 to Armour
 		]])
 		build.itemsTab:AddDisplayItem()
 
 		-- Baseline: only base type transform active (no explicit mod upgrade)
-		-- LOCAL INC was consumed by calcLocal so modDB has none; armourData = FoS base = 44
 		build.configTab.input.customMods = "\z
 		Gloves you equip have their base type transformed to fists of stone while equipped\n\z
 		"
@@ -356,8 +359,8 @@ describe("TestStonefist", function()
 		build.configTab:BuildModList()
 		runCallback("OnFrame")
 		local fullyTransformedArmour = build.calcsTab.mainOutput.Armour or 0
-		-- Explicit upgrade: armourData (raw FoS base 44) × (1+3) = 176
-		assert.is_near(176, fullyTransformedArmour, 2)
+		-- FoS raw base = 0; totalNewBase = old(25)+delta(25) = 50; round(0+50) = 50
+		assert.is_near(50, fullyTransformedArmour, 2)
 		assert.is_true(fullyTransformedArmour > baseTypeOnlyArmour,
 			("expected fully-transformed armour %d > base-type-only armour %d"):format(fullyTransformedArmour, baseTypeOnlyArmour))
 
@@ -395,12 +398,12 @@ describe("TestStonefist", function()
 	it("GloveExplicitModTransform: flat BASE defence mod is upgraded via baseDelta path", function()
 		local origEquiv = data.modEquivalencies
 		-- +25 to Armour is a local BASE defence mod (consumed by calcLocal into armourData).
-		-- baseDelta = 25; with no INC, armourData goes from 125 to 150.
+		-- baseDelta = 25; with no INC, armourData goes from 157 to 182.
 		data.modEquivalencies = {
 			["+25 to Armour"] = "+50 to Armour",
 		}
 
-		-- Titan Mitts base Armour = 100 (New Item quality = 0); +25 flat → armourData = 125
+		-- Titan Mitts base Armour = 132 (New Item quality = 0); +25 flat → armourData = 157
 		build.itemsTab:CreateDisplayItemFromRaw([[
 			New Item
 			Titan Mitts
@@ -414,9 +417,9 @@ describe("TestStonefist", function()
 		"
 		build.configTab:BuildModList()
 		runCallback("OnFrame")
-		-- baseDelta = +25, no INC change: round(125 + 25 * 1 * 1) = 150
+		-- baseDelta = +25, no INC change: round(157 + 25 * 1 * 1) = 182
 		local transformedArmour = build.calcsTab.mainOutput.Armour or 0
-		assert.is_near(150, transformedArmour, 2)
+		assert.is_near(182, transformedArmour, 2)
 
 		data.modEquivalencies = origEquiv
 	end)
@@ -424,9 +427,9 @@ describe("TestStonefist", function()
 	it("GloveExplicitModTransform: implicit local INC is included in Phase 1 ratio", function()
 		-- Phase 1 must scan both implicitModLines and explicitModLines.
 		-- If implicit INC is missed, oldTotal is under-counted and Phase 3 over-corrects.
-		-- armourData = round(100 * (1 + (50+150)/100)) = round(300) = 300
-		-- With fix   : oldTotal=200 → ratio 4.5/3 → round(300*4.5/3) = 450
-		-- Without fix: oldTotal=150 → ratio 4/2.5 → round(300*4/2.5) = 480 (wrong)
+		-- armourData = round(132 * (1 + (50+150)/100)) = round(396) = 396
+		-- With fix   : oldTotal=200 → ratio 4.5/3 → round(396*4.5/3) = 594
+		-- Without fix: oldTotal=150 → ratio 4/2.5 → round(396*4/2.5) = 634 (wrong)
 		local origEquiv = data.modEquivalencies
 		data.modEquivalencies = {
 			["150% increased Armour"] = "300% increased Armour",
@@ -449,9 +452,9 @@ describe("TestStonefist", function()
 		"
 		build.configTab:BuildModList()
 		runCallback("OnFrame")
-		-- Correct: round(300 * (1+3.5)/(1+2)) = round(450) = 450
+		-- Correct: round(396 * (1+3.5)/(1+2)) = round(594) = 594
 		local transformedArmour = build.calcsTab.mainOutput.Armour or 0
-		assert.is_near(450, transformedArmour, 2)
+		assert.is_near(594, transformedArmour, 2)
 
 		data.modEquivalencies = origEquiv
 	end)
@@ -463,7 +466,7 @@ describe("TestStonefist", function()
 			["150% increased Armour and Evasion Rating"] = "300% increased Armour and Evasion Rating",
 		}
 
-		-- Titan Mitts base Armour=100, no base Evasion. Phase 3 skips Evasion because
+		-- Titan Mitts base Armour=132, no base Evasion. Phase 3 skips Evasion because
 		-- armData["Evasion"] is nil; only Armour is actually modified.
 		build.itemsTab:CreateDisplayItemFromRaw([[
 			New Item
@@ -478,9 +481,9 @@ describe("TestStonefist", function()
 		"
 		build.configTab:BuildModList()
 		runCallback("OnFrame")
-		-- oldTotal=150 for both; newTotal=300; Armour: round(250 * 4/2.5) = 400
+		-- oldTotal=150 for both; newTotal=300; Armour: round(330 * 4/2.5) = 528
 		local transformedArmour = build.calcsTab.mainOutput.Armour or 0
-		assert.is_near(400, transformedArmour, 2)
+		assert.is_near(528, transformedArmour, 2)
 
 		data.modEquivalencies = origEquiv
 	end)
@@ -494,7 +497,7 @@ describe("TestStonefist", function()
 			["+25 to Armour"] = "+50 to Armour",
 		}
 
-		-- Titan Mitts + +25 to Armour; base type will be swapped to Fists of Stone (Armour=44)
+		-- Titan Mitts + +25 to Armour; base type will be swapped to Fists of Stone (Armour=0, armour={})
 		build.itemsTab:CreateDisplayItemFromRaw([[
 			New Item
 			Titan Mitts
@@ -508,10 +511,42 @@ describe("TestStonefist", function()
 		"
 		build.configTab:BuildModList()
 		runCallback("OnFrame")
-		-- FoS base Armour = 44; totalOldLocalBASE = 25; bDelta = 25; newTotal INC = 0
-		-- armourData = round(44 + (25+25) * 1 * 1) = round(94) = 94
+		-- FoS raw base Armour = 0; totalOldLocalBASE = 25; bDelta = 25; newTotal INC = 0
+		-- armourData = round(0 + (25+25) * 1 * 1) = round(50) = 50
 		local transformedArmour = build.calcsTab.mainOutput.Armour or 0
-		assert.is_near(94, transformedArmour, 5)
+		assert.is_near(50, transformedArmour, 2)
+
+		data.modEquivalencies = origEquiv
+	end)
+
+	it("GloveBaseTypeTransform + GloveExplicitModTransform: BASE delta with quality>0 scales by qualityMult", function()
+		-- With baseWasTransformed=true, Phase 3 formula is:
+		--   armData[stat] = round(rawFoSBase * newIncFactor + totalNewBase * newIncFactor * qualityMult)
+		-- FoS has no base Armour (armour={}), so rawFoSBase=0.  With quality=20 (qualityMult=1.2),
+		-- totalNewBase=50: round(0 + 50*1*1.2) = 60.  Without qualityMult: round(0+50) = 50 (wrong).
+		local origEquiv = data.modEquivalencies
+		data.modEquivalencies = {
+			["+25 to Armour"] = "+50 to Armour",
+		}
+
+		build.itemsTab:CreateDisplayItemFromRaw([[
+			Rarity: Normal
+			Titan Mitts
+			Quality: 20
+			--------
+			+25 to Armour
+		]])
+		build.itemsTab:AddDisplayItem()
+
+		build.configTab.input.customMods = "\z
+		Gloves you equip have their base type transformed to fists of stone while equipped\n\z
+		their explicit modifiers are transformed into more powerful related modifiers\n\z
+		"
+		build.configTab:BuildModList()
+		runCallback("OnFrame")
+		-- round(0 + 50*1*1.2) = 60; wrong without qualityMult: round(0+50) = 50
+		local transformedArmour = build.calcsTab.mainOutput.Armour or 0
+		assert.is_near(60, transformedArmour, 2)
 
 		data.modEquivalencies = origEquiv
 	end)
@@ -553,14 +588,14 @@ describe("TestStonefist", function()
 		-- When "quality does not increase defences" is present, Item.lua already set
 		-- qualityScalar=0 so armourData was computed without quality.  CalcPerform must
 		-- also use qualityMult=1 for the bDelta term, or the BASE upgrade is over-scaled.
-		-- With quality=20 and bDelta=25: correct=150, wrong=155 (1.2× instead of 1×).
+		-- With quality=20 and bDelta=25: correct=182, wrong=187 (1.2× instead of 1×).
 		local origEquiv = data.modEquivalencies
 		data.modEquivalencies = {
 			["+25 to Armour"] = "+50 to Armour",
 		}
 
 		-- "quality does not increase defences" as implicit; "+25 to Armour" as explicit.
-		-- Item.lua will see AlternateQualityArmour and set qualityScalar=0 → armourData=125.
+		-- Item.lua will see AlternateQualityArmour and set qualityScalar=0 → armourData=157.
 		build.itemsTab:CreateDisplayItemFromRaw([[
 			Rarity: Normal
 			Titan Mitts
@@ -577,10 +612,10 @@ describe("TestStonefist", function()
 		"
 		build.configTab:BuildModList()
 		runCallback("OnFrame")
-		-- armourData = round(100+25)*1*1 = 125; bDelta=25; qualityMult=1
-		-- result = round(125 + 25*1*1) = 150; wrong (qualityMult=1.2) would give 155
+		-- armourData = round(132+25)*1*1 = 157; bDelta=25; qualityMult=1
+		-- result = round(157 + 25*1*1) = 182; wrong (qualityMult=1.2) would give 187
 		local transformedArmour = build.calcsTab.mainOutput.Armour or 0
-		assert.is_near(150, transformedArmour, 2)
+		assert.is_near(182, transformedArmour, 2)
 
 		data.modEquivalencies = origEquiv
 	end)
@@ -624,9 +659,9 @@ describe("TestStonefist", function()
 		-- The Phase 3 formula for non-baseWasTransformed is:
 		--   armData = round(armData * newIncFactor/oldIncFactor + bDelta * newIncFactor * qualityMult)
 		-- With quality=20 (qualityMult=1.2), bDelta=25, no INC change:
-		--   armourData before = round((100+25)*1*1.2) = 150
-		--   after = round(150*1 + 25*1*1.2) = round(150+30) = 180
-		-- Without the qualityMult factor: round(150 + 25*1) = 175 (wrong).
+		--   armourData before = round((132+25)*1.2) = round(188.4) = 188
+		--   after = round(188*1 + 25*1*1.2) = round(188+30) = 218
+		-- Without the qualityMult factor: round(188 + 25*1) = 213 (wrong).
 		local origEquiv = data.modEquivalencies
 		data.modEquivalencies = {
 			["+25 to Armour"] = "+50 to Armour",
@@ -646,9 +681,9 @@ describe("TestStonefist", function()
 		"
 		build.configTab:BuildModList()
 		runCallback("OnFrame")
-		-- bDelta=25, qualityMult=1.2, newIncFactor=1: round(150 + 25*1*1.2) = 180
+		-- bDelta=25, qualityMult=1.2, newIncFactor=1: round(188 + 25*1*1.2) = 218
 		local transformedArmour = build.calcsTab.mainOutput.Armour or 0
-		assert.is_near(180, transformedArmour, 2)
+		assert.is_near(218, transformedArmour, 2)
 
 		data.modEquivalencies = origEquiv
 	end)
@@ -670,7 +705,7 @@ describe("TestStonefist", function()
 		]])
 		build.itemsTab:AddDisplayItem()
 
-		-- Baseline without transform: Armour = round(100*(1+1.5)) = 250
+		-- Baseline without transform: Armour = round(132*(1+1.5)) = 330
 		runCallback("OnFrame")
 		local baselineArmour = build.calcsTab.mainOutput.Armour or 0
 

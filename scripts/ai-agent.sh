@@ -73,7 +73,8 @@ try_claude_code() {
   log "tier 1: Claude Code via Pro subscription"
   local out exit_code
   set +e
-  out=$(CLAUDE_CODE_OAUTH_TOKEN="$CLAUDE_CODE_OAUTH_TOKEN" \
+  out=$(timeout 900 \
+        env CLAUDE_CODE_OAUTH_TOKEN="$CLAUDE_CODE_OAUTH_TOKEN" \
         claude --print "$TASK" \
           --allowedTools "$ALLOWED_TOOLS" \
           --max-turns "$MAX_TURNS" \
@@ -81,6 +82,10 @@ try_claude_code() {
           --dangerously-skip-permissions 2>&1)
   exit_code=$?
   set -e
+  if [[ $exit_code -eq 124 ]]; then
+    log "claude code: timed out after 15 min, falling through to tier 2"
+    return 1
+  fi
   if is_quota_or_overload_error "$out"; then
     log "claude code: hit quota/overload, falling through to tier 2"
     return 1
@@ -107,12 +112,17 @@ try_opencode_model() {
   log "tier 2: OpenCode with model $model"
   local out exit_code
   set +e
-  out=$(OPENCODE_API_KEY="$OPENCODE_API_KEY" \
+  out=$(timeout 720 \
+        env OPENCODE_API_KEY="$OPENCODE_API_KEY" \
         opencode run \
           --model "$model" \
           "$TASK" 2>&1)
   exit_code=$?
   set -e
+  if [[ $exit_code -eq 124 ]]; then
+    log "opencode $model: timed out after 12 min, trying next model"
+    return 1
+  fi
   if is_quota_or_overload_error "$out"; then
     log "opencode $model: hit quota/limit, trying next model"
     return 1

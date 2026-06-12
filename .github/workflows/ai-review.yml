@@ -43,15 +43,17 @@ jobs:
           git diff --stat "origin/${{ github.base_ref }}...HEAD" > /tmp/pr.summary
 
       - name: Guard against oversized diff
+        id: size-check
         run: |
           LINES=$(wc -l < /tmp/pr.diff)
           echo "Diff size: ${LINES} lines"
           if [[ "$LINES" -gt 3000 ]]; then
             echo "::warning::Diff exceeds 3000 lines — skipping AI review"
-            exit 0
+            echo "skip=true" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Build review prompt
+        if: steps.size-check.outputs.skip != 'true'
         run: |
           cat > /tmp/review-prompt.txt << 'PROMPT_EOF'
           You are a senior Lua developer reviewing a Path of Building 2 PR. Follow CLAUDE.md.
@@ -83,12 +85,13 @@ jobs:
           cat /tmp/pr.diff >> /tmp/review-prompt.txt
 
       - name: Run AI review
+        if: steps.size-check.outputs.skip != 'true'
         run: |
           source scripts/agent-lib.sh
           run_agent_with_fallback /tmp/review-prompt.txt review 20 > /tmp/review.md
 
       - name: Save review artifact
-        if: always()
+        if: always() && steps.size-check.outputs.skip != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: ai-review-${{ github.event.pull_request.number }}-${{ github.run_attempt }}
@@ -97,12 +100,14 @@ jobs:
 
       - name: Parse verdict
         id: verdict
+        if: steps.size-check.outputs.skip != 'true'
         run: |
           VERDICT=$(grep '^VERDICT:' /tmp/review.md | tail -1 | cut -d: -f2 || echo "COMMENT")
           sed -i '/^VERDICT:/d' /tmp/review.md
           echo "result=${VERDICT}" >> "$GITHUB_OUTPUT"
 
       - name: Post or update review comment
+        if: steps.size-check.outputs.skip != 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUM: ${{ github.event.pull_request.number }}
@@ -126,6 +131,7 @@ jobs:
           fi
 
       - name: Submit formal review
+        if: steps.size-check.outputs.skip != 'true'
         continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

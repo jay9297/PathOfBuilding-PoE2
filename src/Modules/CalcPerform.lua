@@ -3489,6 +3489,11 @@ function calcs.perform(env, skipEHP)
 													end
 													locallyHandled[mod.name .. ":" .. mod.type] = true
 													break
+												elseif armStatMap[newMod.name] then
+													-- Cross-stat local defence equivalency (e.g. Armour→ArmourAndEvasion):
+													-- adjusting armData across stat names is unsupported; suppress global
+													-- injection so armData retains its current baked-in value unchanged.
+													locallyHandled[newMod.name .. ":" .. newMod.type] = true
 												end
 											end
 										else

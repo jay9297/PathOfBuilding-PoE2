@@ -14,6 +14,11 @@
 -- "Culling Strike") cannot be safely cancelled by value negation; CalcPerform enforces
 -- this at runtime and will silently skip any entry whose value parses to a non-BASE/INC mod.
 --
+-- IMPORTANT: for local defence mods (Armour, Evasion, EnergyShield), the replacement mod
+-- must parse to a mod with the same name and type as the original (e.g. "Armour INC" → "Armour INC",
+-- not "Armour INC" → "ArmourAndEvasion INC").  Cross-name local defence equivalencies are
+-- silently suppressed — no armourData adjustment occurs and no global mod is injected.
+--
 -- cspell:ignore modequivalencies
 return {
 }

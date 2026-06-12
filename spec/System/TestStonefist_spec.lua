@@ -620,6 +620,73 @@ describe("TestStonefist", function()
 		data.modEquivalencies = origEquiv
 	end)
 
+	it("GloveExplicitModTransform: BASE delta with quality>0 scales bDelta by qualityMult", function()
+		-- The Phase 3 formula for non-baseWasTransformed is:
+		--   armData = round(armData * newIncFactor/oldIncFactor + bDelta * newIncFactor * qualityMult)
+		-- With quality=20 (qualityMult=1.2), bDelta=25, no INC change:
+		--   armourData before = round((100+25)*1*1.2) = 150
+		--   after = round(150*1 + 25*1*1.2) = round(150+30) = 180
+		-- Without the qualityMult factor: round(150 + 25*1) = 175 (wrong).
+		local origEquiv = data.modEquivalencies
+		data.modEquivalencies = {
+			["+25 to Armour"] = "+50 to Armour",
+		}
+
+		build.itemsTab:CreateDisplayItemFromRaw([[
+			Rarity: Normal
+			Titan Mitts
+			Quality: 20
+			--------
+			+25 to Armour
+		]])
+		build.itemsTab:AddDisplayItem()
+
+		build.configTab.input.customMods = "\z
+		their explicit modifiers are transformed into more powerful related modifiers\n\z
+		"
+		build.configTab:BuildModList()
+		runCallback("OnFrame")
+		-- bDelta=25, qualityMult=1.2, newIncFactor=1: round(150 + 25*1*1.2) = 180
+		local transformedArmour = build.calcsTab.mainOutput.Armour or 0
+		assert.is_near(180, transformedArmour, 2)
+
+		data.modEquivalencies = origEquiv
+	end)
+
+	it("GloveExplicitModTransform: cross-stat local defence equivalency is a no-op", function()
+		-- A cross-name local defence equivalency (e.g. Armour INC → ArmourAndEvasion INC) cannot
+		-- be decomposed: armData adjustment would require a stat-name change, and injecting the
+		-- new mod globally would double-count the stat.  CalcPerform suppresses injection and
+		-- leaves armourData unchanged.  The result must equal the pre-transform baseline.
+		local origEquiv = data.modEquivalencies
+		data.modEquivalencies = {
+			["150% increased Armour"] = "200% increased Armour and Evasion Rating",
+		}
+
+		build.itemsTab:CreateDisplayItemFromRaw([[
+			New Item
+			Titan Mitts
+			150% increased Armour
+		]])
+		build.itemsTab:AddDisplayItem()
+
+		-- Baseline without transform: Armour = round(100*(1+1.5)) = 250
+		runCallback("OnFrame")
+		local baselineArmour = build.calcsTab.mainOutput.Armour or 0
+
+		build.configTab.input.customMods = "\z
+		their explicit modifiers are transformed into more powerful related modifiers\n\z
+		"
+		build.configTab:BuildModList()
+		runCallback("OnFrame")
+		local transformedArmour = build.calcsTab.mainOutput.Armour or 0
+
+		-- Cross-name equivalency must be a no-op: armour unchanged.
+		assert.is_near(baselineArmour, transformedArmour, 1)
+
+		data.modEquivalencies = origEquiv
+	end)
+
 	it("GloveExplicitModTransform: old FLAG on matched line is not doubled when remapped to BASE/INC", function()
 		-- When an old mod line has a FLAG mod and the equivalency maps it to pure
 		-- BASE/INC, PoB has no mechanism to cancel a FLAG once set (FlagInternal checks

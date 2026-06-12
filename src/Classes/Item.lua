@@ -60,11 +60,11 @@ end
 local ItemClass = newClass("Item", function(self, raw, rarity, highQuality)
 	if raw then
 		self:ParseRaw(sanitiseText(raw), rarity, highQuality)
-	end	
+	end
 end)
 
 local lineFlags = {
-	["custom"] = true, ["fractured"] = true, ["desecrated"] = true, ["mutated"] = true, ["enchant"] = true, ["implicit"] = true, ["rune"] = true, ["unscalable"] = true
+	["custom"] = true, ["crafted"] = true, ["fractured"] = true, ["desecrated"] = true, ["mutated"] = true, ["enchant"] = true, ["implicit"] = true, ["rune"] = true, ["unscalable"] = true
 }
 
 local function baseHasImplicitLine(base, line)
@@ -300,7 +300,9 @@ function ItemClass:ParseRaw(raw, rarity, highQuality)
 	self.rarity = rarity or "UNIQUE"
 	self.charmLimit = nil
 	self.spiritValue = nil
+	self.runicItem = nil
 	self.quality = nil
+	self.wardFromPropertyLine = false
 	self.rawLines = { }
 	-- Find non-blank lines and trim whitespace
 	for line in raw:gmatch("%s*([^\n]*%S)") do
@@ -395,7 +397,7 @@ function ItemClass:ParseRaw(raw, rarity, highQuality)
 	local linePrefix = ""
 	local linePostfix = ""
 
-	while self.rawLines[l] do	
+	while self.rawLines[l] do
 		local line = self.rawLines[l]
 		if flaskBuffLines and flaskBuffLines[line] then
 			flaskBuffLines[line] = nil
@@ -461,7 +463,7 @@ function ItemClass:ParseRaw(raw, rarity, highQuality)
 				if #self.pendingAffixList == 0 and #backupAffixList > 0 then
 					self.pendingAffixList = backupAffixList
 				end
-				if #self.pendingAffixList == 0 and #backupAffixList == 0 then
+				if #self.pendingAffixList == 0 then
 					-- Could be a veiled, temple, or other custom mod, so just keep it around
 					linePrefix = "{custom}"
 				end
@@ -511,6 +513,7 @@ function ItemClass:ParseRaw(raw, rarity, highQuality)
 			if specName then
 				if specName == "Unique ID" then
 					self.uniqueID = specVal
+					goto continue
 				elseif specName == "Item Level" then
 					self.itemLevel = specToNumber(specVal)
 				elseif specName == "Requires Class" then
@@ -579,7 +582,7 @@ function ItemClass:ParseRaw(raw, rarity, highQuality)
 					end
 				elseif specName == "Talisman Tier" then
 					self.talismanTier = specToNumber(specVal)
-				elseif specName == "Armour" or specName == "Evasion Rating" or specName == "Evasion" or specName == "Energy Shield" or specName == "Ward" then
+				elseif specName == "Armour" or specName == "Evasion Rating" or specName == "Evasion" or specName == "Energy Shield" or specName == "Ward" or specName == "Runic Ward" then
 					if specName == "Evasion Rating" then
 						specName = "Evasion"
 						if self.baseName == "Two-Toned Boots (Armour/Energy Shield)" then
@@ -594,9 +597,14 @@ function ItemClass:ParseRaw(raw, rarity, highQuality)
 							self.baseName = "Two-Toned Boots (Evasion/Energy Shield)"
 							self.base = data.itemBases[self.baseName]
 						end
+					elseif specName == "Runic Ward" then
+						specName = "Ward"
 					end
 					self.armourData = self.armourData or { }
 					self.armourData[specName] = specToNumber(specVal)
+					if specName == "Ward" then
+						self.wardFromPropertyLine = true
+					end
 				elseif specName == "Requires Level" then
 					self.requirements.level = specToNumber(specVal)
 					minimumReqLevel = minimumReqLevel or {}
@@ -686,8 +694,8 @@ function ItemClass:ParseRaw(raw, rarity, highQuality)
 					self.requirements[specName:sub(1,3):lower()] = specToNumber(specVal)
 				elseif specName == "Critical Hit Range" or specName == "Attacks per Second" or specName == "Weapon Range" or
 				       specName == "Critical Hit Chance" or specName == "Physical Damage" or specName == "Elemental Damage" or
-				       specName == "Chaos Damage" or specName == "Fire Damage" or specName == "Cold Damage" or specName == "Lightning Damage" or 
-					   specName == "Reload Time" or specName == "Chance to Block" or specName == "Block chance" or 
+				       specName == "Chaos Damage" or specName == "Fire Damage" or specName == "Cold Damage" or specName == "Lightning Damage" or
+					   specName == "Reload Time" or specName == "Chance to Block" or specName == "Block chance" or
 					   specName == "Armour" or specName == "Energy Shield" or specName == "Evasion" or specName == "Requires" then
 					self.hidden_specs = true
 				-- Anything else is an explicit with a colon in it (Fortress Covenant, Pure Talent, etc) unless it's part of the custom name
@@ -792,12 +800,15 @@ function ItemClass:ParseRaw(raw, rarity, highQuality)
 					self.name = self.name:gsub(" %(.+%)","")
 				end
 				if not baseName then
-					baseName = line:gsub("^Superior ", "")
+					baseName = line:gsub("^Superior ", ""):gsub("^Runeforged ", "")
 				end
 				if baseName == "Two-Toned Boots" then
 					baseName = "Two-Toned Boots (Armour/Energy Shield)"
 				end
 				local base = data.itemBases[baseName]
+				if baseName:find("Runeforged") or baseName:find("Runemastered") then
+					self.runicItem = true
+				end
 				if base then
 					-- Items with variants can have multiple bases
 					self.baseLines[baseName] = { line = baseName, variantList = modLine.variantList }
@@ -814,7 +825,7 @@ function ItemClass:ParseRaw(raw, rarity, highQuality)
 						self.affixes = (self.base.subType and data.itemMods[self.base.type..self.base.subType])
 								or data.itemMods[self.base.type]
 								or data.itemMods.Item
-						self.corruptible = self.base.type ~= "Flask" and self.base.type ~= "Charm" and self.base.type ~= "Rune" and self.base.type ~= "SoulCore" and self.base.type ~= "Transcendent Limb"
+						self.corruptible = self.base.type ~= "Flask" and self.base.type ~= "Charm" and self.base.type ~= "Transcendent Limb"
 						self.requirements.str = self.base.req.str or 0
 						self.requirements.dex = self.base.req.dex or 0
 						self.requirements.int = self.base.req.int or 0
@@ -845,25 +856,30 @@ function ItemClass:ParseRaw(raw, rarity, highQuality)
 					gameModeStage = "IMPLICIT"
 				end
 				local catalystScalar = 1
-				if line:match(" %- Unscalable Value$") then
-					line = line:gsub(" %- Unscalable Value$", "")
+				if line:match(" %- Unscalable Value$") or line:match(" — Unscalable Value$") then
+					line = line:gsub(" %- Unscalable Value$", ""):gsub(" — Unscalable Value$", "")
 					modLine.unscalable = true
 				else
 					catalystScalar = getCatalystScalar(self.catalyst, modLine, self.catalystQuality)
 				end
 				if self.pendingAffixList and #self.pendingAffixList > 0 then
 					if #self.pendingAffixList > 1 then
-						-- Probably a conqueror mod since the mod name is the same for all of them
+						-- Probably a conqueror or Essence mod since the mod name is the same for all of them
 						-- Try to match the line against one of the mods there
 						local valueStrippedLine = line:gsub("%-?%d+%.?%d*%(", "("):gsub("%-?%d+%.?%d*", "#")
 						for _, pendingAffix in ipairs(self.pendingAffixList) do
 							local modData = self.affixes[pendingAffix.modId]
 							for _, modDataLine in ipairs(modData) do
+								-- Prefer the exact match
+								if line == modDataLine then
+									self.pendingAffixList = { pendingAffix }
+									break
+								end
 								if valueStrippedLine == modDataLine:gsub("%-?%d+%.?%d*", "#") then
 									self.pendingAffixList = { pendingAffix }
 									break
 								end
-							end	
+							end
 						end
 					end
 					-- Use rolling Delta/Range in case one range is 1-3 and another is 1-100 so we get the finest precision possible
@@ -881,16 +897,19 @@ function ItemClass:ParseRaw(raw, rarity, highQuality)
 					end
 					t_insert(self.pendingAffixList[1].table, {
 						modId = self.pendingAffixList[1].modId,
-						range = tonumber(bestPrecisionRange),
+						range = bestPrecisionRange >= 0 and bestPrecisionRange <= 1 and bestPrecisionRange or 0.5,
 					})
 					self.pendingAffixList = {}
 				else
 					-- Use rolling Delta/Range in case one range is 1-3 and another is 1-100 so we get the finest precision possible
 					local bestPrecisionDelta = -1
 					local bestPrecisionRange = -1
-					
+
 					-- Replace non-number ranges as unsupported
 					line = line:gsub("(%a+)%([%a%s]+%-[%a%s]+%)", "%1")
+
+					-- Strip single values like 25(50) -> 25
+					line = line:gsub("(%d+)%((%d+)%)", "%1")
 
 					for value, range in line:gmatch("(%-?%d+%.?%d*)%((%-?%d+%.?%d*%-%-?%d+%.?%d*)%)") do
 						local min, max = range:match("(%-?%d+%.?%d*)%-(%-?%d+%.?%d*)")
@@ -906,7 +925,7 @@ function ItemClass:ParseRaw(raw, rarity, highQuality)
 						end
 					end
 					if bestPrecisionRange <= 1 and bestPrecisionRange >= 0 then
-						modLine.range = tonumber(bestPrecisionRange)
+						modLine.range = bestPrecisionRange
 					end
 				end
 				local rangedLine = itemLib.applyRange(line, 1, catalystScalar, modLine.corruptedRange)
@@ -1001,6 +1020,18 @@ function ItemClass:ParseRaw(raw, rarity, highQuality)
 	if self.base then
 		if self.base.weapon or self.base.armour or self.base.tags.wand or self.base.tags.staff or self.base.tags.sceptre then
 			local shouldFixRunesOnItem = #self.runes == 0
+			if not shouldFixRunesOnItem and #self.runeModLines > 0 then
+				local canRebuildRunes = true
+				for _, rune in ipairs(self.runes) do
+					if rune ~= "None" and not data.itemMods.Runes[rune] then
+						canRebuildRunes = false
+						break
+					end
+				end
+				if canRebuildRunes then
+					self:UpdateRunes()
+				end
+			end
 
 			local function getRuneLineParts(modLine)
 				local values = { }
@@ -1092,17 +1123,17 @@ function ItemClass:ParseRaw(raw, rarity, highQuality)
 			local broadItemType = self.base.weapon and "weapon" or (self.base.tags.wand or self.base.tags.staff) and "caster" or "armour" -- minor optimisation
 			local specificItemType = self.base.type:lower()
 			for runeName, runeMods in pairs(data.itemMods.Runes) do
-				local addModToGroupedRunes = function (modLine)
+				local addModToGroupedRunes = function (modLine, augmentType)
 					local runeStrippedModLine, runeValues = getRuneLineParts(modLine)
 					if statGroupedRunes[runeStrippedModLine] == nil then
 						statGroupedRunes[runeStrippedModLine] = { }
 					end
-					t_insert(statGroupedRunes[runeStrippedModLine], { name = runeName, values = runeValues })
+					t_insert(statGroupedRunes[runeStrippedModLine], { name = runeName, type = augmentType, values = runeValues })
 				end
 				for slotType, slotMod in pairs(runeMods) do
 					if slotType == broadItemType or slotType == specificItemType then
 						for _, mod in ipairs(slotMod) do
-							addModToGroupedRunes(mod)
+							addModToGroupedRunes(mod, slotMod.type)
 						end
 					end
 				end
@@ -1113,19 +1144,45 @@ function ItemClass:ParseRaw(raw, rarity, highQuality)
 				table.sort(runes,  function(a, b) return compareRuneValueSets(a.values, b.values) end)
 			end
 
+			local gameSocketedRuneEffectModifier = 0
+			if mode == "GAME" and shouldFixRunesOnItem then
+				for _, modLines in ipairs({ self.enchantModLines, self.implicitModLines, self.explicitModLines }) do
+					for _, effectModLine in ipairs(modLines) do
+						for _, mod in ipairs(effectModLine.modList or { }) do
+							if mod.name == "SocketedRuneEffect" and mod.type == "INC" then
+								gameSocketedRuneEffectModifier = gameSocketedRuneEffectModifier + mod.value / 100
+							end
+						end
+					end
+				end
+			end
+
 			local remainingRunes = self.itemSocketCount
 			for i, modLine in ipairs(self.runeModLines) do
 				local strippedModLine, targetValues = getRuneLineParts(modLine.line)
 				local groupedRunes = statGroupedRunes[strippedModLine]
 				if groupedRunes and not modLine.bonded then -- found the rune category with the relevant stat.
-					local result, numRunes = findRuneCombination(groupedRunes, targetValues, remainingRunes)
+					local result, numRunes
+					local socketedRuneEffectAlreadyApplied
+					if gameSocketedRuneEffectModifier ~= 0 then
+						local unscaledTargetValues = { }
+						for valueIndex, value in ipairs(targetValues) do
+							unscaledTargetValues[valueIndex] = value / (1 + gameSocketedRuneEffectModifier)
+						end
+						result, numRunes = findRuneCombination(groupedRunes, unscaledTargetValues, remainingRunes)
+						socketedRuneEffectAlreadyApplied = result ~= nil
+					end
+					if not result then
+						result, numRunes = findRuneCombination(groupedRunes, targetValues, remainingRunes)
+					end
 
 					if result then -- we have found a valid combo for that rune category
 						remainingRunes = remainingRunes - numRunes
-						-- this code should probably be refactored to based off stored self.runes rather than the recomputed amounts off the runeModLines this 
+						-- this code should probably be refactored to based off stored self.runes rather than the recomputed amounts off the runeModLines this
 						-- is too avoid having to run the relatively expensive recomputation every time the item is parsed even if we know the runes on the item already.
-						modLine.soulCore = groupedRunes[1].name:match("Soul Core") ~= nil
+						modLine.augmentType = groupedRunes[1].type
 						modLine.runeCount = numRunes
+						modLine.socketedRuneEffectAlreadyApplied = socketedRuneEffectAlreadyApplied
 
 						if shouldFixRunesOnItem then
 							for index, rune in ipairs(groupedRunes) do
@@ -1143,7 +1200,7 @@ function ItemClass:ParseRaw(raw, rarity, highQuality)
 			self.runes = { }
 		end
 	end
-	
+
 	if self.base and not self.requirements.level then
 		if importedLevelReq and #self.sockets == 0 then
 			-- Requirements on imported items can only be trusted for items with no sockets
@@ -1167,7 +1224,7 @@ function ItemClass:ParseRaw(raw, rarity, highQuality)
 	end
 	self.affixLimit = 0
 	if self.crafted then
-		if not self.affixes then 
+		if not self.affixes then
 			self.crafted = false
 		elseif self.rarity == "MAGIC" then
 			if self.prefixes.limit or self.suffixes.limit then
@@ -1249,7 +1306,7 @@ function ItemClass:NormaliseQuality()
 		elseif not self.uniqueID and not self.corrupted and not self.mirrored and not (self.base.type == "Charm") and self.quality < self.base.quality then -- charms cannot be modified by quality currency.
 			self.quality = main.defaultItemQuality
 		end
-	end	
+	end
 end
 
 function ItemClass:GetModSpawnWeight(mod, includeTags, excludeTags)
@@ -1273,6 +1330,9 @@ end
 
 function ItemClass:BuildRaw()
 	local rawLines = { }
+	if self.runeModLines and self.runeModLines[1] then
+		self:ApplySocketedRuneDisplayScalars()
+	end
 	t_insert(rawLines, "Rarity: " .. self.rarity)
 	if self.title then
 		t_insert(rawLines, self.title)
@@ -1289,7 +1349,9 @@ function ItemClass:BuildRaw()
 	if self.armourData then
 		for _, type in ipairs({ "Armour", "Evasion", "EnergyShield", "Ward" }) do
 			if self.armourData[type] and self.armourData[type] > 0 then
-				t_insert(rawLines, type:gsub("EnergyShield", "Energy Shield") .. ": " .. self.armourData[type])
+				if type ~= "Ward" or self.wardFromPropertyLine then
+					t_insert(rawLines, type:gsub("EnergyShield", "Energy Shield") .. ": " .. self.armourData[type])
+				end
 			end
 		end
 	end
@@ -1332,7 +1394,8 @@ function ItemClass:BuildRaw()
 		t_insert(rawLines, "Item Level: " .. self.itemLevel)
 	end
 	local function writeModLine(modLine)
-		local line = modLine.line
+		local displayValueScalar = modLine.displayValueScalar and (modLine.valueScalar or 1) * modLine.displayValueScalar
+		local line = displayValueScalar and itemLib.applyRange(modLine.line, modLine.range or main.defaultItemAffixQuality, displayValueScalar, modLine.corruptedRange) or modLine.line
 		if modLine.range and line:match("%(%-?[%d%.]+%-%-?[%d%.]+%)") then
 			line = "{range:" .. round(modLine.range, 3) .. "}" .. line
 		end
@@ -1356,6 +1419,9 @@ function ItemClass:BuildRaw()
 		end
 		if modLine.mutated then
 			line = "{mutated}" .. line
+		end
+		if modLine.crafted then
+			line = "{crafted}" .. line
 		end
 		if modLine.unscalable then
 			line = "{unscalable}" .. line
@@ -1383,7 +1449,7 @@ function ItemClass:BuildRaw()
 			if baseLine.variantList then
 				writeModLine(baseLine)
 			end
-		end	
+		end
 		if self.hasAltVariant then
 			t_insert(rawLines, "Has Alt Variant: true")
 			t_insert(rawLines, "Selected Alt Variant: " .. self.variantAlt)
@@ -1477,7 +1543,7 @@ end
 -- Rebuild rune modifiers using the item's runes
 function ItemClass:UpdateRunes()
 	wipeTable(self.runeModLines)
-	local getModRunesForTypes = function(runeName, baseType, specificType) 
+	local getModRunesForTypes = function(runeName, baseType, specificType)
 		local rune = data.itemMods.Runes[runeName]
 		local gatheredRuneMods = { }
 		if rune then
@@ -1486,7 +1552,7 @@ function ItemClass:UpdateRunes()
 					t_insert(gatheredRuneMods, rune[baseType])
 				-- end
 			end
-			if rune[specificType] then 
+			if rune[specificType] then
 				-- for _, mod in pairs(rune[specificType]) do
 					t_insert(gatheredRuneMods, rune[specificType])
 				-- end
@@ -1494,40 +1560,61 @@ function ItemClass:UpdateRunes()
 		end
 		return gatheredRuneMods
 	end
-	
+
 	local statOrder = {}
 	for i = 1, self.itemSocketCount do
 		local name = self.runes[i]
 		if name and name ~= "None" then
-			local baseType = self.base.weapon and "weapon" or self.base.armour and "armour" or (self.base.tags.wand or self.base.tags.staff) and "caster"
-			local specificType = self.base.type:lower()
+			local subType = self.base.subType and self.base.subType:lower()
+			local itemType = self.base.type:lower()
+			local baseType = self.base.weapon and "weapon" or self.base.armour and "armour" or (self.base.tags.wand or self.base.tags.staff or self.base.tags.sceptre) and "caster"
+			local specificType =
+				(subType == "warstaff" and "warstaff") or
+				(itemType == "shield" and subType == "evasion" and "buckler") or
+				itemType
 			local gatheredMods = getModRunesForTypes(name, baseType, specificType)
 			for _, mod in ipairs(gatheredMods) do
 				for i, modLine in ipairs(mod) do
 					local order = mod.statOrder[i]
-					if statOrder[order] then
+					local orderKey = mod.type .. ":" .. (modLine:match("^Bonded:") and "Bonded:"..order or order)
+					if statOrder[orderKey] then
 						-- Combine stats
 						local start = 1
-						statOrder[order].line = statOrder[order].line:gsub("(%d%.?%d*)", function(num)
+						statOrder[orderKey].line = statOrder[orderKey].line:gsub("(%d%.?%d*)", function(num)
 							local s, e, other = mod[i]:find("(%d%.?%d*)", start)
 							start = e + 1
 							return tonumber(num) + tonumber(other)
 						end)
+						local modList, extra = modLib.parseMod(statOrder[orderKey].line)
+						statOrder[orderKey].modList = modList or { }
+						statOrder[orderKey].extra = extra
 					else
-						local modLine = { line = modLine, order = order, rune = true, enchant = true }
+						local modList, extra = modLib.parseMod(modLine)
+						local modLine = { line = modLine, order = order, modList = modList or { }, extra = extra, rune = true, enchant = true, augmentType = mod.type }
 						for l = 1, #self.runeModLines + 1 do
 							if not self.runeModLines[l] or self.runeModLines[l].order > order then
 								t_insert(self.runeModLines, l, modLine)
 								break
 							end
 						end
-						statOrder[order] = modLine
-					end	
+						statOrder[orderKey] = modLine
+					end
 				end
 			end
 		end
 	end
+end
 
+function ItemClass:ApplySocketedRuneDisplayScalars()
+	for _, modLine in ipairs(self.runeModLines or { }) do
+		local effectModifier = modLine.augmentType == "SoulCore" and (self.socketedSoulCoreEffectModifier or 0)
+			or modLine.augmentType == "Rune" and (self.socketedRuneEffectModifier or 0)
+		if effectModifier and effectModifier ~= 0 and not modLine.socketedRuneEffectAlreadyApplied then
+			modLine.displayValueScalar = 1 + effectModifier
+		else
+			modLine.displayValueScalar = nil
+		end
+	end
 end
 
 -- Rebuild explicit modifiers using the item's affixes
@@ -1580,7 +1667,7 @@ function ItemClass:Craft()
 							end
 						end
 						statOrder[order] = modLine
-					end	
+					end
 				end
 			end
 		end
@@ -1595,7 +1682,7 @@ function ItemClass:Craft()
 end
 
 function ItemClass:CheckModLineVariant(modLine)
-	return not modLine.variantList 
+	return not modLine.variantList
 		or modLine.variantList[self.variant]
 		or (self.hasAltVariant and modLine.variantList[self.variantAlt])
 		or (self.hasAltVariant2 and modLine.variantList[self.variantAlt2])
@@ -1621,6 +1708,14 @@ function ItemClass:GetPrimarySlot()
 	else
 		return self.type
 	end
+end
+
+function ItemClass:GetArmourDataValue(name, level)
+	local armourData = self.armourData
+	if not armourData then
+		return 0
+	end
+	return (armourData[name] or 0) + round((armourData[name.."PerLevel"] or 0) * (level or 0))
 end
 
 -- Calculate local modifiers, and removes them from the modifier list
@@ -1712,7 +1807,7 @@ function ItemClass:BuildModListForSlotNum(baseList, slotNum)
 		weaponData.AttackRate = round(self.base.weapon.AttackRateBase * (1 + weaponData.AttackSpeedInc / 100), 2)
 		weaponData.rangeBonus = calcLocal(modList, "WeaponRange", "BASE", 0) + 10 * calcLocal(modList, "WeaponRangeMetre", "BASE", 0) + m_floor(self.quality / 10 * calcLocal(modList, "AlternateQualityLocalWeaponRangePer10Quality", "BASE", 0))
 		weaponData.range = self.base.weapon.Range + weaponData.rangeBonus
-		if self.base.weapon.ReloadTimeBase then 
+		if self.base.weapon.ReloadTimeBase then
 			weaponData.ReloadSpeedInc = calcLocal(modList, "ReloadSpeed", "INC", ModFlag.Attack) + weaponData.AttackSpeedInc
 			weaponData.ReloadTime = round(self.base.weapon.ReloadTimeBase / (1 + weaponData.ReloadSpeedInc / 100), 2)
 		end
@@ -1764,20 +1859,41 @@ function ItemClass:BuildModListForSlotNum(baseList, slotNum)
 			weaponData.TotalDPS = weaponData.TotalDPS + (weaponData[dmgType.."DPS"] or 0)
 		end
 	elseif self.base.armour then
-		local armourData = self.armourData
+		local armourData = self.armourData  -- same object populated by ParseRaw/ImportItem; authoritative Ward read inside wardIsAuthoritative block below relies on this
 		local armourBase = calcLocal(modList, "Armour", "BASE", 0) + (self.base.armour.Armour or 0)
 		local armourEvasionBase = calcLocal(modList, "ArmourAndEvasion", "BASE", 0)
 		local evasionBase = calcLocal(modList, "Evasion", "BASE", 0) + (self.base.armour.Evasion or 0)
 		local evasionEnergyShieldBase = calcLocal(modList, "EvasionAndEnergyShield", "BASE", 0)
 		local energyShieldBase = calcLocal(modList, "EnergyShield", "BASE", 0) + (self.base.armour.EnergyShield or 0)
 		local armourEnergyShieldBase = calcLocal(modList, "ArmourAndEnergyShield", "BASE", 0)
-		local wardBase = calcLocal(modList, "Ward", "BASE", 0) + (self.base.armour.Ward or 0)
+		-- wardIsAuthoritative: true when armourData.Ward was set by a property line in the original
+		-- user-provided paste or API import (tracked by self.wardFromPropertyLine, which BuildRaw
+		-- preserves only for authoritative items, so the flag survives BuildAndParseRaw round-trips).
+		-- That value is the final game-computed ward (already includes flat rune mods, INC rune mods,
+		-- and quality). We must consume the local ward mods from modList to prevent double-application
+		-- in CalcDefence, but we must NOT re-scale the already-final value.
+		-- Exception: WardPerLevel is NOT baked into the property line, so the consumed wardInc
+		-- must still be applied to it (same as EvasionPerLevel/EnergyShieldPerLevel use their INC mods).
+		local wardIsAuthoritative = self.wardFromPropertyLine
+		local wardBase
+		local wardIncConsumed = 0  -- INC consumed in authoritative path; preserved for WardPerLevel
+		if wardIsAuthoritative then
+			calcLocal(modList, "Ward", "BASE", 0)  -- consume flat rune ward mods (discard result)
+			wardIncConsumed = calcLocal(modList, "Ward", "INC", 0)  -- consume INC rune ward mods; save for WardPerLevel
+			wardBase = armourData.Ward  -- property line is the final game value; base Ward is already baked in
+		else
+			wardBase = calcLocal(modList, "Ward", "BASE", 0) + (self.base.armour.Ward or 0)
+		end
+		local evasionPerLevel = calcLocal(modList, "EvasionPerLevel", "BASE", 0)
+		local energyShieldPerLevel = calcLocal(modList, "EnergyShieldPerLevel", "BASE", 0)
+		local wardPerLevel = calcLocal(modList, "WardPerLevel", "BASE", 0)
 		local armourInc = calcLocal(modList, "Armour", "INC", 0)
 		local armourEvasionInc = calcLocal(modList, "ArmourAndEvasion", "INC", 0)
 		local evasionInc = calcLocal(modList, "Evasion", "INC", 0)
 		local evasionEnergyShieldInc = calcLocal(modList, "EvasionAndEnergyShield", "INC", 0)
 		local energyShieldInc = calcLocal(modList, "EnergyShield", "INC", 0)
-		local wardInc = calcLocal(modList, "Ward", "INC", 0)
+		local wardInc = wardIsAuthoritative and 0 or calcLocal(modList, "Ward", "INC", 0)
+		local wardIncForPerLevel = wardIsAuthoritative and wardIncConsumed or wardInc
 		local armourEnergyShieldInc = calcLocal(modList, "ArmourAndEnergyShield", "INC", 0)
 		local defencesInc = calcLocal(modList, "Defences", "INC", 0)
 		local qualityScalar = self.quality
@@ -1788,7 +1904,12 @@ function ItemClass:BuildModListForSlotNum(baseList, slotNum)
 		armourData.Armour = round((armourBase + armourEvasionBase + armourEnergyShieldBase) * (1 + (armourInc + armourEvasionInc + armourEnergyShieldInc + defencesInc) / 100) * (1 + (qualityScalar / 100)))
 		armourData.Evasion = round((evasionBase + armourEvasionBase + evasionEnergyShieldBase) * (1 + (evasionInc + armourEvasionInc + evasionEnergyShieldInc + defencesInc) / 100) * (1 + (qualityScalar / 100)))
 		armourData.EnergyShield = round((energyShieldBase + evasionEnergyShieldBase + armourEnergyShieldBase) * (1 + (energyShieldInc + armourEnergyShieldInc + evasionEnergyShieldInc + defencesInc) / 100) * (1 + (qualityScalar / 100)))
-		armourData.Ward = round((wardBase) * (1 + (wardInc + defencesInc) / 100) * (1 + (qualityScalar / 100)))
+		armourData.Ward = wardIsAuthoritative
+			and round(wardBase)  -- property line is final (game already applied quality+INC); do not re-scale
+			or round((wardBase) * (1 + (wardInc + defencesInc) / 100) * (1 + (qualityScalar / 100)))
+		armourData.EvasionPerLevel = evasionPerLevel * (1 + (evasionInc + armourEvasionInc + evasionEnergyShieldInc + defencesInc) / 100) * (1 + (qualityScalar / 100))
+		armourData.EnergyShieldPerLevel = energyShieldPerLevel * (1 + (energyShieldInc + armourEnergyShieldInc + evasionEnergyShieldInc + defencesInc) / 100) * (1 + (qualityScalar / 100))
+		armourData.WardPerLevel = wardPerLevel * (1 + (wardIncForPerLevel + defencesInc) / 100) * (1 + (qualityScalar / 100))
 
 		if self.base.armour.BlockChance then
 			armourData.BlockChance = m_floor((self.base.armour.BlockChance * (1 + calcLocal(modList, "BlockChance", "INC", 0) / 100) + calcLocal(modList, "BlockChance", "BASE", 0)))
@@ -1863,6 +1984,9 @@ function ItemClass:BuildModListForSlotNum(baseList, slotNum)
 		for _, value in ipairs(modList:List(nil, "JewelData")) do
 			jewelData[value.key] = value.value
 		end
+		for _, className in ipairs(modList:List(nil, "AlternateClassStart")) do
+			jewelData.alternateClassStart = className
+		end
 		if modList:List(nil, "FromNothingKeystones") then
 			jewelData.fromNothingKeystones = { }
 			for _, value in ipairs(modList:List(nil, "FromNothingKeystones")) do
@@ -1892,11 +2016,11 @@ function ItemClass:BuildModListForSlotNum(baseList, slotNum)
 			if jewelData.clusterJewelSkill and not self.clusterJewel.skills[jewelData.clusterJewelSkill] then
 				jewelData.clusterJewelSkill = nil
 			end
-			jewelData.clusterJewelValid = jewelData.clusterJewelKeystone 
-				or ((jewelData.clusterJewelSkill or jewelData.clusterJewelSmallsAreNothingness) and jewelData.clusterJewelNodeCount) 
+			jewelData.clusterJewelValid = jewelData.clusterJewelKeystone
+				or ((jewelData.clusterJewelSkill or jewelData.clusterJewelSmallsAreNothingness) and jewelData.clusterJewelNodeCount)
 				or (jewelData.clusterJewelSocketCountOverride and jewelData.clusterJewelNothingnessCount)
 		end
-	end	
+	end
 	return { unpack(modList) }
 end
 
@@ -1941,7 +2065,7 @@ function ItemClass:BuildModList()
 				if modLine.range then
 					-- Check if line actually has a range
 					if modLine.line:find("%((%-?%d+%.?%d*)%-(%-?%d+%.?%d*)%)") then
-						local strippedModeLine = modLine.line:gsub("\n"," ")						
+						local strippedModeLine = modLine.line:gsub("\n"," ")
 						local catalystScalar = getCatalystScalar(self.catalyst, modLine, self.catalystQuality)
 						-- Put the modified value into the string
 						local line = itemLib.applyRange(strippedModeLine, modLine.range, catalystScalar, modLine.corruptedRange)
@@ -1981,6 +2105,20 @@ function ItemClass:BuildModList()
 	end
 	for _, modLine in ipairs(self.explicitModLines) do
 		processModLine(modLine)
+	end
+	self.socketedSoulCoreEffectModifier = calcLocal(baseList, "SocketedSoulCoreEffect", "INC", 0) / 100
+	self.socketedRuneEffectModifier = calcLocal(baseList, "SocketedRuneEffect", "INC", 0) / 100
+	if self.runeModLines[1] then
+		self:ApplySocketedRuneDisplayScalars()
+	end
+	for _, modLine in ipairs(self.runeModLines) do
+		local effectModifier = modLine.augmentType == "SoulCore" and self.socketedSoulCoreEffectModifier
+			or modLine.augmentType == "Rune" and self.socketedRuneEffectModifier
+		if effectModifier and effectModifier ~= 0 and self:CheckModLineVariant(modLine) and not modLine.extra and not modLine.socketedRuneEffectAlreadyApplied then
+			for _, mod in ipairs(modLine.modList) do
+				baseList:ScaleAddMod(mod, effectModifier)
+			end
+		end
 	end
 	self.grantedSkills = { }
 	for _, skill in ipairs(baseList:List(nil, "ExtraSkill")) do
@@ -2047,14 +2185,17 @@ function ItemClass:BuildModList()
 		baseList:NewMod("ArmourData", "LIST", { key = "EnergyShield", value = 0 })
 		self.requirements.int = 0
 	end
+	if self.name == "Geofri's Sanctuary, Revered Vestments" then
+		baseList:NewMod("ArmourData", "LIST", { key = "EnergyShield", value = 0 })
+	end
 	if calcLocal(baseList, "NoAttributeRequirements", "FLAG", 0) then
 		self.requirements.strMod = 0
 		self.requirements.dexMod = 0
 		self.requirements.intMod = 0
 	elseif calcLocal(baseList, "AttributeRequirementsConverted", "FLAG", 0) then
-		local strConversion = calcLocal(baseList, "AttributeRequirementsConvertedToStrength", "BASE", 0) / 100  
-		local dexConversion = calcLocal(baseList, "AttributeRequirementsConvertedToDexterity", "BASE", 0) / 100 
-		local intConversion = calcLocal(baseList, "AttributeRequirementsConvertedToIntelligence", "BASE", 0) / 100 
+		local strConversion = calcLocal(baseList, "AttributeRequirementsConvertedToStrength", "BASE", 0) / 100
+		local dexConversion = calcLocal(baseList, "AttributeRequirementsConvertedToDexterity", "BASE", 0) / 100
+		local intConversion = calcLocal(baseList, "AttributeRequirementsConvertedToIntelligence", "BASE", 0) / 100
 		self.requirements.intBase = intConversion * (self.requirements.str + self.requirements.dex) + (self.requirements.int + calcLocal(baseList, "IntRequirement", "BASE", 0)) - self.requirements.int * (strConversion + dexConversion)
 		self.requirements.intMod = m_floor(self.requirements.intBase * (1 + calcLocal(baseList, "IntRequirement", "INC", 0) / 100))
 		self.requirements.dexBase = dexConversion * (self.requirements.str + self.requirements.int) + (self.requirements.dex + calcLocal(baseList, "DexRequirement", "BASE", 0)) - self.requirements.dex * (strConversion + intConversion)
@@ -2088,5 +2229,4 @@ function ItemClass:BuildModList()
 	else
 		self.modList = self:BuildModListForSlotNum(baseList)
 	end
-	self.socketedSoulCoreEffectModifier = calcLocal(baseList, "SocketedSoulCoreEffect", "INC", 0) / 100
 end

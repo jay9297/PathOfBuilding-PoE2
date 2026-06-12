@@ -15,6 +15,7 @@ function SkillsSetServiceClass:NewSkillSet(name)
 	self.skillsTab:SetActiveSkillSet(skillSet.id, true)
 	self.skillsTab:AddUndoState()
 	self.skillsTab.build:SyncLoadouts()
+	return skillSet
 end
 
 function SkillsSetServiceClass:CopySkillSet(skillSetId, name)

@@ -16,6 +16,7 @@ function ItemSetServiceClass:NewItemSet(name)
 	self.itemsTab:AddUndoState()
 	self.itemsTab.build:SyncLoadouts()
 	self.itemsTab.build.buildFlag = true
+	return itemSet
 end
 
 function ItemSetServiceClass:CopyItemSet(itemSetId, name)

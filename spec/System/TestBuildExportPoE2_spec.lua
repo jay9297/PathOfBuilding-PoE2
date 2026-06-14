@@ -269,6 +269,15 @@ describe("TestBuildExportPoE2", function()
 			-- An empty build has no passives so no stringId check fires.
 			assert.is_nil(warning)
 		end)
+
+		it("Returns warning when allocated nodes lack stringId", function()
+			-- Simulate a node without stringId to trigger the degraded-export path.
+			build.treeTab.specList[1].allocNodes = { [1] = {} }
+			local _, err, warning = BuildExportPoE2.Export(build)
+			assert.is_nil(err)
+			assert.is_not_nil(warning)
+			assert.is_truthy(warning:find("stringId"))
+		end)
 	end)
 
 	describe("WriteFile", function()

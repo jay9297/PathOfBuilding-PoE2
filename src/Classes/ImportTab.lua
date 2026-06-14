@@ -402,7 +402,7 @@ function ImportTabClass:DoPoE2Export(Exporter, path)
 	local function doWrite()
 		local ok, err, warning = Exporter.WriteFile(self.build, path)
 		if ok then
-			local safePath = path:gsub("%^", "^")
+			local safePath = path:gsub("%^", "^^")
 			if warning then
 				self.poe2ExportStatus = colorCodes.WARNING .. "Saved (warning): " .. warning
 			else

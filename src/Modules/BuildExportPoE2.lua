@@ -178,13 +178,13 @@ local POE2_APP_ID = "2694490"
 local POE2_RELATIVE = "Documents" .. "/" .. "My Games" .. "/" .. "Path of Exile 2" .. "/" .. "BuildPlanner"
 
 local function dirExists(path)
-	-- os.rename(x, x) is a POSIX-guaranteed no-op when x exists; the returned
-	-- error distinguishes ENOENT ("No such file") from other failures (e.g.
-	-- EBUSY, EACCES) that still indicate the path exists. No shell is spawned
-	-- and no path content is ever interpolated into a command string.
-	local ok, err = os.rename(path, path)
-	if ok then return true end
-	return err ~= nil and not err:find("No such file") and not err:find("does not exist")
+	-- os.rename(x, x) is a POSIX-guaranteed no-op when x exists; we only
+	-- trust the true-return because error strings are locale-dependent and
+	-- cannot be used to distinguish ENOENT from EACCES reliably. False
+	-- negatives (directory exists but isn't renameable) are acceptable here
+	-- since this function only determines a suggested default path.
+	local ok = os.rename(path, path)
+	return ok == true
 end
 
 local function tryProtonPath(baseSteam)

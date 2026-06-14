@@ -539,9 +539,9 @@ function PassiveTreeViewClass:Draw(build, viewPort, inputEvents)
 	elseif treeClick == "RIGHT" then
 		-- User right-clicked on a node
 		if hoverNode then
-			if IsKeyDown("SHIFT") then
-				-- Shift+Right-Click: open a popup to edit the per-node author note
-				-- (consumed by the PoE2 .build export as the node's additional_text).
+			if IsKeyDown("SHIFT") and hoverNode.alloc then
+				-- Shift+Right-Click on an allocated node: edit the per-node author
+				-- note emitted into the PoE2 .build export as additional_text.
 				local nodeId = hoverNode.id
 				local title = "Note: " .. (hoverNode.dn or hoverNode.name or "Passive")
 				main:OpenNoteEditPopup(title, spec.nodeNotes[nodeId], function(text)
@@ -1999,13 +1999,16 @@ function PassiveTreeViewClass:AddNodeTooltip(tooltip, node, build, incSmallPassi
 		tooltip:AddLine(14, colorCodes.TIP.."Tip: Hold Ctrl to hide this tooltip.")
 		tooltip:AddLine(14, colorCodes.TIP.."Tip: Press Ctrl+C to copy this node's text.")
 	end
-	-- Per-node author note (Shift+Right-Click to set/edit) emitted into the PoE2 .build export.
-	if node.id and build.spec and build.spec.nodeNotes then
+	-- Per-node author note (Shift+Right-Click on an allocated node to set/edit).
+	if node.id and node.alloc and build.spec and build.spec.nodeNotes then
 		local existing = build.spec.nodeNotes[node.id]
-		tooltip:AddSeparator(10)
-		tooltip:AddLine(14, colorCodes.TIP.."Shift + Right-Click to add a build note (PoE2 .build export)")
 		if existing and existing ~= "" then
+			tooltip:AddSeparator(10)
 			tooltip:AddLine(14, "^7Note: "..existing)
+			tooltip:AddLine(14, colorCodes.TIP.."Shift + Right-Click to edit (PoE2 .build export)")
+		else
+			tooltip:AddSeparator(10)
+			tooltip:AddLine(14, colorCodes.TIP.."Shift + Right-Click to add a build note (PoE2 .build export)")
 		end
 	end
 end

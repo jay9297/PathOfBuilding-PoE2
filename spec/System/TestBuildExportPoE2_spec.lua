@@ -96,6 +96,17 @@ describe("TestBuildExportPoE2", function()
 			assert.are.equals(1, newEntry.levelMin)
 			assert.are.equals(30, newEntry.levelMax)
 		end)
+
+		it("Treats levelMin-only entry as having a level set", function()
+			local existing = { { id = 1, levelMin = 1 } }
+			local newEntry = { id = 2 }
+			BuildExportPoE2.PresetNextLevels(existing, newEntry)
+			-- anyHas=true but maxLvl=0 (no levelMax), so new entry gets [1,30]
+			assert.are.equals(1, newEntry.levelMin)
+			assert.are.equals(30, newEntry.levelMax)
+			-- Must NOT re-seed the existing entry (it already had levelMin set)
+			assert.is_nil(existing[1].levelMax)
+		end)
 	end)
 
 	describe("NextLoadoutBracket", function()
@@ -250,6 +261,13 @@ describe("TestBuildExportPoE2", function()
 			local json1 = BuildExportPoE2.Export(build)
 			local json2 = BuildExportPoE2.Export(build)
 			assert.are.equals(json1, json2)
+		end)
+
+		it("Returns nil warning for an empty build", function()
+			local _, err, warning = BuildExportPoE2.Export(build)
+			assert.is_nil(err)
+			-- An empty build has no passives so no stringId check fires.
+			assert.is_nil(warning)
 		end)
 	end)
 

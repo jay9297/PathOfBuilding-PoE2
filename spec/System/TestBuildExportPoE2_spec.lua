@@ -278,6 +278,21 @@ describe("TestBuildExportPoE2", function()
 			assert.is_not_nil(warning)
 			assert.is_truthy(warning:find("stringId"))
 		end)
+
+		it("autoBracket never produces hi < lo for n >= 100 specs", function()
+			-- With n=100, i=1: old code gave hi=floor(1/100*99)=0 < lo=1.
+			-- The m_max fix ensures hi >= lo.
+			build.treeTab.specList[1].allocNodes = { [1] = {} }
+			for i = 2, 100 do
+				build.treeTab.specList[i] = { id = i, allocNodes = {} }
+			end
+			local root = BuildExportPoE2.BuildTable(build)
+			local first = root.passives[1]
+			if type(first) == "table" and first.level_interval then
+				assert.is_true(first.level_interval[1] <= first.level_interval[2],
+					"autoBracket produced hi < lo: " .. tostring(first.level_interval[1]) .. " > " .. tostring(first.level_interval[2]))
+			end
+		end)
 	end)
 
 	describe("WriteFile", function()

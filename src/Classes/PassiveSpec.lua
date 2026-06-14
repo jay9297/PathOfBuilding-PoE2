@@ -2367,7 +2367,7 @@ function PassiveSpecClass:CreateUndoState()
 	local weaponSets = { }
 	for nodeId in pairs(self.allocNodes) do
 		t_insert(allocNodeIdList, nodeId)
-		if self.nodes[nodeId].allocMode and self.nodes[nodeId].allocMode ~= 0 then
+		if self.nodes[nodeId] and self.nodes[nodeId].allocMode and self.nodes[nodeId].allocMode ~= 0 then
 			weaponSets[nodeId] = self.nodes[nodeId].allocMode
 		end
 	end

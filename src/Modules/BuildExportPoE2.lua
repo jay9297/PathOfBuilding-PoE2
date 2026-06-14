@@ -181,7 +181,7 @@ local function dirExists(path)
 	-- os.rename(x, x) is a POSIX-guaranteed no-op when x exists; we only
 	-- trust the true-return because error strings are locale-dependent and
 	-- cannot be used to distinguish ENOENT from EACCES reliably. False
-	-- negatives (directory exists but isn't renameable) are acceptable here
+	-- negatives (directory exists but isn't renamable) are acceptable here
 	-- since this function only determines a suggested default path.
 	local ok = os.rename(path, path)
 	return ok == true
@@ -283,6 +283,7 @@ local function buildPassives(build, brackets)
 	end
 	local passiveWarning = nil
 	if sawMissingStringId and not sawStringId then
+		-- cspell:ignore passivetree
 		passiveWarning = "tree.lua has no stringId fields — passive ids are numeric and may not be recognised by the in-game BuildPlanner. Regenerate tree.lua via Export/Scripts/passivetree.lua to fix."
 		ConPrintf("[PoE2Export] " .. passiveWarning)
 	end

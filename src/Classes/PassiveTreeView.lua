@@ -539,7 +539,7 @@ function PassiveTreeViewClass:Draw(build, viewPort, inputEvents)
 	elseif treeClick == "RIGHT" then
 		-- User right-clicked on a node
 		if hoverNode then
-			if IsKeyDown("SHIFT") and hoverNode.alloc then
+			if IsKeyDown("SHIFT") and hoverNode.alloc and spec then
 				-- Shift+Right-Click on an allocated node: edit the per-node author
 				-- note emitted into the PoE2 .build export as additional_text.
 				local nodeId = hoverNode.id

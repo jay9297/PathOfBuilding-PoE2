@@ -400,9 +400,14 @@ end
 
 function ImportTabClass:DoPoE2Export(Exporter, path)
 	local function doWrite()
-		local ok, err = Exporter.WriteFile(self.build, path)
+		local ok, err, warning = Exporter.WriteFile(self.build, path)
 		if ok then
-			self.poe2ExportStatus = colorCodes.POSITIVE .. "Saved to " .. path
+			local safePath = path:gsub("%^", "^^")
+			if warning then
+				self.poe2ExportStatus = colorCodes.WARNING .. "Saved (warning): " .. warning
+			else
+				self.poe2ExportStatus = colorCodes.POSITIVE .. "Saved to " .. safePath
+			end
 		else
 			self.poe2ExportStatus = colorCodes.NEGATIVE .. (err or "Export failed")
 			main:OpenMessagePopup("Export Failed", err or "Unknown error")

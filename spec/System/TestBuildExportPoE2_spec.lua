@@ -96,6 +96,17 @@ describe("TestBuildExportPoE2", function()
 			assert.are.equals(1, newEntry.levelMin)
 			assert.are.equals(30, newEntry.levelMax)
 		end)
+
+		it("Treats levelMin-only entry as having a level set", function()
+			local existing = { { id = 1, levelMin = 1 } }
+			local newEntry = { id = 2 }
+			BuildExportPoE2.PresetNextLevels(existing, newEntry)
+			-- anyHas=true but maxLvl=0 (no levelMax), so new entry gets [1,30]
+			assert.are.equals(1, newEntry.levelMin)
+			assert.are.equals(30, newEntry.levelMax)
+			-- Must NOT re-seed the existing entry (it already had levelMin set)
+			assert.is_nil(existing[1].levelMax)
+		end)
 	end)
 
 	describe("NextLoadoutBracket", function()
@@ -250,6 +261,37 @@ describe("TestBuildExportPoE2", function()
 			local json1 = BuildExportPoE2.Export(build)
 			local json2 = BuildExportPoE2.Export(build)
 			assert.are.equals(json1, json2)
+		end)
+
+		it("Returns nil warning for an empty build", function()
+			local _, err, warning = BuildExportPoE2.Export(build)
+			assert.is_nil(err)
+			-- An empty build has no passives so no stringId check fires.
+			assert.is_nil(warning)
+		end)
+
+		it("Returns warning when allocated nodes lack stringId", function()
+			-- Simulate a node without stringId to trigger the degraded-export path.
+			build.treeTab.specList[1].allocNodes = { [1] = {} }
+			local _, err, warning = BuildExportPoE2.Export(build)
+			assert.is_nil(err)
+			assert.is_not_nil(warning)
+			assert.is_truthy(warning:find("stringId"))
+		end)
+
+		it("autoBracket never produces hi < lo for n >= 100 specs", function()
+			-- With n=100, i=1: old code gave hi=floor(1/100*99)=0 < lo=1.
+			-- The m_max fix ensures hi >= lo.
+			build.treeTab.specList[1].allocNodes = { [1] = {} }
+			for i = 2, 100 do
+				build.treeTab.specList[i] = { id = i, allocNodes = {} }
+			end
+			local root = BuildExportPoE2.BuildTable(build)
+			local first = root.passives[1]
+			if type(first) == "table" and first.level_interval then
+				assert.is_true(first.level_interval[1] <= first.level_interval[2],
+					"autoBracket produced hi < lo: " .. tostring(first.level_interval[1]) .. " > " .. tostring(first.level_interval[2]))
+			end
 		end)
 	end)
 

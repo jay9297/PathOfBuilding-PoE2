@@ -2392,7 +2392,8 @@ function PassiveSpecClass:CreateUndoState()
 		weaponSets = weaponSets,
 		hashOverrides = copyTable(self.hashOverrides, true),
 		masteryEffects = selections,
-		treeVersion = self.treeVersion
+		treeVersion = self.treeVersion,
+		nodeNotes = copyTable(self.nodeNotes),
 	}
 end
 
@@ -2408,6 +2409,7 @@ function PassiveSpecClass:RestoreUndoState(state, treeVersion)
 		end
 	end
 	self:ImportFromNodeList(nil, classId, ascendClassId, state.secondaryAscendClassId, state.hashList, state.weaponSets, state.hashOverrides, state.masteryEffects, treeVersion or state.treeVersion)
+	self.nodeNotes = state.nodeNotes or {}
 	self:SetWindowTitleWithBuildClass()
 end
 

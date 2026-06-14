@@ -7,6 +7,7 @@ local pairs = pairs
 local ipairs = ipairs
 local t_insert = table.insert
 local t_remove = table.remove
+local m_floor = math.floor
 local m_min = math.min
 local m_max = math.max
 
@@ -1441,7 +1442,7 @@ function SkillsTabClass:OpenSkillSetManagePopup()
 		return function(buf)
 			local n = tonumber(buf)
 			if not n then return nil end
-			n = math.floor(n)
+			n = m_floor(n)
 			if n < 0 then n = 0 end
 			if n > 100 then n = 100 end
 			return n
@@ -1455,7 +1456,7 @@ function SkillsTabClass:OpenSkillSetManagePopup()
 		local set = selectedSet()
 		if set then
 			set.levelMin = clampLvl(buf)
-			self.build.modFlag = true
+			self.modFlag = true
 		end
 	end)
 	controls.lvlMin.tooltipText = "Lowest character level this skill set applies to in the exported .build (1-100). Leave blank to auto-split across skill sets."
@@ -1464,7 +1465,7 @@ function SkillsTabClass:OpenSkillSetManagePopup()
 		local set = selectedSet()
 		if set then
 			set.levelMax = clampLvl(buf)
-			self.build.modFlag = true
+			self.modFlag = true
 		end
 	end)
 	controls.lvlMax.tooltipText = "Highest character level this skill set applies to in the exported .build (1-100). Leave blank to auto-split across skill sets."

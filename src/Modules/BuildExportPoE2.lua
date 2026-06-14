@@ -68,7 +68,7 @@ local function autoBracket(i, n)
 		return presetBrackets[n][i]
 	end
 	local lo = (i == 1) and 1 or (m_floor((i - 1) / n * 99) + 1)
-	local hi = (i == n) and 100 or m_floor(i / n * 99)
+	local hi = (i == n) and 100 or m_max(lo, m_floor(i / n * 99))
 	return { lo, hi }
 end
 
@@ -152,9 +152,9 @@ function M.PresetNextLevels(existingEntries, newEntry)
 	local maxLvl = 0
 	local anyHas = false
 	for _, entry in ipairs(existingEntries or {}) do
-		if entry.levelMax then
+		if entry.levelMin or entry.levelMax then
 			anyHas = true
-			if entry.levelMax > maxLvl then maxLvl = entry.levelMax end
+			if entry.levelMax and entry.levelMax > maxLvl then maxLvl = entry.levelMax end
 		end
 	end
 	if not anyHas then
@@ -178,11 +178,13 @@ local POE2_APP_ID = "2694490"
 local POE2_RELATIVE = "Documents" .. "/" .. "My Games" .. "/" .. "Path of Exile 2" .. "/" .. "BuildPlanner"
 
 local function dirExists(path)
-	local handle = io.popen('ls -d "' .. path .. '" 2>/dev/null')
-	if not handle then return false end
-	local result = handle:read("*a")
-	handle:close()
-	return result and result:match("%S") ~= nil
+	-- os.rename(x, x) is a POSIX-guaranteed no-op when x exists; we only
+	-- trust the true-return because error strings are locale-dependent and
+	-- cannot be used to distinguish ENOENT from EACCES reliably. False
+	-- negatives (directory exists but isn't renameable) are acceptable here
+	-- since this function only determines a suggested default path.
+	local ok = os.rename(path, path)
+	return ok == true
 end
 
 local function tryProtonPath(baseSteam)
@@ -227,8 +229,9 @@ end
 -- and should not be emitted into the PassiveSkills table the loader looks up.
 local MAX_NORMAL_NODE_ID = 65536
 
-local warnedNoStringId = false
-
+-- buildPassives returns (outTable, warningString|nil).
+-- warningString is non-nil when tree.lua lacks stringId fields, meaning the
+-- in-game BuildPlanner may not recognise the numeric passive ids.
 local function buildPassives(build, brackets)
 	local specList = build.treeTab and build.treeTab.specList
 	if not specList then return {} end
@@ -278,15 +281,12 @@ local function buildPassives(build, brackets)
 			end
 		end
 	end
-	-- The PoE2 BuildPlanner expects PassiveSkills.Id strings (e.g. "projectiles18",
-	-- "AscendancyMercenary2Notable5"). PoB's tree.lua only carries numeric ids
-	-- until src/Export/Scripts/passivetree.lua is re-run against GGPK to emit -- cspell:ignore passivetree
-	-- the stringId field. Warn once when that hasn't happened — the file will
-	-- still write but the loader probably won't recognise the passive ids.
-	if sawMissingStringId and not sawStringId and not warnedNoStringId then
-		warnedNoStringId = true
-		ConPrintf("[PoE2Export] tree.lua has no stringId fields; passive ids will be numeric and may not be recognised by the in-game BuildPlanner. Regenerate tree.lua via src/Export/Scripts/passivetree.lua to fix.")
+	local passiveWarning = nil
+	if sawMissingStringId and not sawStringId then
+		passiveWarning = "tree.lua has no stringId fields — passive ids are numeric and may not be recognised by the in-game BuildPlanner. Regenerate tree.lua via Export/Scripts/passivetree.lua to fix."
+		ConPrintf("[PoE2Export] " .. passiveWarning)
 	end
+	table.sort(order)
 	local out = {}
 	for _, nodeId in ipairs(order) do
 		local m = merged[nodeId]
@@ -301,12 +301,11 @@ local function buildPassives(build, brackets)
 			t_insert(out, entry)
 		end
 	end
-	return out
+	return out, passiveWarning
 end
 
--- The auto-generated Gems.lua has a typo in ~486 entries' `gameId` field
--- ("Metadata/Items/Gem/" vs the canonical "Metadata/Items/Gems/"). The table
--- KEY is correct; `gemInstance.gemId` stores that key, so prefer it.
+-- Prefer the Gems.lua table key (gemId) over the gemData.gameId field;
+-- the key is always authoritative whereas gameId may differ in some entries.
 local function gemIdFor(gem)
 	if gem and gem.gemId then return gem.gemId end
 	return gem and gem.gemData and gem.gemData.gameId or nil
@@ -470,7 +469,11 @@ local function buildItems(build, brackets)
 		local itemSet = itemsTab.itemSets[setId]
 		local interval = brackets and brackets[setIdx] or nil
 		if itemSet then
-			for pobSlotName, mapping in pairs(M.SlotMap) do
+			local slotNames = {}
+			for k in pairs(M.SlotMap) do t_insert(slotNames, k) end
+			table.sort(slotNames)
+			for _, pobSlotName in ipairs(slotNames) do
+				local mapping = M.SlotMap[pobSlotName]
 				local slotEntry = itemSet[pobSlotName]
 				if slotEntry and slotEntry.selItemId and slotEntry.selItemId ~= 0 then
 					local item = itemsTab.items[slotEntry.selItemId]
@@ -535,28 +538,31 @@ function M.BuildTable(build)
 		itemBrackets = bracketsFor(build.itemsTab.itemSetOrderList, function(id) return getItemSet(build.itemsTab, id) end)
 	end
 
-	root.passives = buildPassives(build, treeBrackets)
+	local passiveWarning
+	root.passives, passiveWarning = buildPassives(build, treeBrackets)
 	root.skills   = buildSkills(build, skillBrackets)
 	root.items    = buildItems(build, itemBrackets)
-	return root
+	return root, passiveWarning
 end
 
---- Returns (jsonString, nil) on success, or (nil, errorMessage) on failure.
+--- Returns (jsonString, nil, warning) on success, or (nil, errorMessage) on failure.
+--- warning is a non-nil string when the export succeeded but passive ids are
+--- numeric (tree.lua has no stringId fields) and may not be recognised in-game.
 function M.Export(build)
-	local root = M.BuildTable(build)
+	local root, passiveWarning = M.BuildTable(build)
 	-- Force array-ness on the three top-level lists even when empty so the
 	-- loader sees `[]` instead of `{}`.
 	local state = { indent = true, level = 0 }
 	local json, err = dkjson.encode(root, state)
 	if not json then return nil, "JSON encode failed: " .. tostring(err) end
-	return json
+	return json, nil, passiveWarning
 end
 
 -- Writes the exported build to disk. Caller should confirm overwrite with the
 -- user before calling this — no existing-file check is performed here.
---- Returns (path, nil) on success.
+--- Returns (path, nil, warning) on success; (nil, errMsg) on failure.
 function M.WriteFile(build, path)
-	local json, err = M.Export(build)
+	local json, err, warning = M.Export(build)
 	if not json then return nil, err end
 	-- Best-effort: ensure the target directory exists.
 	local dir = path:match("^(.*[/\\])")
@@ -565,7 +571,7 @@ function M.WriteFile(build, path)
 	if not f then return nil, "Couldn't open '" .. path .. "': " .. tostring(fileErr) end
 	f:write(json)
 	f:close()
-	return path
+	return path, nil, warning
 end
 
 return M

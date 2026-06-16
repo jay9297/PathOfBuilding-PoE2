@@ -129,14 +129,16 @@ function calcs.buildModListForNode(env, node, incSmallPassiveSkill, includeKeyst
 	local localNotableIncEffect = 0
 	local modList = new("ModList")
 	if node.type == "Keystone" then
-		if includeKeystoneMods then
+		if includeKeystoneMods and node.modList then
 			modList:AddList(node.modList)
 		end
 		if node.keystoneMod then
 			modList:AddMod(node.keystoneMod)
 		end
 	else
-		modList:AddList(node.modList)
+		if node.modList then
+			modList:AddList(node.modList)
+		end
 	end
 
 	if #env.radiusJewelList > 0 and not GlobalCache.cachedData[env.mode].radiusJewelData then
@@ -288,7 +290,9 @@ function calcs.buildModListForNodeList(env, nodeList, finishJewels, includeKeyst
 	-- calculate inc from SmallPassiveSkillEffect
 	local inc = 0
 	for _, node in pairs(nodeList) do
-		inc = inc + node.modList:Sum("INC", nil ,"SmallPassiveSkillEffect")
+		if node.modList then
+			inc = inc + node.modList:Sum("INC", nil ,"SmallPassiveSkillEffect")
+		end
 	end
 
 	-- Add node modifiers

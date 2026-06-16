@@ -25,6 +25,9 @@ local M = {}
 -- inventory_id values derived from GGG's .build format documentation example
 -- (https://www.pathofexile.com/developer/docs/game#buildplanner).
 -- Only "Weapon1" is explicitly documented; others match the example output.
+-- Ring3, Charm1-3, Flask1-2: present in PoB's slot list but unconfirmed against
+-- the documented schema. Unknown ids are silently skipped by the loader, so the
+-- worst case is those items are omitted from the export rather than causing errors.
 M.SlotMap = {
 	["Weapon 1"]      = { inventory_id = "Weapon1" },
 	["Weapon 2"]      = { inventory_id = "Weapon2" },
@@ -58,7 +61,7 @@ function M.ClampLevel(v)
 	v = tonumber(v)
 	if not v then return nil end
 	v = m_floor(v)
-	if v < 0 then v = 0 end
+	if v < 1 then v = 1 end   -- level 0 is invalid in PoE2; clamp to minimum 1
 	if v > 100 then v = 100 end
 	return v
 end
@@ -175,7 +178,7 @@ function M.PresetNextLevels(existingEntries, newEntry)
 end
 
 local POE2_APP_ID = "2694490"
-local POE2_RELATIVE = "Documents" .. "/" .. "My Games" .. "/" .. "Path of Exile 2" .. "/" .. "BuildPlanner"
+local POE2_RELATIVE = "Documents/My Games/Path of Exile 2/BuildPlanner"
 
 local function dirExists(path)
 	-- os.rename(x, x) is a POSIX-guaranteed no-op when x exists; we only
@@ -197,7 +200,8 @@ end
 
 function M.DefaultDir()
 	if os.getenv("USERPROFILE") then
-		return os.getenv("USERPROFILE") .. "\\" .. POE2_RELATIVE .. "\\"
+		-- Use backslashes throughout on Windows to produce a consistent path.
+		return os.getenv("USERPROFILE") .. "\\Documents\\My Games\\Path of Exile 2\\BuildPlanner\\"
 	end
 	local home = os.getenv("HOME") or ""
 	local nativePath = home .. "/" .. POE2_RELATIVE
@@ -305,10 +309,7 @@ local function buildPassives(build, brackets)
 	return out, passiveWarning
 end
 
--- Prefer the Gems.lua table key (gemId) over the gemData.gameId field;
--- the key is always authoritative whereas gameId may differ in some entries.
 local function gemIdFor(gem)
-	if gem and gem.gemId then return gem.gemId end
 	return gem and gem.gemData and gem.gemData.gameId or nil
 end
 
@@ -451,7 +452,20 @@ local function itemAdditionalText(item)
 	appendItalic(item.implicitModLines)
 	appendPlain(item.explicitModLines)
 	local text = t_concat(parts, "\n")
-	if #text > 1000 then text = text:sub(1, 997) .. "..." end
+	if #text > 1000 then
+		-- Truncate at the last newline within the limit to avoid splitting a markup tag.
+		local limit = 997
+		local lastNl = 0
+		for pos in text:gmatch("()\n") do
+			if pos > limit then break end
+			lastNl = pos
+		end
+		if lastNl > 0 then
+			text = text:sub(1, lastNl - 1) .. "\n..."
+		else
+			text = text:sub(1, limit) .. "..."
+		end
+	end
 	return text
 end
 

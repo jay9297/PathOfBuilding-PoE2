@@ -24,9 +24,10 @@ describe("TestBuildExportPoE2", function()
 			assert.are.equals(5, BuildExportPoE2.ClampLevel("5.7"))
 		end)
 
-		it("Clamps negative values to 0", function()
-			assert.are.equals(0, BuildExportPoE2.ClampLevel(-10))
-			assert.are.equals(0, BuildExportPoE2.ClampLevel(-0.5))
+		it("Clamps values below 1 to 1 (level 0 is invalid in PoE2)", function()
+			assert.are.equals(1, BuildExportPoE2.ClampLevel(-10))
+			assert.are.equals(1, BuildExportPoE2.ClampLevel(-0.5))
+			assert.are.equals(1, BuildExportPoE2.ClampLevel(0))
 		end)
 
 		it("Clamps values above 100 to 100", function()
@@ -282,16 +283,80 @@ describe("TestBuildExportPoE2", function()
 		it("autoBracket never produces hi < lo for n >= 100 specs", function()
 			-- With n=100, i=1: old code gave hi=floor(1/100*99)=0 < lo=1.
 			-- The m_max fix ensures hi >= lo.
-			build.treeTab.specList[1].allocNodes = { [1] = {} }
+			-- Inject a stringId so the entry is definitely emitted as a table
+			-- (not collapsed to a bare string), making the assertion unconditional.
+			build.treeTab.specList[1].allocNodes = { [1] = { stringId = "test_node_1" } }
 			for i = 2, 100 do
 				build.treeTab.specList[i] = { id = i, allocNodes = {} }
 			end
 			local root = BuildExportPoE2.BuildTable(build)
 			local first = root.passives[1]
-			if type(first) == "table" and first.level_interval then
-				assert.is_true(first.level_interval[1] <= first.level_interval[2],
-					"autoBracket produced hi < lo: " .. tostring(first.level_interval[1]) .. " > " .. tostring(first.level_interval[2]))
+			assert.is_table(first, "expected first passive to be a table with level_interval")
+			assert.is_not_nil(first.level_interval, "expected first passive to have level_interval")
+			assert.is_true(first.level_interval[1] <= first.level_interval[2],
+				"autoBracket produced hi < lo: " .. tostring(first.level_interval[1]) .. " > " .. tostring(first.level_interval[2]))
+		end)
+	end)
+
+	describe("levelMin/levelMax round-trip via PassiveSpec save/load", function()
+		before_each(function()
+			newBuild()
+		end)
+
+		it("persists levelMin and levelMax through save/load", function()
+			local spec = new("PassiveSpec", build, latestTreeVersion)
+			spec.levelMin = 30
+			spec.levelMax = 60
+
+			-- PassiveSpec:Save sets xml.attrib in-place and appends children.
+			local xml = { attrib = {} }
+			spec:Save(xml)
+
+			local spec2 = new("PassiveSpec", build, latestTreeVersion)
+			spec2:Load(xml, "test.xml")
+
+			assert.are.equals(30, spec2.levelMin)
+			assert.are.equals(60, spec2.levelMax)
+		end)
+
+		it("levelMin and levelMax are nil after save/load when not set", function()
+			local spec = new("PassiveSpec", build, latestTreeVersion)
+			-- Do not set levelMin/levelMax — they should stay nil.
+
+			local xml = { attrib = {} }
+			spec:Save(xml)
+
+			local spec2 = new("PassiveSpec", build, latestTreeVersion)
+			spec2:Load(xml, "test.xml")
+
+			assert.is_nil(spec2.levelMin)
+			assert.is_nil(spec2.levelMax)
+		end)
+
+		it("bracketsFor uses persisted levelMin/levelMax to emit correct level_interval", function()
+			-- Tag spec 1 with [1,50] and add an untagged spec 2.
+			-- bracketsFor should detect hasAnyExplicit=true and leave spec 2 with no interval.
+			build.treeTab.specList[1].levelMin = 1
+			build.treeTab.specList[1].levelMax = 50
+			build.treeTab.specList[1].allocNodes = { [1] = { stringId = "test_node_a" } }
+			build.treeTab.specList[2] = { id = 2, allocNodes = { [2] = { stringId = "test_node_b" } } }
+
+			local root = BuildExportPoE2.BuildTable(build)
+
+			-- Node from spec 1 should have level_interval = {1, 50}.
+			local found1 = false
+			local found2_has_interval = false
+			for _, p in ipairs(root.passives) do
+				if type(p) == "table" and p.id == "test_node_a" then
+					found1 = true
+					assert.are.same({1, 50}, p.level_interval)
+				end
+				if type(p) == "table" and p.id == "test_node_b" and p.level_interval then
+					found2_has_interval = true
+				end
 			end
+			assert.is_true(found1, "node from tagged spec not found in passives")
+			assert.is_false(found2_has_interval, "untagged spec should have no level_interval when another spec is tagged")
 		end)
 	end)
 

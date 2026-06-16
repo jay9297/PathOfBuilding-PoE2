@@ -265,6 +265,8 @@ describe("TestBuildExportPoE2", function()
 		end)
 
 		it("Returns nil warning for an empty build", function()
+			-- Clear allocNodes so the stringId check has nothing to iterate.
+			build.treeTab.specList[1].allocNodes = {}
 			local _, err, warning = BuildExportPoE2.Export(build)
 			assert.is_nil(err)
 			-- An empty build has no passives so no stringId check fires.

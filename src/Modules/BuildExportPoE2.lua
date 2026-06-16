@@ -184,7 +184,7 @@ local function dirExists(path)
 	-- os.rename(x, x) is a POSIX-guaranteed no-op when x exists; we only
 	-- trust the true-return because error strings are locale-dependent and
 	-- cannot be used to distinguish ENOENT from EACCES reliably. False
-	-- negatives (directory exists but isn't renamable) are acceptable here
+	-- negatives (directory exists but os.rename fails) are acceptable here
 	-- since this function only determines a suggested default path.
 	local ok = os.rename(path, path)
 	return ok == true

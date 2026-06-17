@@ -344,6 +344,10 @@ function buildMode:Init(dbFileName, buildName, buildXML, convertBuild, importLin
 		self.viewMode = "CALCS"
 	end)
 	self.controls.modeCalcs.locked = function() return self.viewMode == "CALCS" end
+	self.controls.modeAdvisor = new("ButtonControl", {"LEFT",self.controls.modeCalcs,"RIGHT"}, {4, 0, 72, 20}, "Advisor", function()
+		self.viewMode = "ADVISOR"
+	end)
+	self.controls.modeAdvisor.locked = function() return self.viewMode == "ADVISOR" end
 	self.controls.modeParty = new("ButtonControl", {"TOPLEFT",self.anchorSideBar,"TOPLEFT"}, {0, 52, 72, 20}, "Party", function()
 		self.viewMode = "PARTY"
 	end)
@@ -512,6 +516,7 @@ function buildMode:Init(dbFileName, buildName, buildXML, convertBuild, importLin
 	self.data = data
 	self.importTab = new("ImportTab", self)
 	self.notesTab = new("NotesTab", self)
+	self.advisorTab = new("AdvisorTab", self)
 	self.partyTab = new("PartyTab", self)
 	self.configTab = new("ConfigTab", self)
 	self.itemsTab = new("ItemsTab", self)
@@ -1355,6 +1360,8 @@ function buildMode:OnFrame(inputEvents)
 		self.importTab:Draw(tabViewPort, inputEvents)
 	elseif self.viewMode == "NOTES" then
 		self.notesTab:Draw(tabViewPort, inputEvents)
+	elseif self.viewMode == "ADVISOR" then
+		self.advisorTab:Draw(tabViewPort, inputEvents)
 	elseif self.viewMode == "PARTY" then
 		self.partyTab:Draw(tabViewPort, inputEvents)
 	elseif self.viewMode == "CONFIG" then

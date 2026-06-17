@@ -1,8 +1,17 @@
 -- Path of Building
 --
 -- Module: Advisor Tab
--- Deterministic build-advisor tab (UI shell). Analysis logic lands in a later issue.
+-- Deterministic build-advisor tab. UI only — all rule logic lives in Modules/Advisor.lua.
 --
+local Advisor = LoadModule("Modules/Advisor")
+
+local severityColor = {
+	high = colorCodes.NEGATIVE,
+	med = colorCodes.WARNING,
+	low = colorCodes.NORMAL,
+	info = "^8",
+}
+
 local AdvisorTabClass = newClass("AdvisorTab", "ControlHost", "Control", function(self, build)
 	self.ControlHost()
 	self.Control()
@@ -15,11 +24,10 @@ local AdvisorTabClass = newClass("AdvisorTab", "ControlHost", "Control", functio
 	self.controls.refresh = new("ButtonControl", {"TOPLEFT",self.controls.title,"TOPLEFT"}, {0, 28, 80, 20}, "Refresh", function()
 		self:Refresh()
 	end)
-	self.controls.body = new("LabelControl", {"TOPLEFT",self.controls.refresh,"TOPLEFT"}, {0, 32, 0, 16}, "^7No findings yet — press Refresh")
 end)
 
 function AdvisorTabClass:Refresh()
-	-- No-op stub. Issue #79 wires this to Advisor.analyze(self.build).
+	self.findings = Advisor.analyze(self.build) or { }
 end
 
 function AdvisorTabClass:Draw(viewPort, inputEvents)
@@ -33,4 +41,26 @@ function AdvisorTabClass:Draw(viewPort, inputEvents)
 	main:DrawBackground(viewPort)
 
 	self:DrawControls(viewPort)
+
+	local x = viewPort.x + 8
+	local y = viewPort.y + 80
+	local findings = self.findings or { }
+	if #findings == 0 then
+		DrawString(x, y, "LEFT", 16, "VAR", "^7No issues found.")
+		return
+	end
+	for _, f in ipairs(findings) do
+		local color = severityColor[f.severity] or "^7"
+		DrawString(x, y, "LEFT", 16, "VAR BOLD", color .. "[" .. f.severity:upper() .. "] " .. (f.title or ""))
+		y = y + 18
+		if f.detail then
+			DrawString(x + 16, y, "LEFT", 14, "VAR", "^7" .. f.detail)
+			y = y + 16
+		end
+		if f.fix then
+			DrawString(x + 16, y, "LEFT", 14, "VAR", "^8Fix: " .. f.fix)
+			y = y + 16
+		end
+		y = y + 6
+	end
 end

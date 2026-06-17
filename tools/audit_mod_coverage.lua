@@ -1,7 +1,8 @@
 #!/usr/bin/env luajit
 -- Standalone audit script. Run from repo root: luajit tools/audit_mod_coverage.lua
 
-local lib = require("tools/mod_coverage_lib")
+package.path = "tools/?.lua;" .. package.path
+local lib = require("mod_coverage_lib")
 
 local manifest = lib.generate("src/Data/ModCache.lua")
 

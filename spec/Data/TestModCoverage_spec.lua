@@ -3,38 +3,46 @@ local lib = require("mod_coverage_lib")
 
 describe("ModCoverage #data", function()
     it("manifest matches committed audit/mod-coverage.txt", function()
-        local expected = lib.generate("../src/Data/ModCache.lua")
+        local actual = lib.generate("../src/Data/ModCache.lua")
 
         local f, err = io.open("../audit/mod-coverage.txt", "r")
         assert(f, "audit/mod-coverage.txt not found: " .. tostring(err))
-        local actual = f:read("*a")
+        local expected = f:read("*a")
         f:close()
 
-        if expected .. "\n" == actual then
+        -- Normalise trailing newlines so a lone trailing newline in the
+        -- committed file does not count as a content difference.
+        local norm_expected = expected:gsub("\n+$", "")
+        local norm_actual   = actual:gsub("\n+$", "")
+
+        if norm_expected == norm_actual then
             return
         end
 
-        local expected_lines = {}
-        for line in (expected .. "\n"):gmatch("([^\n]*)\n") do
-            expected_lines[#expected_lines + 1] = line
+        -- Build sets for a set-based diff (avoids positional false-positives
+        -- when a single inserted line would otherwise flood the output).
+        local expected_set = {}
+        for line in (norm_expected .. "\n"):gmatch("([^\n]*)\n") do
+            expected_set[line] = true
         end
-        local actual_lines = {}
-        for line in actual:gmatch("([^\n]*)\n") do
-            actual_lines[#actual_lines + 1] = line
+        local actual_set = {}
+        for line in (norm_actual .. "\n"):gmatch("([^\n]*)\n") do
+            actual_set[line] = true
         end
 
-        local added, removed = {}, {}
-        local max = math.max(#expected_lines, #actual_lines)
-        for i = 1, max do
-            if expected_lines[i] ~= actual_lines[i] then
-                if expected_lines[i] then
-                    removed[#removed + 1] = "- " .. expected_lines[i]
-                end
-                if actual_lines[i] then
-                    added[#added + 1] = "+ " .. actual_lines[i]
-                end
+        local removed, added = {}, {}
+        for line in pairs(expected_set) do
+            if not actual_set[line] then
+                removed[#removed + 1] = "- " .. line
             end
         end
+        for line in pairs(actual_set) do
+            if not expected_set[line] then
+                added[#added + 1] = "+ " .. line
+            end
+        end
+        table.sort(removed)
+        table.sort(added)
 
         local diff = table.concat(removed, "\n") .. "\n" .. table.concat(added, "\n")
         fail("audit/mod-coverage.txt is stale. Re-run: luajit tools/audit_mod_coverage.lua\nDiff:\n" .. diff)

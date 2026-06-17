@@ -26,7 +26,6 @@ function M.analyse(mod_cache_path)
         error("Failed to load ModCache.lua: " .. tostring(err))
     end
     local cache = {}
-    setfenv(chunk, setmetatable({}, { __index = _G }))
     chunk(cache)
 
     local supported = 0
@@ -83,6 +82,10 @@ end
 function M.render(result)
     local lines = {}
 
+    -- Note: the counts in the header are raw cache entry counts (before
+    -- number-normalisation de-duplication), while the manifest body lists
+    -- de-duped normalised forms. The line counts in the body will therefore
+    -- be <= the header counts for partial/unsupported categories.
     lines[#lines + 1] = string.format(
         "# total=%d supported=%d partial=%d unsupported=%d",
         result.total, result.supported, result.partial, result.unsupported

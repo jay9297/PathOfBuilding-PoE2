@@ -14,29 +14,32 @@ describe("SkillStatCoverage #data", function()
 			return
 		end
 
-		local expected_lines = {}
-		for line in (expected .. "\n"):gmatch("([^\n]*)\n") do
-			expected_lines[#expected_lines + 1] = line
-		end
-		local actual_lines = {}
+		-- Build sets from each side to avoid false positives from a single
+		-- inserted line shifting all subsequent positional comparisons.
+		local committed_set = {}
 		for line in actual:gmatch("([^\n]*)\n") do
-			actual_lines[#actual_lines + 1] = line
+			committed_set[line] = true
+		end
+		local generated_set = {}
+		for line in (expected .. "\n"):gmatch("([^\n]*)\n") do
+			generated_set[line] = true
 		end
 
-		local added, removed = {}, {}
-		local max = math.max(#expected_lines, #actual_lines)
-		for i = 1, max do
-			if expected_lines[i] ~= actual_lines[i] then
-				if expected_lines[i] then
-					removed[#removed + 1] = "- " .. expected_lines[i]
-				end
-				if actual_lines[i] then
-					added[#added + 1] = "+ " .. actual_lines[i]
-				end
+		-- "-" = in committed file but not in generated (removed)
+		-- "+" = in generated but not in committed (added)
+		local diff_lines = {}
+		for line in actual:gmatch("([^\n]*)\n") do
+			if not generated_set[line] then
+				diff_lines[#diff_lines + 1] = "- " .. line
+			end
+		end
+		for line in (expected .. "\n"):gmatch("([^\n]*)\n") do
+			if not committed_set[line] then
+				diff_lines[#diff_lines + 1] = "+ " .. line
 			end
 		end
 
-		local diff = table.concat(removed, "\n") .. "\n" .. table.concat(added, "\n")
+		local diff = table.concat(diff_lines, "\n")
 		fail("audit/skill-stat-coverage.txt is stale. Re-run: luajit tools/audit_skill_stats.lua\nDiff:\n" .. diff)
 	end)
 

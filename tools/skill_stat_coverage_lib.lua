@@ -2,9 +2,10 @@
 -- audit script and the Busted regression-guard spec.
 --
 -- Stat resolution order (mirrors CalcActiveSkill.lua mergeSkillInstanceMods):
---   1. Local statMap on the statSet (rawget, bypasses metatable)
---   2. Global data.skillStatMap (loaded from Data/SkillStatMap.lua)
--- If neither contains the stat ID, the stat is unmapped — the calc engine
+--   statSet.statMap[statId] — normal index; the __index metatable installed by
+--   Data.lua transparently falls through to data.skillStatMap for any key not
+--   present locally, so a single lookup covers both local and global entries.
+-- If the stat ID is not found, the stat is unmapped — the calc engine
 -- silently drops it, producing no mod.
 
 local M = {}
@@ -54,21 +55,14 @@ local function collectStatIds(grantedEffect)
 end
 
 --- Check whether a stat ID has a mod mapping.
--- Resolution: local statMap (rawget) → global skillStatMap.
+-- Resolution mirrors the engine: statSet.statMap[statId] transparently falls
+-- through to data.skillStatMap via the __index metatable installed by Data.lua.
 -- @param statId string
 -- @param statSet table  The statSet being checked (for local statMap).
--- @param globalSkillStatMap table  The global data.skillStatMap.
--- @return boolean  true if mapped (in either location).
-local function isStatMapped(statId, statSet, globalSkillStatMap)
-	-- Check local statMap first (rawget to avoid metatable fallback)
-	if statSet.statMap then
-		local localEntry = rawget(statSet.statMap, statId)
-		if localEntry then
-			return true
-		end
-	end
-	-- Check global SkillStatMap
-	if globalSkillStatMap[statId] then
+-- @return boolean  true if mapped.
+local function isStatMapped(statId, statSet)
+	-- Normal index: metatable __index falls through to data.skillStatMap
+	if statSet.statMap[statId] then
 		return true
 	end
 	return false
@@ -77,7 +71,7 @@ end
 --- Analyse all skills and classify stat IDs as mapped or unmapped.
 -- Requires the PoB data layer to be loaded (data.skills, data.skillStatMap).
 -- @param skills table  data.skills (the granted effects table).
--- @param globalSkillStatMap table  data.skillStatMap.
+-- @param globalSkillStatMap table  data.skillStatMap (kept for API compatibility, no longer used directly).
 -- @return table  { unmapped = { {statId, count, skillNames}... }, totalStats = N, unmappedCount = N }
 function M.analyse(skills, globalSkillStatMap)
 	-- Collect all unique stat IDs across all skills, tracking which skills use each
@@ -102,7 +96,7 @@ function M.analyse(skills, globalSkillStatMap)
 				end
 			end
 			if not already then
-				skillList[#skillList + 1] = grantedEffect.name
+				skillList[#skillList + 1] = grantedEffect.name or "(unnamed)"
 			end
 		end
 	end
@@ -113,6 +107,21 @@ function M.analyse(skills, globalSkillStatMap)
 	-- Build a lookup: statId → first statSet that contains it
 	local statToStatSet = {}
 	for skillId, grantedEffect in pairs(skills) do
+		-- qualityStats live at the top level of grantedEffect; resolve them
+		-- through the first available statSet (mirrors SkillsTab.lua line 883).
+		local fallbackStatSet = (grantedEffect.statSets or {})[1]
+		for _, entry in ipairs(grantedEffect.qualityStats or {}) do
+			local statId = entry[1]
+			if not statToStatSet[statId] then
+				if fallbackStatSet then
+					statToStatSet[statId] = fallbackStatSet
+				else
+					-- No statSets at all: use a sentinel with the global map
+					statToStatSet[statId] = { statMap = globalSkillStatMap }
+				end
+			end
+		end
+
 		for _, statSet in ipairs(grantedEffect.statSets or {}) do
 			-- Check stats[]
 			for _, statId in ipairs(statSet.stats or {}) do
@@ -135,7 +144,7 @@ function M.analyse(skills, globalSkillStatMap)
 
 	for _, statId in ipairs(allStatIds) do
 		local statSet = statToStatSet[statId]
-		if statSet and isStatMapped(statId, statSet, globalSkillStatMap) then
+		if statSet and isStatMapped(statId, statSet) then
 			mapped = mapped + 1
 		else
 			local skillNames = statToSkills[statId] or {}

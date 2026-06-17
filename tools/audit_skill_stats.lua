@@ -2,6 +2,11 @@
 -- Standalone skill stat coverage audit.
 -- Run from src/ directory: cd src && luajit ../tools/audit_skill_stats.lua
 
+-- Bundled runtime libraries (xml, dkjson, sha1, ...) live in runtime/lua and
+-- are normally added to the search path by the .busted config. Mirror that
+-- here so the script can boot HeadlessWrapper standalone.
+package.path = "../runtime/lua/?.lua;../runtime/lua/?/init.lua;" .. package.path
+
 dofile("HeadlessWrapper.lua")
 
 package.path = "../tools/?.lua;" .. package.path

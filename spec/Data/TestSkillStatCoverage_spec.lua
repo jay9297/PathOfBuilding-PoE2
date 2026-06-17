@@ -45,7 +45,7 @@ describe("SkillStatCoverage #data", function()
 		end
 
 		local diff = table.concat(diff_lines, "\n")
-		fail("audit/skill-stat-coverage.txt is stale. Re-run: luajit tools/audit_skill_stats.lua\nDiff:\n" .. diff)
+		error("audit/skill-stat-coverage.txt is stale. Re-run: luajit tools/audit_skill_stats.lua\nDiff:\n" .. diff, 0)
 	end)
 
 	it("well-known mapped stats are not in the unmapped set", function()

@@ -2,10 +2,9 @@
 -- audit script and the Busted regression-guard spec.
 --
 -- Stat resolution order (mirrors CalcActiveSkill.lua mergeSkillInstanceMods):
---   statSet.statMap[statId] — normal index; the __index metatable installed by
---   Data.lua transparently falls through to data.skillStatMap for any key not
---   present locally, so a single lookup covers both local and global entries.
--- If the stat ID is not found, the stat is unmapped — the calc engine
+--   1. Local statMap on the statSet (rawget, bypasses metatable)
+--   2. Global data.skillStatMap (loaded from Data/SkillStatMap.lua)
+-- If neither contains the stat ID, the stat is unmapped — the calc engine
 -- silently drops it, producing no mod.
 
 local M = {}
@@ -54,28 +53,10 @@ local function collectStatIds(grantedEffect)
 	return result
 end
 
---- Check whether a stat ID has a mod mapping.
--- Resolution mirrors the engine: statSet.statMap[statId] transparently falls
--- through to data.skillStatMap via the __index metatable installed by Data.lua.
--- @param statId string
--- @param statSet table  The statSet being checked (for local statMap).
--- @return boolean  true if mapped.
-local function isStatMapped(statId, statSet)
-	-- Guard: some statSets (e.g. sentinel rows) have no local statMap
-	if not statSet.statMap then
-		return false
-	end
-	-- Normal index: metatable __index falls through to data.skillStatMap
-	if statSet.statMap[statId] then
-		return true
-	end
-	return false
-end
-
 --- Analyse all skills and classify stat IDs as mapped or unmapped.
 -- Requires the PoB data layer to be loaded (data.skills, data.skillStatMap).
 -- @param skills table  data.skills (the granted effects table).
--- @param globalSkillStatMap table  data.skillStatMap (kept for API compatibility, no longer used directly).
+-- @param globalSkillStatMap table  data.skillStatMap.
 -- @return table  { unmapped = { {statId, count, skillNames}... }, totalStats = N, unmappedCount = N }
 function M.analyse(skills, globalSkillStatMap)
 	-- Collect all unique stat IDs across all skills, tracking which skills use each
@@ -100,44 +81,30 @@ function M.analyse(skills, globalSkillStatMap)
 				end
 			end
 			if not already then
-				skillList[#skillList + 1] = grantedEffect.name or "(unnamed)"
+				skillList[#skillList + 1] = grantedEffect.name
 			end
 		end
 	end
 
-	-- Now check each stat ID against the mapping
-	-- We need to check across ALL statSets that reference the stat,
-	-- using the first one we find (since local statMap varies by statSet).
-	-- Build a lookup: statId → first statSet that contains it
-	local statToStatSet = {}
-	for skillId, grantedEffect in pairs(skills) do
-		-- qualityStats live at the top level of grantedEffect; resolve them
-		-- through the first available statSet (mirrors SkillsTab.lua line 883).
-		local fallbackStatSet = (grantedEffect.statSets or {})[1]
-		for _, entry in ipairs(grantedEffect.qualityStats or {}) do
-			local statId = entry[1]
-			if not statToStatSet[statId] then
-				if fallbackStatSet then
-					statToStatSet[statId] = fallbackStatSet
-				else
-					-- No statSets at all: use a sentinel with the global map
-					statToStatSet[statId] = { statMap = globalSkillStatMap }
-				end
-			end
-		end
-
+	-- Determine which stat IDs are mapped by a *local* statMap. A stat may
+	-- appear in several statSets; treat it as locally mapped if ANY statSet
+	-- referencing it maps it. This is order-independent (unlike picking an
+	-- arbitrary "first" statSet) so the manifest is deterministic regardless
+	-- of pairs() iteration order, and it matches the calc engine's behaviour:
+	-- a stat that resolves in any context is not silently dropped everywhere.
+	local locallyMapped = {}
+	for _, grantedEffect in pairs(skills) do
 		for _, statSet in ipairs(grantedEffect.statSets or {}) do
-			-- Check stats[]
-			for _, statId in ipairs(statSet.stats or {}) do
-				if not statToStatSet[statId] then
-					statToStatSet[statId] = statSet
+			if statSet.statMap then
+				for _, statId in ipairs(statSet.stats or {}) do
+					if rawget(statSet.statMap, statId) then
+						locallyMapped[statId] = true
+					end
 				end
-			end
-			-- Check constantStats[]
-			for _, entry in ipairs(statSet.constantStats or {}) do
-				local statId = entry[1]
-				if not statToStatSet[statId] then
-					statToStatSet[statId] = statSet
+				for _, entry in ipairs(statSet.constantStats or {}) do
+					if rawget(statSet.statMap, entry[1]) then
+						locallyMapped[entry[1]] = true
+					end
 				end
 			end
 		end
@@ -147,11 +114,13 @@ function M.analyse(skills, globalSkillStatMap)
 	local mapped = 0
 
 	for _, statId in ipairs(allStatIds) do
-		local statSet = statToStatSet[statId]
-		if statSet and isStatMapped(statId, statSet) then
+		if locallyMapped[statId] or globalSkillStatMap[statId] then
 			mapped = mapped + 1
 		else
 			local skillNames = statToSkills[statId] or {}
+			-- Sort skill names so the "first few" rendered in the manifest are
+			-- stable across runs (pairs() order over data.skills is undefined).
+			table.sort(skillNames)
 			unmapped[#unmapped + 1] = {
 				statId = statId,
 				count = #skillNames,
@@ -177,20 +146,20 @@ end
 function M.render(result)
 	local lines = {}
 
+	-- Generated artifact: every token below is a game stat ID or skill name
+	-- (some carry typos baked into the game data). Disable spell-checking so the
+	-- CI spellcheck job does not flag GGG's identifiers as misspellings.
+	lines[#lines + 1] = "# cspell:disable"
 	lines[#lines + 1] = string.format(
 		"# unmapped=%d total_stats=%d",
 		result.unmappedCount, result.totalStats
 	)
 
 	for _, entry in ipairs(result.unmapped) do
-		-- Sort skill names for deterministic output before slicing
-		local sortedNames = {}
-		for i, v in ipairs(entry.skillNames) do sortedNames[i] = v end
-		table.sort(sortedNames)
-		local showCount = math.min(5, #sortedNames)
+		local showCount = math.min(5, #entry.skillNames)
 		local names = {}
 		for i = 1, showCount do
-			names[i] = sortedNames[i]
+			names[i] = entry.skillNames[i]
 		end
 		lines[#lines + 1] = string.format(
 			"%s\t%d\t%s",

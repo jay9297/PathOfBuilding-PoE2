@@ -1,7 +1,12 @@
-package.path = "../tools/?.lua;" .. package.path
-local lib = require("skill_stat_coverage_lib")
+local lib
 
 describe("SkillStatCoverage #data", function()
+	lazy_setup(function()
+		local saved_path = package.path
+		package.path = "../tools/?.lua;" .. package.path
+		lib = require("skill_stat_coverage_lib")
+		package.path = saved_path
+	end)
 	it("manifest matches committed audit/skill-stat-coverage.txt", function()
 		local expected = lib.generate(data.skills, data.skillStatMap)
 

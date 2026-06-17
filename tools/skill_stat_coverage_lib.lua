@@ -61,6 +61,10 @@ end
 -- @param statSet table  The statSet being checked (for local statMap).
 -- @return boolean  true if mapped.
 local function isStatMapped(statId, statSet)
+	-- Guard: some statSets (e.g. sentinel rows) have no local statMap
+	if not statSet.statMap then
+		return false
+	end
 	-- Normal index: metatable __index falls through to data.skillStatMap
 	if statSet.statMap[statId] then
 		return true
@@ -179,10 +183,14 @@ function M.render(result)
 	)
 
 	for _, entry in ipairs(result.unmapped) do
-		local showCount = math.min(5, #entry.skillNames)
+		-- Sort skill names for deterministic output before slicing
+		local sortedNames = {}
+		for i, v in ipairs(entry.skillNames) do sortedNames[i] = v end
+		table.sort(sortedNames)
+		local showCount = math.min(5, #sortedNames)
 		local names = {}
 		for i = 1, showCount do
-			names[i] = entry.skillNames[i]
+			names[i] = sortedNames[i]
 		end
 		lines[#lines + 1] = string.format(
 			"%s\t%d\t%s",

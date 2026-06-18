@@ -217,8 +217,9 @@ t_insert(Advisor.checks, function(build, out, findings)
 					if ge and ge.support and gem.enabled ~= false then
 						local req = ge.requireSkillTypes
 						local exc = ge.excludeSkillTypes
-						local applies = (not req or not req[1] or calcLib.doesTypeExpressionMatch(req, types))
-							and not (exc and exc[1] and calcLib.doesTypeExpressionMatch(exc, types))
+						local minionTypes = (not ge.ignoreMinionTypes) and activeGE.minionSkillTypes or nil
+						local applies = (not req or not req[1] or (calcLib and calcLib.doesTypeExpressionMatch(req, types, minionTypes)))
+							and not (exc and exc[1] and calcLib and calcLib.doesTypeExpressionMatch(exc, types))
 						if not applies then
 							t_insert(findings, {
 								id = "support.inapplicable." .. tostring(ge.name or gemDisplayName(gem)),
@@ -281,17 +282,21 @@ t_insert(Advisor.checks, function(build, out, findings)
 				local gid = gem.gemData and gem.gemData.gameId
 				if ge and ge.support and gid and gem.enabled ~= false then
 					if seen[gid] then
-						t_insert(findings, {
-							id = "support.duplicate." .. tostring(gid),
-							severity = "med",
-							category = "Skills",
-							title = "Duplicate support: " .. gemDisplayName(gem),
-							detail = gemDisplayName(gem) .. " is socketed more than once in the same group.",
-							fix = "Remove the duplicate; a support only applies once.",
-							jump = { mode = "SKILLS" },
-						})
+						if seen[gid] ~= "dup" then
+							t_insert(findings, {
+								id = "support.duplicate." .. tostring(gid),
+								severity = "med",
+								category = "Skills",
+								title = "Duplicate support: " .. gemDisplayName(gem),
+								detail = gemDisplayName(gem) .. " is socketed more than once in the same group.",
+								fix = "Remove the duplicate; a support only applies once.",
+								jump = { mode = "SKILLS" },
+							})
+							seen[gid] = "dup"
+						end
+					else
+						seen[gid] = true
 					end
-					seen[gid] = true
 				end
 			end
 		end
@@ -308,21 +313,23 @@ t_insert(Advisor.checks, function(build, out, findings)
 	local skillsTab = build and build.skillsTab
 	if not (skillsTab and skillsTab.socketGroupList) then return end
 	for _, group in ipairs(skillsTab.socketGroupList) do
-		for _, gem in ipairs(group.gemList or { }) do
-			if gem.enabled ~= false and gem.gemData then
-				for _, a in ipairs(GEM_ATTRS) do
-					local req = gem[a.req]
-					local have = out[a.attr]
-					if req and have and req > 0 and req > have then
-						t_insert(findings, {
-							id = "attr.unmet." .. a.attr .. "." .. gemDisplayName(gem),
-							severity = "high",
-							category = "Attributes",
-							title = "Unmet " .. a.label .. " requirement: " .. gemDisplayName(gem),
-							detail = s_format("%s needs %d %s but you have %d (gem disabled).", gemDisplayName(gem), req, a.label, have),
-							fix = s_format("Add ~%d %s, or use a lower-level gem.", req - have, a.label),
-							jump = { mode = "SKILLS" },
-						})
+		if group.enabled ~= false then
+			for _, gem in ipairs(group.gemList or { }) do
+				if gem.enabled ~= false and gem.gemData then
+					for _, a in ipairs(GEM_ATTRS) do
+						local req = gem[a.req]
+						local have = out[a.attr]
+						if req and have and req > 0 and req > have then
+							t_insert(findings, {
+								id = "attr.unmet." .. a.attr .. "." .. gemDisplayName(gem),
+								severity = "high",
+								category = "Attributes",
+								title = "Unmet " .. a.label .. " requirement: " .. gemDisplayName(gem),
+								detail = s_format("%s needs %d %s but you have %d (gem disabled).", gemDisplayName(gem), req, a.label, have),
+								fix = s_format("Add ~%d %s, or use a lower-level gem.", req - have, a.label),
+								jump = { mode = "SKILLS" },
+							})
+						end
 					end
 				end
 			end

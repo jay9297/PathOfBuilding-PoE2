@@ -1,3 +1,4 @@
+-- cspell:ignore maxhit deadend ntype
 describe("Advisor", function()
 	local Advisor
 

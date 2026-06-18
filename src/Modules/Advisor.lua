@@ -4,6 +4,8 @@
 -- Pure, deterministic build-advisor logic. No UI references — unit-testable headlessly.
 -- Reads the already-calculated build (build.calcsTab.mainOutput) and returns findings.
 --
+-- cspell:ignore maxhit deadend headlessly
+--
 -- Severity guide:
 --   high = likely loss or disabled (uncapped elemental resistance)
 --   med  = meaningful weakness (under-cap chaos, low EHP, no mitigation/recovery layer)

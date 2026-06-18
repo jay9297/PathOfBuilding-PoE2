@@ -1,5 +1,7 @@
 # Advisor — Developer notes
 
+<!-- cspell:ignore pathofbuilding pathofbuildingcommunity headlessly maxhit deadend -->
+
 Working notes for the **Advisor** feature (native, fully-offline deterministic
 build-advisor tab). Tracking epic: [#85](https://github.com/jay9297/PathOfBuilding-PoE2/issues/85).
 

@@ -1,5 +1,7 @@
 # Advisor
 
+<!-- cspell:ignore maxhit deadend headlessly -->
+
 A native, fully-offline **Advisor** tab for this PoB2 fork. It reads the live,
 already-calculated build (`build.calcsTab.mainOutput`, `build.skillsTab`,
 `build.spec`) and surfaces rule-based improvement findings. **No LLM, no network** —

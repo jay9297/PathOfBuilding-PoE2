@@ -208,14 +208,13 @@ t_insert(Advisor.checks, function(build, out, findings)
 				for k, v in pairs(activeGE.skillTypes) do types[k] = v end
 				for _, gem in ipairs(group.gemList or { }) do
 					local ge = gem.gemData and gem.gemData.grantedEffect
-					if ge and ge.support and ge.addSkillTypes then
+					if ge and ge.support and gem.enabled ~= false and ge.addSkillTypes then
 						for _, st in pairs(ge.addSkillTypes) do types[st] = true end
 					end
 				end
 				for _, gem in ipairs(group.gemList or { }) do
 					local ge = gem.gemData and gem.gemData.grantedEffect
-					if ge and ge.support and gem.enabled ~= false
-						and not (ge.supportGemsOnly and not activeGem.gemData) then
+					if ge and ge.support and gem.enabled ~= false then
 						local req = ge.requireSkillTypes
 						local exc = ge.excludeSkillTypes
 						local minionTypes = (not ge.ignoreMinionTypes) and activeGE.minionSkillTypes or nil

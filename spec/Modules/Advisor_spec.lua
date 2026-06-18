@@ -144,6 +144,24 @@ describe("Advisor", function()
 		assert.is_nil(byId(Advisor.analyze(makeSkillBuild({ group })), "support.inapplicable.Spell Echo"))
 	end)
 
+	it("respects addSkillTypes broadening from enabled supports only", function()
+		-- Adder adds SkillType.Area to the effective type set; Follower requires Area.
+		-- Follower should not be flagged when Adder is enabled, but SHOULD be when it is disabled.
+		local adder = supportGem("Area Adder", "adder", { add = { SkillType.Area } })
+		local follower = supportGem("Area Follower", "follower", { require = { SkillType.Area } })
+		local group_enabled = { enabled = true, gemList = {
+			activeGem("Spark", SkillType.Spell), adder, follower,
+		} }
+		assert.is_nil(byId(Advisor.analyze(makeSkillBuild({ group_enabled })), "support.inapplicable.Area Follower"))
+
+		local adder_off = supportGem("Area Adder", "adder", { add = { SkillType.Area } })
+		adder_off.enabled = false
+		local group_disabled = { enabled = true, gemList = {
+			activeGem("Spark", SkillType.Spell), adder_off, follower,
+		} }
+		assert.is_truthy(byId(Advisor.analyze(makeSkillBuild({ group_disabled })), "support.inapplicable.Area Follower"))
+	end)
+
 	it("flags a group with no support gems", function()
 		local group = { enabled = true, gemList = { activeGem("Spark", SkillType.Spell) } }
 		assert.is_truthy(byId(Advisor.analyze(makeSkillBuild({ group })), "support.empty.Spark"))

@@ -74,6 +74,22 @@ The feature keeps its surface area small to make this cheap — see the touched-
 
 ## Upstream files touched
 
-The Advisor feature is intentionally isolated. New files plus a few small edits in
-`src/Modules/Build.lua` (tab instantiation, mode button, draw dispatch). The authoritative
-list of touched upstream files lives in `ADVISOR.md`.
+The Advisor feature is intentionally isolated to keep upstream rebases cheap. The only
+modified upstream file is `src/Modules/Build.lua`, with three small additions:
+
+| Location | Change |
+|---|---|
+| tab instantiation (~L519) | `self.advisorTab = new("AdvisorTab", self)` |
+| mode-button row (~L347) | `modeAdvisor` button + `locked` + dynamic high-severity `label` badge |
+| draw dispatch (~L1363) | `elseif self.viewMode == "ADVISOR" then self.advisorTab:Draw(...)` |
+
+Everything else is new, self-contained files:
+
+- `src/Classes/AdvisorTab.lua` — UI tab
+- `src/Modules/Advisor.lua` — analysis logic
+- `spec/Modules/Advisor_spec.lua` — unit tests
+- `spec/System/TestAdvisorSmoke_spec.lua` — headless smoke test
+- `ADVISOR.md`, `ADVISOR-DEV.md` — docs
+
+Because the upstream surface is one file with three additive hunks, rebasing on an
+upstream release rarely conflicts; if it does, re-apply the three hunks above.

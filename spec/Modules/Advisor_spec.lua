@@ -160,6 +160,32 @@ describe("Advisor", function()
 		assert.are.equal("med", f.severity)
 	end)
 
+	it("emits exactly one duplicate finding even when three copies are socketed", function()
+		local group = { enabled = true, gemList = {
+			activeGem("Spark", SkillType.Spell),
+			supportGem("Spell Echo", "echo", { require = { SkillType.Spell } }),
+			supportGem("Spell Echo", "echo", { require = { SkillType.Spell } }),
+			supportGem("Spell Echo", "echo", { require = { SkillType.Spell } }),
+		} }
+		local findings = Advisor.analyze(makeSkillBuild({ group }))
+		local count = 0
+		for _, f in ipairs(findings) do
+			if f.id == "support.duplicate.echo" then count = count + 1 end
+		end
+		assert.are.equal(1, count)
+	end)
+
+	it("does not flag a support that applies via minionSkillTypes", function()
+		local active = { enabled = true, gemData = { name = "Summon Raging Spirits", gameId = "Summon Raging Spirits", grantedEffect = {
+			name = "Summon Raging Spirits",
+			skillTypes = { [SkillType.Spell] = true },
+			minionSkillTypes = { [SkillType.Attack] = true, [SkillType.Melee] = true },
+		} } }
+		local sup = supportGem("Melee Infusion", "melee", { require = { SkillType.Attack } })
+		local group = { enabled = true, gemList = { active, sup } }
+		assert.is_nil(byId(Advisor.analyze(makeSkillBuild({ group })), "support.inapplicable.Melee Infusion"))
+	end)
+
 	it("flags an unmet attribute requirement", function()
 		local gem = activeGem("Heavy Skill", SkillType.Spell)
 		gem.reqStr = 200
@@ -168,6 +194,13 @@ describe("Advisor", function()
 		assert.is_truthy(f)
 		assert.are.equal("high", f.severity)
 		assert.is_truthy(f.detail:find("200"))
+	end)
+
+	it("does not flag unmet attribute requirements for gems in a disabled group", function()
+		local gem = activeGem("Heavy Skill", SkillType.Spell)
+		gem.reqStr = 200
+		local group = { enabled = false, gemList = { gem } }
+		assert.is_nil(byId(Advisor.analyze(makeSkillBuild({ group }, { Str = 100 })), "attr.unmet.Str.Heavy Skill"))
 	end)
 
 	it("flags over-reserved and unused spirit", function()

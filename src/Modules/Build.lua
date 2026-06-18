@@ -348,6 +348,10 @@ function buildMode:Init(dbFileName, buildName, buildXML, convertBuild, importLin
 		self.viewMode = "ADVISOR"
 	end)
 	self.controls.modeAdvisor.locked = function() return self.viewMode == "ADVISOR" end
+	self.controls.modeAdvisor.label = function()
+		local n = self.advisorTab and self.advisorTab.highCount or 0
+		return n > 0 and ("Advisor (" .. n .. ")") or "Advisor"
+	end
 	self.controls.modeParty = new("ButtonControl", {"TOPLEFT",self.anchorSideBar,"TOPLEFT"}, {0, 52, 72, 20}, "Party", function()
 		self.viewMode = "PARTY"
 	end)

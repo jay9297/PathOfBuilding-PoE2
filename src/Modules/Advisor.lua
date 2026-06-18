@@ -174,6 +174,187 @@ t_insert(Advisor.checks, function(build, out, findings)
 	end
 end)
 
+-- ===== Issue #81: skill / support / attribute / spirit checks =====
+
+local LARGE_UNUSED_SPIRIT = 30   -- unreserved Spirit above this is likely a wasted reservation slot
+
+local function gemDisplayName(gem)
+	local ge = gem.gemData and gem.gemData.grantedEffect
+	return (gem.gemData and gem.gemData.name) or (ge and ge.name) or "a gem"
+end
+
+-- Returns the active (non-support) granted effect and gem for a socket group, or nil.
+local function groupActiveEffect(group)
+	for _, gem in ipairs(group.gemList or { }) do
+		local ge = gem.gemData and gem.gemData.grantedEffect
+		if ge and not ge.support and gem.enabled ~= false then
+			return ge, gem
+		end
+	end
+	return nil
+end
+
+-- Check: support gems that cannot apply to the group's active skill (wasted sockets).
+t_insert(Advisor.checks, function(build, out, findings)
+	local skillsTab = build and build.skillsTab
+	if not (skillsTab and skillsTab.socketGroupList) then return end
+	for _, group in ipairs(skillsTab.socketGroupList) do
+		if group.enabled ~= false then
+			local activeGE, activeGem = groupActiveEffect(group)
+			if activeGE and activeGE.skillTypes then
+				local types = { }
+				for k, v in pairs(activeGE.skillTypes) do types[k] = v end
+				for _, gem in ipairs(group.gemList or { }) do
+					local ge = gem.gemData and gem.gemData.grantedEffect
+					if ge and ge.support and ge.addSkillTypes then
+						for _, st in pairs(ge.addSkillTypes) do types[st] = true end
+					end
+				end
+				for _, gem in ipairs(group.gemList or { }) do
+					local ge = gem.gemData and gem.gemData.grantedEffect
+					if ge and ge.support and gem.enabled ~= false then
+						local req = ge.requireSkillTypes
+						local exc = ge.excludeSkillTypes
+						local applies = (not req or not req[1] or calcLib.doesTypeExpressionMatch(req, types))
+							and not (exc and exc[1] and calcLib.doesTypeExpressionMatch(exc, types))
+						if not applies then
+							t_insert(findings, {
+								id = "support.inapplicable." .. tostring(ge.name or gemDisplayName(gem)),
+								severity = "high",
+								category = "Skills",
+								title = "Support does not apply: " .. gemDisplayName(gem),
+								detail = s_format("%s does nothing for %s (skill-type tags do not match).", gemDisplayName(gem), gemDisplayName(activeGem)),
+								fix = "Replace it with a support whose tags match the skill, or move it to a compatible skill.",
+								jump = { mode = "SKILLS" },
+							})
+						end
+					end
+				end
+			end
+		end
+	end
+end)
+
+-- Check: a socket group with an active skill but no support gems at all.
+t_insert(Advisor.checks, function(build, out, findings)
+	local skillsTab = build and build.skillsTab
+	if not (skillsTab and skillsTab.socketGroupList) then return end
+	for _, group in ipairs(skillsTab.socketGroupList) do
+		if group.enabled ~= false then
+			local activeGE, activeGem = groupActiveEffect(group)
+			if activeGE then
+				local hasSupport = false
+				for _, gem in ipairs(group.gemList or { }) do
+					local ge = gem.gemData and gem.gemData.grantedEffect
+					if ge and ge.support and gem.enabled ~= false then
+						hasSupport = true
+						break
+					end
+				end
+				if not hasSupport then
+					t_insert(findings, {
+						id = "support.empty." .. gemDisplayName(activeGem),
+						severity = "info",
+						category = "Skills",
+						title = "No support gems on " .. gemDisplayName(activeGem),
+						detail = gemDisplayName(activeGem) .. " has no supports — you are leaving sockets unused.",
+						fix = "Add support gems to boost this skill.",
+						jump = { mode = "SKILLS" },
+					})
+				end
+			end
+		end
+	end
+end)
+
+-- Check: the same support gem socketed more than once in a group (redundant).
+t_insert(Advisor.checks, function(build, out, findings)
+	local skillsTab = build and build.skillsTab
+	if not (skillsTab and skillsTab.socketGroupList) then return end
+	for _, group in ipairs(skillsTab.socketGroupList) do
+		if group.enabled ~= false then
+			local seen = { }
+			for _, gem in ipairs(group.gemList or { }) do
+				local ge = gem.gemData and gem.gemData.grantedEffect
+				local gid = gem.gemData and gem.gemData.gameId
+				if ge and ge.support and gid and gem.enabled ~= false then
+					if seen[gid] then
+						t_insert(findings, {
+							id = "support.duplicate." .. tostring(gid),
+							severity = "med",
+							category = "Skills",
+							title = "Duplicate support: " .. gemDisplayName(gem),
+							detail = gemDisplayName(gem) .. " is socketed more than once in the same group.",
+							fix = "Remove the duplicate; a support only applies once.",
+							jump = { mode = "SKILLS" },
+						})
+					end
+					seen[gid] = true
+				end
+			end
+		end
+	end
+end)
+
+-- Check: gems whose attribute requirement exceeds the character's attribute (gem disabled).
+local GEM_ATTRS = {
+	{ req = "reqStr", attr = "Str", label = "Strength" },
+	{ req = "reqDex", attr = "Dex", label = "Dexterity" },
+	{ req = "reqInt", attr = "Int", label = "Intelligence" },
+}
+t_insert(Advisor.checks, function(build, out, findings)
+	local skillsTab = build and build.skillsTab
+	if not (skillsTab and skillsTab.socketGroupList) then return end
+	for _, group in ipairs(skillsTab.socketGroupList) do
+		for _, gem in ipairs(group.gemList or { }) do
+			if gem.enabled ~= false and gem.gemData then
+				for _, a in ipairs(GEM_ATTRS) do
+					local req = gem[a.req]
+					local have = out[a.attr]
+					if req and have and req > 0 and req > have then
+						t_insert(findings, {
+							id = "attr.unmet." .. a.attr .. "." .. gemDisplayName(gem),
+							severity = "high",
+							category = "Attributes",
+							title = "Unmet " .. a.label .. " requirement: " .. gemDisplayName(gem),
+							detail = s_format("%s needs %d %s but you have %d (gem disabled).", gemDisplayName(gem), req, a.label, have),
+							fix = s_format("Add ~%d %s, or use a lower-level gem.", req - have, a.label),
+							jump = { mode = "SKILLS" },
+						})
+					end
+				end
+			end
+		end
+	end
+end)
+
+-- Check: Spirit reservation — over-reserved (negative unreserved) or large unused pool.
+t_insert(Advisor.checks, function(build, out, findings)
+	local total = out.Spirit
+	local unreserved = out.SpiritUnreserved
+	if total and unreserved then
+		if unreserved < 0 then
+			t_insert(findings, {
+				id = "spirit.over",
+				severity = "high",
+				category = "Spirit",
+				title = "Spirit is over-reserved",
+				detail = s_format("Unreserved Spirit is %d (you have reserved more than your %d total).", unreserved, total),
+				fix = "Drop or cheapen a reservation so unreserved Spirit is not negative.",
+			})
+		elseif total > 0 and unreserved >= LARGE_UNUSED_SPIRIT then
+			t_insert(findings, {
+				id = "spirit.unused",
+				severity = "info",
+				category = "Spirit",
+				title = "Unused Spirit available",
+				detail = s_format("%d of %d Spirit is unreserved.", unreserved, total),
+				fix = "You could reserve another aura/herald or buff with the spare Spirit.",
+			})
+		end
+	end
+end)
+
 function Advisor.sort(findings)
 	t_sort(findings, function(a, b)
 		local ra = Advisor.severityRank[a.severity] or 0

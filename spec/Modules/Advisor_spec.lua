@@ -106,4 +106,75 @@ describe("Advisor", function()
 		assert.is_truthy(f.detail:find("Fire"))
 		assert.is_truthy(f.detail:find("3000"))
 	end)
+
+	local function activeGem(name, skillType)
+		return { enabled = true, gemData = { name = name, gameId = name, grantedEffect = { name = name, skillTypes = { [skillType] = true } } } }
+	end
+
+	local function supportGem(name, gameId, opts)
+		opts = opts or { }
+		return { enabled = true, gemData = { name = name, gameId = gameId or name, grantedEffect = {
+			name = name, support = true,
+			requireSkillTypes = opts.require or { },
+			excludeSkillTypes = opts.exclude or { },
+			addSkillTypes = opts.add or { },
+		} } }
+	end
+
+	local function makeSkillBuild(socketGroupList, outOverrides)
+		return { calcsTab = { mainOutput = healthyOutput(outOverrides) }, characterLevel = 90, skillsTab = { socketGroupList = socketGroupList } }
+	end
+
+	it("flags a support whose tags do not match the active skill", function()
+		local group = { enabled = true, gemList = {
+			activeGem("Spark", SkillType.Spell),
+			supportGem("Melee Infusion", "melee", { require = { SkillType.Attack } }),
+		} }
+		local f = byId(Advisor.analyze(makeSkillBuild({ group })), "support.inapplicable.Melee Infusion")
+		assert.is_truthy(f)
+		assert.are.equal("high", f.severity)
+	end)
+
+	it("does not flag a support whose tags match", function()
+		local group = { enabled = true, gemList = {
+			activeGem("Spark", SkillType.Spell),
+			supportGem("Spell Echo", "echo", { require = { SkillType.Spell } }),
+		} }
+		assert.is_nil(byId(Advisor.analyze(makeSkillBuild({ group })), "support.inapplicable.Spell Echo"))
+	end)
+
+	it("flags a group with no support gems", function()
+		local group = { enabled = true, gemList = { activeGem("Spark", SkillType.Spell) } }
+		assert.is_truthy(byId(Advisor.analyze(makeSkillBuild({ group })), "support.empty.Spark"))
+	end)
+
+	it("flags a duplicate support gem", function()
+		local group = { enabled = true, gemList = {
+			activeGem("Spark", SkillType.Spell),
+			supportGem("Spell Echo", "echo", { require = { SkillType.Spell } }),
+			supportGem("Spell Echo", "echo", { require = { SkillType.Spell } }),
+		} }
+		local f = byId(Advisor.analyze(makeSkillBuild({ group })), "support.duplicate.echo")
+		assert.is_truthy(f)
+		assert.are.equal("med", f.severity)
+	end)
+
+	it("flags an unmet attribute requirement", function()
+		local gem = activeGem("Heavy Skill", SkillType.Spell)
+		gem.reqStr = 200
+		local group = { enabled = true, gemList = { gem } }
+		local f = byId(Advisor.analyze(makeSkillBuild({ group }, { Str = 100 })), "attr.unmet.Str.Heavy Skill")
+		assert.is_truthy(f)
+		assert.are.equal("high", f.severity)
+		assert.is_truthy(f.detail:find("200"))
+	end)
+
+	it("flags over-reserved and unused spirit", function()
+		local over = byId(Advisor.analyze(makeBuild(healthyOutput({ Spirit = 100, SpiritUnreserved = -10 }))), "spirit.over")
+		assert.is_truthy(over)
+		assert.are.equal("high", over.severity)
+		local unused = byId(Advisor.analyze(makeBuild(healthyOutput({ Spirit = 100, SpiritUnreserved = 50 }))), "spirit.unused")
+		assert.is_truthy(unused)
+		assert.are.equal("info", unused.severity)
+	end)
 end)

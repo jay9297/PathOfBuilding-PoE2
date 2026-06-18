@@ -203,7 +203,7 @@ t_insert(Advisor.checks, function(build, out, findings)
 	for _, group in ipairs(skillsTab.socketGroupList) do
 		if group.enabled ~= false then
 			local activeGE, activeGem = groupActiveEffect(group)
-			if activeGE and activeGE.skillTypes then
+			if activeGE and activeGE.skillTypes and not activeGE.cannotBeSupported then
 				local types = { }
 				for k, v in pairs(activeGE.skillTypes) do types[k] = v end
 				for _, gem in ipairs(group.gemList or { }) do
@@ -214,11 +214,12 @@ t_insert(Advisor.checks, function(build, out, findings)
 				end
 				for _, gem in ipairs(group.gemList or { }) do
 					local ge = gem.gemData and gem.gemData.grantedEffect
-					if ge and ge.support and gem.enabled ~= false then
+					if ge and ge.support and gem.enabled ~= false
+						and not (ge.supportGemsOnly and not activeGem.gemData) then
 						local req = ge.requireSkillTypes
 						local exc = ge.excludeSkillTypes
 						local minionTypes = (not ge.ignoreMinionTypes) and activeGE.minionSkillTypes or nil
-						local applies = (not req or not req[1] or (calcLib and calcLib.doesTypeExpressionMatch(req, types, minionTypes)))
+						local applies = (not req or not req[1] or (not calcLib or calcLib.doesTypeExpressionMatch(req, types, minionTypes)))
 							and not (exc and exc[1] and calcLib and calcLib.doesTypeExpressionMatch(exc, types))
 						if not applies then
 							t_insert(findings, {
@@ -367,7 +368,7 @@ end)
 -- ===== Issue #82: passive-tree efficiency checks =====
 
 local MAX_NOTABLE_SUGGESTIONS = 8   -- cap adjacent-notable suggestions so the list stays readable
-local PAYOFF_TYPES = { Notable = true, Keystone = true, Socket = true }
+local PAYOFF_TYPES = { Notable = true, Keystone = true, Socket = true, Mastery = true }
 
 -- Count a node's allocated neighbours within the allocated subgraph.
 local function allocDegree(spec, node)

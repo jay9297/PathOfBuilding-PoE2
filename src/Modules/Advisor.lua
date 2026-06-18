@@ -355,6 +355,125 @@ t_insert(Advisor.checks, function(build, out, findings)
 	end
 end)
 
+-- ===== Issue #82: passive-tree efficiency checks =====
+
+local MAX_NOTABLE_SUGGESTIONS = 8   -- cap adjacent-notable suggestions so the list stays readable
+local PAYOFF_TYPES = { Notable = true, Keystone = true, Socket = true }
+
+-- Count a node's allocated neighbours within the allocated subgraph.
+local function allocDegree(spec, node)
+	local d = 0
+	if node.linked then
+		for _, other in ipairs(node.linked) do
+			if other and spec.allocNodes[other.id] then d = d + 1 end
+		end
+	end
+	return d
+end
+
+-- Check: unallocated notables directly adjacent to your allocated tree (cheap upgrades).
+t_insert(Advisor.checks, function(build, out, findings)
+	local spec = build and build.spec
+	if not (spec and spec.allocNodes) then return end
+	local seen = { }
+	local count = 0
+	for _, node in pairs(spec.allocNodes) do
+		if node.linked then
+			for _, other in ipairs(node.linked) do
+				if other and other.type == "Notable" and not other.ascendancyName
+					and not spec.allocNodes[other.id] and not seen[other.id] then
+					seen[other.id] = true
+					count = count + 1
+					if count <= MAX_NOTABLE_SUGGESTIONS then
+						local stat = (other.sd and other.sd[1]) or other.name or "a notable"
+						t_insert(findings, {
+							id = "tree.adjacent." .. tostring(other.id),
+							severity = "info",
+							category = "Tree",
+							title = "Adjacent notable available: " .. (other.name or "Notable"),
+							detail = s_format("%s is one node from your tree (%s).", other.name or "A notable", stat),
+							fix = "Consider pathing into it if the stats suit your build.",
+							jump = { mode = "TREE" },
+						})
+					end
+				end
+			end
+		end
+	end
+end)
+
+-- Check: allocated travel (Normal) leaf nodes that pay nothing (wasted points).
+t_insert(Advisor.checks, function(build, out, findings)
+	local spec = build and build.spec
+	if not (spec and spec.allocNodes) then return end
+	for id, node in pairs(spec.allocNodes) do
+		if node.type == "Normal" and allocDegree(spec, node) == 1 then
+			local neighborIsPayoff = false
+			if node.linked then
+				for _, other in ipairs(node.linked) do
+					if other and spec.allocNodes[other.id] and PAYOFF_TYPES[other.type] then
+						neighborIsPayoff = true
+						break
+					end
+				end
+			end
+			if not neighborIsPayoff then
+				t_insert(findings, {
+					id = "tree.deadend." .. tostring(id),
+					severity = "med",
+					category = "Tree",
+					title = "Dead-end travel node",
+					detail = s_format("Allocated travel node '%s' leads to no notable, keystone, or socket.", node.name or tostring(id)),
+					fix = "Refund this point (and its branch) unless it reaches something worthwhile.",
+					jump = { mode = "TREE" },
+				})
+			end
+		end
+	end
+end)
+
+-- Check: allocated nodes with no allocated path back to a class start (should not happen).
+t_insert(Advisor.checks, function(build, out, findings)
+	local spec = build and build.spec
+	if not (spec and spec.allocNodes) then return end
+	local queue = { }
+	local visited = { }
+	for id, node in pairs(spec.allocNodes) do
+		if node.type == "ClassStart" or node.type == "AscendClassStart" then
+			visited[id] = true
+			t_insert(queue, node)
+		end
+	end
+	while #queue > 0 do
+		local node = table.remove(queue)
+		if node.linked then
+			for _, other in ipairs(node.linked) do
+				if other and spec.allocNodes[other.id] and not visited[other.id] then
+					visited[other.id] = true
+					t_insert(queue, other)
+				end
+			end
+		end
+	end
+	local floating = 0
+	for id, node in pairs(spec.allocNodes) do
+		if not visited[id] and node.type ~= "ClassStart" and node.type ~= "AscendClassStart" then
+			floating = floating + 1
+		end
+	end
+	if floating > 0 then
+		t_insert(findings, {
+			id = "tree.floating",
+			severity = "med",
+			category = "Tree",
+			title = "Disconnected passive allocations",
+			detail = s_format("%d allocated node(s) are not connected to your class start.", floating),
+			fix = "Re-path so every allocated node connects to your starting location.",
+			jump = { mode = "TREE" },
+		})
+	end
+end)
+
 function Advisor.sort(findings)
 	t_sort(findings, function(a, b)
 		local ra = Advisor.severityRank[a.severity] or 0

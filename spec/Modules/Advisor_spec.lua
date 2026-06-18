@@ -177,4 +177,65 @@ describe("Advisor", function()
 		assert.is_truthy(unused)
 		assert.are.equal("info", unused.severity)
 	end)
+
+	local function makeNode(id, ntype, name, sd)
+		return { id = id, type = ntype, name = name, sd = sd, linked = { } }
+	end
+
+	local function linkNodes(a, b)
+		table.insert(a.linked, b)
+		table.insert(b.linked, a)
+	end
+
+	local function makeTreeBuild(nodes, allocIds)
+		local nodeMap = { }
+		for _, n in ipairs(nodes) do nodeMap[n.id] = n end
+		local allocNodes = { }
+		for _, id in ipairs(allocIds) do allocNodes[id] = nodeMap[id] end
+		return { calcsTab = { mainOutput = healthyOutput() }, characterLevel = 90, spec = { nodes = nodeMap, allocNodes = allocNodes } }
+	end
+
+	it("suggests an unallocated notable adjacent to the allocated tree", function()
+		local start = makeNode(1, "ClassStart", "Start")
+		local a = makeNode(2, "Notable", "Allocated Notable")
+		local n = makeNode(3, "Notable", "Nearby Notable", { "+30% increased damage" })
+		linkNodes(start, a)
+		linkNodes(a, n)
+		local f = byId(Advisor.analyze(makeTreeBuild({ start, a, n }, { 1, 2 })), "tree.adjacent.3")
+		assert.is_truthy(f)
+		assert.are.equal("info", f.severity)
+		assert.is_truthy(f.title:find("Nearby Notable"))
+	end)
+
+	it("flags a dead-end travel node and not a productive path", function()
+		local start = makeNode(1, "ClassStart", "Start")
+		local a = makeNode(2, "Normal", "Travel A")
+		local b = makeNode(3, "Normal", "Travel B")
+		linkNodes(start, a)
+		linkNodes(a, b)
+		local findings = Advisor.analyze(makeTreeBuild({ start, a, b }, { 1, 2, 3 }))
+		local dead = byId(findings, "tree.deadend.3")
+		assert.is_truthy(dead)
+		assert.are.equal("med", dead.severity)
+		assert.is_nil(byId(findings, "tree.deadend.2"))
+	end)
+
+	it("does not flag a travel node that reaches a notable", function()
+		local start = makeNode(1, "ClassStart", "Start")
+		local a = makeNode(2, "Normal", "Travel A")
+		local n = makeNode(3, "Notable", "Payoff")
+		linkNodes(start, a)
+		linkNodes(a, n)
+		assert.is_nil(byId(Advisor.analyze(makeTreeBuild({ start, a, n }, { 1, 2, 3 })), "tree.deadend.2"))
+	end)
+
+	it("flags disconnected (floating) allocations", function()
+		local start = makeNode(1, "ClassStart", "Start")
+		local a = makeNode(2, "Notable", "Connected")
+		local floatNode = makeNode(9, "Notable", "Floating")
+		linkNodes(start, a)
+		local f = byId(Advisor.analyze(makeTreeBuild({ start, a, floatNode }, { 1, 2, 9 })), "tree.floating")
+		assert.is_truthy(f)
+		assert.are.equal("med", f.severity)
+	end)
 end)

@@ -200,6 +200,10 @@ end
 t_insert(Advisor.checks, function(build, out, findings)
 	local skillsTab = build and build.skillsTab
 	if not (skillsTab and skillsTab.socketGroupList) then return end
+	if not calcLib then
+		ConPrintf("Advisor: calcLib unavailable, skipping support-applicability check")
+		return
+	end
 	for _, group in ipairs(skillsTab.socketGroupList) do
 		if group.enabled ~= false then
 			local activeGE, activeGem = groupActiveEffect(group)
@@ -209,7 +213,7 @@ t_insert(Advisor.checks, function(build, out, findings)
 				for _, gem in ipairs(group.gemList or { }) do
 					local ge = gem.gemData and gem.gemData.grantedEffect
 					if ge and ge.support and gem.enabled ~= false and ge.addSkillTypes then
-						for _, st in pairs(ge.addSkillTypes) do types[st] = true end
+						for _, st in ipairs(ge.addSkillTypes) do types[st] = true end
 					end
 				end
 				for _, gem in ipairs(group.gemList or { }) do
@@ -218,8 +222,8 @@ t_insert(Advisor.checks, function(build, out, findings)
 						local req = ge.requireSkillTypes
 						local exc = ge.excludeSkillTypes
 						local minionTypes = (not ge.ignoreMinionTypes) and activeGE.minionSkillTypes or nil
-						local applies = (not req or not req[1] or (not calcLib or calcLib.doesTypeExpressionMatch(req, types, minionTypes)))
-							and not (exc and exc[1] and calcLib and calcLib.doesTypeExpressionMatch(exc, types))
+						local applies = (not req or not req[1] or calcLib.doesTypeExpressionMatch(req, types, minionTypes))
+							and not (exc and exc[1] and calcLib.doesTypeExpressionMatch(exc, types))
 						if not applies then
 							t_insert(findings, {
 								id = "support.inapplicable." .. tostring(ge.name or gemDisplayName(gem)),

@@ -136,6 +136,14 @@ describe("Advisor", function()
 		assert.are.equal("high", f.severity)
 	end)
 
+	it("does not flag inapplicable supports in a disabled group", function()
+		local group = { enabled = false, gemList = {
+			activeGem("Spark", SkillType.Spell),
+			supportGem("Melee Infusion", "melee", { require = { SkillType.Attack } }),
+		} }
+		assert.is_nil(byId(Advisor.analyze(makeSkillBuild({ group })), "support.inapplicable.Melee Infusion"))
+	end)
+
 	it("does not flag a support whose tags match", function()
 		local group = { enabled = true, gemList = {
 			activeGem("Spark", SkillType.Spell),
@@ -165,6 +173,11 @@ describe("Advisor", function()
 	it("flags a group with no support gems", function()
 		local group = { enabled = true, gemList = { activeGem("Spark", SkillType.Spell) } }
 		assert.is_truthy(byId(Advisor.analyze(makeSkillBuild({ group })), "support.empty.Spark"))
+	end)
+
+	it("does not flag empty supports in a disabled group", function()
+		local group = { enabled = false, gemList = { activeGem("Spark", SkillType.Spell) } }
+		assert.is_nil(byId(Advisor.analyze(makeSkillBuild({ group })), "support.empty.Spark"))
 	end)
 
 	it("flags a duplicate support gem", function()

@@ -262,7 +262,9 @@ t_insert(Advisor.checks, function(build, out, findings)
 			if #activeList > 0 then
 				for _, active in ipairs(activeList) do
 					active.types = { }
-					for k, v in pairs(active.ge.skillTypes) do active.types[k] = v end
+					if active.ge.skillTypes then
+						for k, v in pairs(active.ge.skillTypes) do active.types[k] = v end
+					end
 				end
 				local supportList = { }
 				for _, gem in ipairs(group.gemList or { }) do

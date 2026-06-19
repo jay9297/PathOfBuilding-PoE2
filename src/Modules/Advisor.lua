@@ -13,8 +13,10 @@
 --   info = informational (wasted resistance surplus, weakest max-hit type)
 --
 local t_insert = table.insert
+local t_remove = table.remove
 local t_sort = table.sort
 local s_format = string.format
+local m_max = math.max
 
 local Advisor = { }
 
@@ -138,8 +140,19 @@ end)
 -- Check 5: no meaningful mitigation layer present.
 t_insert(Advisor.checks, function(build, out, findings)
 	local physDR = out.PhysicalDamageReduction or 0
-	local evade = out.EvadeChance or out.MeleeEvadeChance or 0
-	local block = out.EffectiveBlockChance or 0
+	local evade = m_max(
+		out.EvadeChance or 0,
+		out.MeleeEvadeChance or 0,
+		out.ProjectileEvadeChance or 0,
+		out.SpellEvadeChance or 0,
+		out.SpellProjectileEvadeChance or 0
+	)
+	local block = m_max(
+		out.EffectiveBlockChance or 0,
+		out.EffectiveProjectileBlockChance or 0,
+		out.EffectiveSpellBlockChance or 0,
+		out.EffectiveSpellProjectileBlockChance or 0
+	)
 	local suppress = out.EffectiveSpellSuppressionChance or 0
 	local hasLayer = physDR >= PHYS_DR_MIN or evade >= EVADE_MIN or block >= BLOCK_MIN or suppress >= SUPPRESS_MIN
 	if not hasLayer then
@@ -185,7 +198,19 @@ local function gemDisplayName(gem)
 	return (gem.gemData and gem.gemData.name) or (ge and ge.name) or "a gem"
 end
 
--- Returns the active (non-support) granted effect and gem for a socket group, or nil.
+-- Returns the active (non-support) granted effects/gems for a socket group.
+local function groupActiveEffects(group)
+	local list = { }
+	for _, gem in ipairs(group.gemList or { }) do
+		local ge = gem.gemData and gem.gemData.grantedEffect
+		if ge and not ge.support and gem.enabled ~= false then
+			t_insert(list, { ge = ge, gem = gem })
+		end
+	end
+	return list
+end
+
+-- Returns the first active (non-support) granted effect and gem for a socket group, or nil.
 local function groupActiveEffect(group)
 	for _, gem in ipairs(group.gemList or { }) do
 		local ge = gem.gemData and gem.gemData.grantedEffect
@@ -196,7 +221,28 @@ local function groupActiveEffect(group)
 	return nil
 end
 
--- Check: support gems that cannot apply to the group's active skill (wasted sockets).
+-- Test whether a support's skill-type requirements/exclusions match an active skill.
+-- `types` is the active skill's effective type set (including addSkillTypes from accepted supports).
+local function supportAppliesToActive(supportGE, activeGE, types)
+	local req = supportGE.requireSkillTypes
+	local exc = supportGE.excludeSkillTypes
+	local ignoreMinion = supportGE.ignoreMinionTypes
+	local minionTypes = (not ignoreMinion) and activeGE.minionSkillTypes or nil
+	if req and req[1] and not calcLib.doesTypeExpressionMatch(req, types, minionTypes) then
+		return false
+	end
+	if exc and exc[1] then
+		if ignoreMinion or not activeGE.minionSkillTypes then
+			if calcLib.doesTypeExpressionMatch(exc, types) then return false end
+		else
+			-- Supports that target minions exclude based on the minion's types, not the active's.
+			if calcLib.doesTypeExpressionMatch(exc, activeGE.minionSkillTypes) then return false end
+		end
+	end
+	return true
+end
+
+-- Check: support gems that cannot apply to any active skill in their group (wasted sockets).
 t_insert(Advisor.checks, function(build, out, findings)
 	local skillsTab = build and build.skillsTab
 	if not (skillsTab and skillsTab.socketGroupList) then return end
@@ -206,35 +252,72 @@ t_insert(Advisor.checks, function(build, out, findings)
 	end
 	for _, group in ipairs(skillsTab.socketGroupList) do
 		if group.enabled ~= false then
-			local activeGE, activeGem = groupActiveEffect(group)
-			if activeGE and activeGE.skillTypes and not activeGE.cannotBeSupported then
-				local types = { }
-				for k, v in pairs(activeGE.skillTypes) do types[k] = v end
-				for _, gem in ipairs(group.gemList or { }) do
-					local ge = gem.gemData and gem.gemData.grantedEffect
-					if ge and ge.support and gem.enabled ~= false and ge.addSkillTypes then
-						for _, st in ipairs(ge.addSkillTypes) do types[st] = true end
+			local activeList = groupActiveEffects(group)
+			-- Active gems that cannot be supported can never make a support valid.
+			for i = #activeList, 1, -1 do
+				if activeList[i].ge.cannotBeSupported then
+					t_remove(activeList, i)
+				end
+			end
+			if #activeList > 0 then
+				for _, active in ipairs(activeList) do
+					active.types = { }
+					if active.ge.skillTypes then
+						for k, v in pairs(active.ge.skillTypes) do active.types[k] = v end
 					end
 				end
+				local supportList = { }
 				for _, gem in ipairs(group.gemList or { }) do
 					local ge = gem.gemData and gem.gemData.grantedEffect
 					if ge and ge.support and gem.enabled ~= false then
-						local req = ge.requireSkillTypes
-						local exc = ge.excludeSkillTypes
-						local minionTypes = (not ge.ignoreMinionTypes) and activeGE.minionSkillTypes or nil
-						local applies = (not req or not req[1] or calcLib.doesTypeExpressionMatch(req, types, minionTypes))
-							and not (exc and exc[1] and calcLib.doesTypeExpressionMatch(exc, types))
-						if not applies then
-							t_insert(findings, {
-								id = "support.inapplicable." .. tostring(ge.name or gemDisplayName(gem)),
-								severity = "high",
-								category = "Skills",
-								title = "Support does not apply: " .. gemDisplayName(gem),
-								detail = s_format("%s does nothing for %s (skill-type tags do not match).", gemDisplayName(gem), gemDisplayName(activeGem)),
-								fix = "Replace it with a support whose tags match the skill, or move it to a compatible skill.",
-								jump = { mode = "SKILLS" },
-							})
+						t_insert(supportList, { gem = gem, ge = ge })
+					end
+				end
+				-- Iteratively accept supports whose tags match the current effective type set,
+				-- adding their addSkillTypes each time, mirroring CalcActiveSkill.
+				local changed = true
+				while changed do
+					changed = false
+					for _, sup in ipairs(supportList) do
+						if not sup.accepted then
+							local appliedAny = false
+							for _, active in ipairs(activeList) do
+								if supportAppliesToActive(sup.ge, active.ge, active.types) then
+									appliedAny = true
+									local add = sup.ge.addSkillTypes
+									if add then
+										for _, st in ipairs(add) do
+											if not active.types[st] then
+												active.types[st] = true
+												changed = true
+											end
+										end
+									end
+								end
+							end
+							if appliedAny then
+								sup.accepted = true
+							end
 						end
+					end
+				end
+				for _, sup in ipairs(supportList) do
+					if not sup.accepted then
+						local activeName
+						if #activeList == 1 then
+							activeName = gemDisplayName(activeList[1].gem)
+						else
+							activeName = "any active skill in this group"
+						end
+						t_insert(findings, {
+							id = "support.inapplicable." .. tostring(sup.ge.name or gemDisplayName(sup.gem)),
+							severity = "high",
+							category = "Skills",
+							title = "Support does not apply: " .. gemDisplayName(sup.gem),
+							detail = s_format("%s does nothing for %s (skill-type tags do not match).", gemDisplayName(sup.gem), activeName),
+							fix = "Replace it with a support whose tags match the skill, or move it to a compatible skill.",
+							jump = { mode = "SKILLS" },
+						})
 					end
 				end
 			end
@@ -373,12 +456,27 @@ end)
 local MAX_NOTABLE_SUGGESTIONS = 8   -- cap adjacent-notable suggestions so the list stays readable
 local PAYOFF_TYPES = { Notable = true, Keystone = true, Socket = true, Mastery = true }
 
--- Count a node's allocated neighbours within the allocated subgraph.
+-- Is a node currently allocated and active in the tree's current allocation mode?
+local function isNodeActive(spec, node)
+	if not (node and spec.allocNodes[node.id]) then return false end
+	if not spec.CanPathThroughAllocMode then
+		local mode = node.allocMode or 0
+		return mode == 0 or mode == spec.allocMode
+	end
+	return spec:CanPathThroughAllocMode(spec.allocMode, node)
+end
+
+-- Does a node provide any stats of its own (so a leaf node is not necessarily wasted)?
+local function nodeHasStats(node)
+	return (node.sd and node.sd[1]) or (node.modList and node.modList[1])
+end
+
+-- Count a node's active allocated neighbours.
 local function allocDegree(spec, node)
 	local d = 0
 	if node.linked then
 		for _, other in ipairs(node.linked) do
-			if other and spec.allocNodes[other.id] then d = d + 1 end
+			if other and isNodeActive(spec, other) then d = d + 1 end
 		end
 	end
 	return d
@@ -391,7 +489,7 @@ t_insert(Advisor.checks, function(build, out, findings)
 	local seen = { }
 	local count = 0
 	for _, node in pairs(spec.allocNodes) do
-		if node.linked then
+		if isNodeActive(spec, node) and node.linked then
 			for _, other in ipairs(node.linked) do
 				if other and other.type == "Notable" and not other.ascendancyName
 					and not spec.allocNodes[other.id] and not seen[other.id] then
@@ -420,11 +518,11 @@ t_insert(Advisor.checks, function(build, out, findings)
 	local spec = build and build.spec
 	if not (spec and spec.allocNodes) then return end
 	for id, node in pairs(spec.allocNodes) do
-		if node.type == "Normal" and allocDegree(spec, node) == 1 then
+		if isNodeActive(spec, node) and node.type == "Normal" and not nodeHasStats(node) and allocDegree(spec, node) == 1 then
 			local neighborIsPayoff = false
 			if node.linked then
 				for _, other in ipairs(node.linked) do
-					if other and spec.allocNodes[other.id] and PAYOFF_TYPES[other.type] then
+					if other and (PAYOFF_TYPES[other.type] or other.type == "ClassStart" or other.type == "AscendClassStart") then
 						neighborIsPayoff = true
 						break
 					end
@@ -436,7 +534,7 @@ t_insert(Advisor.checks, function(build, out, findings)
 					severity = "med",
 					category = "Tree",
 					title = "Dead-end travel node",
-					detail = s_format("Allocated travel node '%s' leads to no notable, keystone, or socket.", node.name or tostring(id)),
+					detail = s_format("Allocated travel node '%s' leads to no notable, keystone, socket, or start.", node.name or tostring(id)),
 					fix = "Refund this point (and its branch) unless it reaches something worthwhile.",
 					jump = { mode = "TREE" },
 				})
@@ -452,7 +550,7 @@ t_insert(Advisor.checks, function(build, out, findings)
 	local queue = { }
 	local visited = { }
 	for id, node in pairs(spec.allocNodes) do
-		if node.type == "ClassStart" or node.type == "AscendClassStart" then
+		if isNodeActive(spec, node) and (node.type == "ClassStart" or node.type == "AscendClassStart") then
 			visited[id] = true
 			t_insert(queue, node)
 		end
@@ -461,7 +559,7 @@ t_insert(Advisor.checks, function(build, out, findings)
 		local node = table.remove(queue)
 		if node.linked then
 			for _, other in ipairs(node.linked) do
-				if other and spec.allocNodes[other.id] and not visited[other.id] then
+				if other and isNodeActive(spec, other) and not visited[other.id] then
 					visited[other.id] = true
 					t_insert(queue, other)
 				end
@@ -470,7 +568,7 @@ t_insert(Advisor.checks, function(build, out, findings)
 	end
 	local floating = 0
 	for id, node in pairs(spec.allocNodes) do
-		if not visited[id] and node.type ~= "ClassStart" and node.type ~= "AscendClassStart" then
+		if isNodeActive(spec, node) and not visited[id] and node.type ~= "ClassStart" and node.type ~= "AscendClassStart" then
 			floating = floating + 1
 		end
 	end

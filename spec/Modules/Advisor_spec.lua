@@ -98,6 +98,22 @@ describe("Advisor", function()
 		assert.are.equal("med", f.severity)
 	end)
 
+	it("counts all evade and block variants as mitigation layers", function()
+		local function zeroMit(extra)
+			local t = { PhysicalDamageReduction = 0, EvadeChance = 0, MeleeEvadeChance = 0, ProjectileEvadeChance = 0, SpellEvadeChance = 0, SpellProjectileEvadeChance = 0, EffectiveBlockChance = 0, EffectiveProjectileBlockChance = 0, EffectiveSpellBlockChance = 0, EffectiveSpellProjectileBlockChance = 0, EffectiveSpellSuppressionChance = 0 }
+			for k, v in pairs(extra) do t[k] = v end
+			return t
+		end
+		-- each evade variant independently satisfies the mitigation check (threshold 20%)
+		assert.is_nil(byId(Advisor.analyze(makeBuild(healthyOutput(zeroMit({ ProjectileEvadeChance = 25 })))), "mitigation.none"))
+		assert.is_nil(byId(Advisor.analyze(makeBuild(healthyOutput(zeroMit({ SpellEvadeChance = 25 })))), "mitigation.none"))
+		assert.is_nil(byId(Advisor.analyze(makeBuild(healthyOutput(zeroMit({ SpellProjectileEvadeChance = 25 })))), "mitigation.none"))
+		-- each block variant independently satisfies the mitigation check (threshold 10%)
+		assert.is_nil(byId(Advisor.analyze(makeBuild(healthyOutput(zeroMit({ EffectiveSpellBlockChance = 15 })))), "mitigation.none"))
+		assert.is_nil(byId(Advisor.analyze(makeBuild(healthyOutput(zeroMit({ EffectiveProjectileBlockChance = 15 })))), "mitigation.none"))
+		assert.is_nil(byId(Advisor.analyze(makeBuild(healthyOutput(zeroMit({ EffectiveSpellProjectileBlockChance = 15 })))), "mitigation.none"))
+	end)
+
 	it("surfaces the weakest damage type by max hit", function()
 		local f = byId(Advisor.analyze(makeBuild(healthyOutput({
 			PhysicalMaximumHitTaken = 5000, FireMaximumHitTaken = 3000,
@@ -112,15 +128,16 @@ describe("Advisor", function()
 		return { enabled = true, gemData = { name = name, gameId = name, grantedEffect = { name = name, skillTypes = { [skillType] = true } } } }
 	end
 
-	local function supportGem(name, gameId, opts)
-		opts = opts or { }
-		return { enabled = true, gemData = { name = name, gameId = gameId or name, grantedEffect = {
-			name = name, support = true,
-			requireSkillTypes = opts.require or { },
-			excludeSkillTypes = opts.exclude or { },
-			addSkillTypes = opts.add or { },
-		} } }
-	end
+local function supportGem(name, gameId, opts)
+	opts = opts or { }
+	return { enabled = true, gemData = { name = name, gameId = gameId or name, grantedEffect = {
+		name = name, support = true,
+		requireSkillTypes = opts.require or { },
+		excludeSkillTypes = opts.exclude or { },
+		addSkillTypes = opts.add or { },
+		ignoreMinionTypes = opts.ignoreMinionTypes,
+	} } }
+end
 
 	local function makeSkillBuild(socketGroupList, outOverrides)
 		return { calcsTab = { mainOutput = healthyOutput(outOverrides) }, characterLevel = 90, skillsTab = { socketGroupList = socketGroupList } }
@@ -217,6 +234,50 @@ describe("Advisor", function()
 		assert.is_nil(byId(Advisor.analyze(makeSkillBuild({ group })), "support.inapplicable.Melee Infusion"))
 	end)
 
+	it("does not flag a support valid for any active in a multi-active group", function()
+		local group = { enabled = true, gemList = {
+			activeGem("Spark", SkillType.Spell),
+			activeGem("Heavy Strike", SkillType.Attack),
+			supportGem("Melee Infusion", "melee", { require = { SkillType.Attack } }),
+		} }
+		assert.is_nil(byId(Advisor.analyze(makeSkillBuild({ group })), "support.inapplicable.Melee Infusion"))
+	end)
+
+	it("flags a support that cannot support any active in a multi-active group", function()
+		local group = { enabled = true, gemList = {
+			activeGem("Spark", SkillType.Spell),
+			activeGem("Fireball", SkillType.Spell),
+			supportGem("Melee Infusion", "melee", { require = { SkillType.Attack } }),
+		} }
+		local f = byId(Advisor.analyze(makeSkillBuild({ group })), "support.inapplicable.Melee Infusion")
+		assert.is_truthy(f)
+		assert.is_truthy(f.detail:find("any active skill in this group"))
+	end)
+
+	it("does not flag a minion support excluded only by the active skill's types", function()
+		-- The support targets the minion, so an active-skill-only type in its exclude list should not matter.
+		local active = { enabled = true, gemData = { name = "Raise Zombie", gameId = "RaiseZombie", grantedEffect = {
+			name = "Raise Zombie",
+			skillTypes = { [SkillType.Spell] = true, [SkillType.Minion] = true, [SkillType.CreatesMinion] = true },
+			minionSkillTypes = { [SkillType.Attack] = true, [SkillType.Melee] = true, [SkillType.MeleeSingleTarget] = true },
+		} } }
+		local sup = supportGem("Minion Splash", "splash", { require = { SkillType.CreatesMinion, SkillType.MeleeSingleTarget, SkillType.AND }, exclude = { SkillType.Spell } })
+		local group = { enabled = true, gemList = { active, sup } }
+		assert.is_nil(byId(Advisor.analyze(makeSkillBuild({ group })), "support.inapplicable.Minion Splash"))
+	end)
+
+	it("does not let an incompatible support enable another support via addSkillTypes", function()
+		-- Adder requires Attack (active is Spell), so it is invalid and its Area tag must not enable Follower.
+		local adder = supportGem("Area Adder", "adder", { require = { SkillType.Attack }, add = { SkillType.Area } })
+		local follower = supportGem("Area Follower", "follower", { require = { SkillType.Area } })
+		local group = { enabled = true, gemList = {
+			activeGem("Spark", SkillType.Spell), adder, follower,
+		} }
+		local findings = Advisor.analyze(makeSkillBuild({ group }))
+		assert.is_truthy(byId(findings, "support.inapplicable.Area Adder"))
+		assert.is_truthy(byId(findings, "support.inapplicable.Area Follower"))
+	end)
+
 	it("flags an unmet attribute requirement", function()
 		local gem = activeGem("Heavy Skill", SkillType.Spell)
 		gem.reqStr = 200
@@ -252,12 +313,30 @@ describe("Advisor", function()
 		table.insert(b.linked, a)
 	end
 
-	local function makeTreeBuild(nodes, allocIds)
+	local function makeTreeBuild(nodes, allocIds, allocMode, nodeModes)
 		local nodeMap = { }
 		for _, n in ipairs(nodes) do nodeMap[n.id] = n end
 		local allocNodes = { }
-		for _, id in ipairs(allocIds) do allocNodes[id] = nodeMap[id] end
-		return { calcsTab = { mainOutput = healthyOutput() }, characterLevel = 90, spec = { nodes = nodeMap, allocNodes = allocNodes } }
+		for _, id in ipairs(allocIds) do
+			local node = nodeMap[id]
+			if nodeModes and nodeModes[id] then
+				node.allocMode = nodeModes[id]
+			end
+			allocNodes[id] = node
+		end
+		return {
+			calcsTab = { mainOutput = healthyOutput() },
+			characterLevel = 90,
+			spec = {
+				nodes = nodeMap,
+				allocNodes = allocNodes,
+				allocMode = allocMode or 0,
+				CanPathThroughAllocMode = function(_, mode, node)
+					local nodeMode = node.allocMode or 0
+					return nodeMode == 0 or mode > 0 and nodeMode == mode
+				end,
+			},
+		}
 	end
 
 	it("suggests an unallocated notable adjacent to the allocated tree", function()
@@ -303,16 +382,16 @@ describe("Advisor", function()
 		assert.is_nil(byId(Advisor.analyze(makeTreeBuild({ start, a, m }, { 1, 2, 3 })), "tree.deadend.2"))
 	end)
 
-	it("flags a Normal leaf as deadend and the adjacent unallocated notable separately", function()
+	it("does not flag a Normal leaf that leads to an unallocated notable", function()
 		-- Start → A(Normal, allocated) → B(Notable, NOT allocated)
-		-- Expected: A is a dead-end (leads to no allocated payoff), B is adjacent-notable suggestion.
+		-- A is pathing to a payoff, so it is not a dead-end; only the adjacent-notable suggestion should fire.
 		local start = makeNode(1, "ClassStart", "Start")
 		local a = makeNode(2, "Normal", "Travel A")
 		local b = makeNode(3, "Notable", "Nearby Notable", { "+10 strength" })
 		linkNodes(start, a)
 		linkNodes(a, b)
 		local findings = Advisor.analyze(makeTreeBuild({ start, a, b }, { 1, 2 }))
-		assert.is_truthy(byId(findings, "tree.deadend.2"))
+		assert.is_nil(byId(findings, "tree.deadend.2"))
 		assert.is_truthy(byId(findings, "tree.adjacent.3"))
 	end)
 
@@ -324,5 +403,34 @@ describe("Advisor", function()
 		local f = byId(Advisor.analyze(makeTreeBuild({ start, a, floatNode }, { 1, 2, 9 })), "tree.floating")
 		assert.is_truthy(f)
 		assert.are.equal("med", f.severity)
+	end)
+
+	it("does not flag a Normal leaf that provides stats", function()
+		local start = makeNode(1, "ClassStart", "Start")
+		local a = makeNode(2, "Normal", "+10 Strength", { "+10 to Strength" })
+		linkNodes(start, a)
+		assert.is_nil(byId(Advisor.analyze(makeTreeBuild({ start, a }, { 1, 2 })), "tree.deadend.2"))
+	end)
+
+	it("does not flag a bridge node to the ascendancy start", function()
+		-- Node 2 has allocDegree == 1 (only the AscendClassStart is its active neighbor),
+		-- so the dead-end guard fires and must be suppressed by the AscendClassStart exemption.
+		local ascStart = makeNode(1, "AscendClassStart", "Ascendancy Start")
+		local a = makeNode(2, "Normal", "Ascendancy Bridge")
+		linkNodes(ascStart, a)
+		assert.is_nil(byId(Advisor.analyze(makeTreeBuild({ ascStart, a }, { 1, 2 })), "tree.deadend.2"))
+	end)
+
+	it("ignores allocations from a different weapon set", function()
+		local start = makeNode(1, "ClassStart", "Start")
+		local a = makeNode(2, "Normal", "Travel A")
+		local b = makeNode(3, "Normal", "Travel B")
+		linkNodes(start, a)
+		linkNodes(a, b)
+		-- In mode 0, only the start is active; a and b are mode 2 and should not be flagged.
+		local findings = Advisor.analyze(makeTreeBuild({ start, a, b }, { 1, 2, 3 }, 0, { [2] = 2, [3] = 2 }))
+		assert.is_nil(byId(findings, "tree.deadend.2"))
+		assert.is_nil(byId(findings, "tree.deadend.3"))
+		assert.is_nil(byId(findings, "tree.floating"))
 	end)
 end)

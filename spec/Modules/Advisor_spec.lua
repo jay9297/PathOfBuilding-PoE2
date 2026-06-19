@@ -250,7 +250,7 @@ end
 			skillTypes = { [SkillType.Spell] = true, [SkillType.Minion] = true, [SkillType.CreatesMinion] = true },
 			minionSkillTypes = { [SkillType.Attack] = true, [SkillType.Melee] = true, [SkillType.MeleeSingleTarget] = true },
 		} } }
-		local sup = supportGem("Minion Splash", "minionsplash", { require = { SkillType.CreatesMinion, SkillType.MeleeSingleTarget, SkillType.AND }, exclude = { SkillType.Spell } })
+		local sup = supportGem("Minion Splash", "splash", { require = { SkillType.CreatesMinion, SkillType.MeleeSingleTarget, SkillType.AND }, exclude = { SkillType.Spell } })
 		local group = { enabled = true, gemList = { active, sup } }
 		assert.is_nil(byId(Advisor.analyze(makeSkillBuild({ group })), "support.inapplicable.Minion Splash"))
 	end)

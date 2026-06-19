@@ -98,9 +98,20 @@ describe("Advisor", function()
 		assert.are.equal("med", f.severity)
 	end)
 
-	it("counts projectile evade and spell block as mitigation layers", function()
-		assert.is_nil(byId(Advisor.analyze(makeBuild(healthyOutput({ PhysicalDamageReduction = 0, EvadeChance = 0, MeleeEvadeChance = 0, ProjectileEvadeChance = 25, EffectiveBlockChance = 0, EffectiveSpellBlockChance = 0, EffectiveSpellSuppressionChance = 0 }))), "mitigation.none"))
-		assert.is_nil(byId(Advisor.analyze(makeBuild(healthyOutput({ PhysicalDamageReduction = 0, EvadeChance = 0, EffectiveBlockChance = 0, EffectiveSpellBlockChance = 15, EffectiveSpellSuppressionChance = 0 }))), "mitigation.none"))
+	it("counts all evade and block variants as mitigation layers", function()
+		local function zeroMit(extra)
+			local t = { PhysicalDamageReduction = 0, EvadeChance = 0, MeleeEvadeChance = 0, ProjectileEvadeChance = 0, SpellEvadeChance = 0, SpellProjectileEvadeChance = 0, EffectiveBlockChance = 0, EffectiveProjectileBlockChance = 0, EffectiveSpellBlockChance = 0, EffectiveSpellProjectileBlockChance = 0, EffectiveSpellSuppressionChance = 0 }
+			for k, v in pairs(extra) do t[k] = v end
+			return t
+		end
+		-- each evade variant independently satisfies the mitigation check (threshold 20%)
+		assert.is_nil(byId(Advisor.analyze(makeBuild(healthyOutput(zeroMit({ ProjectileEvadeChance = 25 })))), "mitigation.none"))
+		assert.is_nil(byId(Advisor.analyze(makeBuild(healthyOutput(zeroMit({ SpellEvadeChance = 25 })))), "mitigation.none"))
+		assert.is_nil(byId(Advisor.analyze(makeBuild(healthyOutput(zeroMit({ SpellProjectileEvadeChance = 25 })))), "mitigation.none"))
+		-- each block variant independently satisfies the mitigation check (threshold 10%)
+		assert.is_nil(byId(Advisor.analyze(makeBuild(healthyOutput(zeroMit({ EffectiveSpellBlockChance = 15 })))), "mitigation.none"))
+		assert.is_nil(byId(Advisor.analyze(makeBuild(healthyOutput(zeroMit({ EffectiveProjectileBlockChance = 15 })))), "mitigation.none"))
+		assert.is_nil(byId(Advisor.analyze(makeBuild(healthyOutput(zeroMit({ EffectiveSpellProjectileBlockChance = 15 })))), "mitigation.none"))
 	end)
 
 	it("surfaces the weakest damage type by max hit", function()
@@ -402,12 +413,12 @@ end
 	end)
 
 	it("does not flag a bridge node to the ascendancy start", function()
-		local start = makeNode(1, "ClassStart", "Start")
+		-- Node 2 has allocDegree == 1 (only the AscendClassStart is its active neighbor),
+		-- so the dead-end guard fires and must be suppressed by the AscendClassStart exemption.
+		local ascStart = makeNode(1, "AscendClassStart", "Ascendancy Start")
 		local a = makeNode(2, "Normal", "Ascendancy Bridge")
-		local ascStart = makeNode(3, "AscendClassStart", "Ascendancy Start")
-		linkNodes(start, a)
-		linkNodes(a, ascStart)
-		assert.is_nil(byId(Advisor.analyze(makeTreeBuild({ start, a, ascStart }, { 1, 2, 3 })), "tree.deadend.2"))
+		linkNodes(ascStart, a)
+		assert.is_nil(byId(Advisor.analyze(makeTreeBuild({ ascStart, a }, { 1, 2 })), "tree.deadend.2"))
 	end)
 
 	it("ignores allocations from a different weapon set", function()

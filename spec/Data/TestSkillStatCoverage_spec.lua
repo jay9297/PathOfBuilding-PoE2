@@ -67,4 +67,20 @@ describe("SkillStatCoverage #data", function()
 				"Expected mapped stat '" .. statId .. "' found in unmapped set — resolution order may be wrong")
 		end
 	end)
+
+	it("count column equals the number of skill names (no nil-drop undercount)", function()
+		local result = lib.analyse(data.skills, data.skillStatMap)
+		for _, entry in ipairs(result.unmapped) do
+			-- The reported count must match the gathered names exactly, and a
+			-- nil name silently dropped by `t[#t + 1] = nil` would desync these.
+			assert.are.equal(#entry.skillNames, entry.count,
+				"count column out of sync with skillNames for stat '" .. entry.statId .. "'")
+			assert.is_true(entry.count >= 1,
+				"every unmapped stat must be referenced by at least one skill: '" .. entry.statId .. "'")
+			for _, name in ipairs(entry.skillNames) do
+				assert.is_not_nil(name,
+					"skillNames contains a nil entry for stat '" .. entry.statId .. "'")
+			end
+		end
+	end)
 end)

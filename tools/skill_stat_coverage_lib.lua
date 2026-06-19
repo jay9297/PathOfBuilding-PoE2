@@ -9,44 +9,40 @@
 
 local M = {}
 
---- Collect every stat ID referenced by a granted effect (all statSets).
+--- Collect every unique stat ID referenced by a granted effect (all statSets).
 -- Includes: statSet.stats[], statSet.constantStats[][1], grantedEffect.qualityStats[][1].
 -- @param grantedEffect table  A single granted effect from data.skills[id].
--- @return table  Array of { statId = string, setName = string } entries.
+-- @return table  Array of stat ID strings, deduplicated; nil/missing IDs skipped.
 local function collectStatIds(grantedEffect)
 	local result = {}
 	local seen = {}
 
+	-- Guard against entries that lack index 1: indexing `seen[nil]` reads fine
+	-- but `seen[nil] = true` would throw "table index is nil" in LuaJIT.
+	local function add(statId)
+		if statId ~= nil and not seen[statId] then
+			seen[statId] = true
+			result[#result + 1] = statId
+		end
+	end
+
 	-- Quality stats (top-level on the granted effect)
 	if grantedEffect.qualityStats then
 		for _, entry in ipairs(grantedEffect.qualityStats) do
-			local statId = entry[1]
-			if not seen[statId] then
-				seen[statId] = true
-				result[#result + 1] = { statId = statId, setName = "qualityStats" }
-			end
+			add(entry[1])
 		end
 	end
 
 	-- Each statSet
-	for setIdx, statSet in ipairs(grantedEffect.statSets or {}) do
-		local setName = statSet.label or ("statSet_" .. setIdx)
-
+	for _, statSet in ipairs(grantedEffect.statSets or {}) do
 		-- stats[] — boolean/flag stats and per-level-scaled stats
 		for _, statId in ipairs(statSet.stats or {}) do
-			if not seen[statId] then
-				seen[statId] = true
-				result[#result + 1] = { statId = statId, setName = setName }
-			end
+			add(statId)
 		end
 
 		-- constantStats[] — { statId, value } pairs
 		for _, entry in ipairs(statSet.constantStats or {}) do
-			local statId = entry[1]
-			if not seen[statId] then
-				seen[statId] = true
-				result[#result + 1] = { statId = statId, setName = setName }
-			end
+			add(entry[1])
 		end
 	end
 
@@ -63,10 +59,13 @@ function M.analyse(skills, globalSkillStatMap)
 	local statToSkills = {}  -- statId → { skillName1, skillName2, ... }
 	local allStatIds = {}    -- ordered list of unique stat IDs
 
-	for skillId, grantedEffect in pairs(skills) do
-		local entries = collectStatIds(grantedEffect)
-		for _, entry in ipairs(entries) do
-			local statId = entry.statId
+	for _, grantedEffect in pairs(skills) do
+		-- Some granted effects are anonymous (no `name`); normalise nil to ""
+		-- so it is appended like any other name instead of being silently
+		-- dropped by `t[#t + 1] = nil`, which would undercount the stat.
+		local skillName = grantedEffect.name or ""
+		local statIds = collectStatIds(grantedEffect)
+		for _, statId in ipairs(statIds) do
 			if not statToSkills[statId] then
 				statToSkills[statId] = {}
 				allStatIds[#allStatIds + 1] = statId
@@ -75,13 +74,13 @@ function M.analyse(skills, globalSkillStatMap)
 			-- Deduplicate skill names per stat
 			local already = false
 			for _, name in ipairs(skillList) do
-				if name == grantedEffect.name then
+				if name == skillName then
 					already = true
 					break
 				end
 			end
 			if not already then
-				skillList[#skillList + 1] = grantedEffect.name
+				skillList[#skillList + 1] = skillName
 			end
 		end
 	end
@@ -96,14 +95,17 @@ function M.analyse(skills, globalSkillStatMap)
 	for _, grantedEffect in pairs(skills) do
 		for _, statSet in ipairs(grantedEffect.statSets or {}) do
 			if statSet.statMap then
+				-- Test key *presence* (~= nil), not truthiness: a statMap entry
+				-- could legitimately be a falsy value and must still count as mapped.
 				for _, statId in ipairs(statSet.stats or {}) do
-					if rawget(statSet.statMap, statId) then
+					if rawget(statSet.statMap, statId) ~= nil then
 						locallyMapped[statId] = true
 					end
 				end
 				for _, entry in ipairs(statSet.constantStats or {}) do
-					if rawget(statSet.statMap, entry[1]) then
-						locallyMapped[entry[1]] = true
+					local statId = entry[1]
+					if statId ~= nil and rawget(statSet.statMap, statId) ~= nil then
+						locallyMapped[statId] = true
 					end
 				end
 			end
@@ -114,7 +116,7 @@ function M.analyse(skills, globalSkillStatMap)
 	local mapped = 0
 
 	for _, statId in ipairs(allStatIds) do
-		if locallyMapped[statId] or globalSkillStatMap[statId] then
+		if locallyMapped[statId] or globalSkillStatMap[statId] ~= nil then
 			mapped = mapped + 1
 		else
 			local skillNames = statToSkills[statId] or {}

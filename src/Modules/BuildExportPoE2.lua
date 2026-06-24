@@ -313,9 +313,9 @@ local function gemIdFor(gem)
 	return gem and gem.gemData and gem.gemData.gameId or nil
 end
 
--- Build the additional_text for a gem instance. An author-set note (via
--- Shift+Right-Click on the gem) takes precedence; otherwise falls back to a
--- "Level N[, Q% Quality]" hint so the loader has something useful to show.
+-- Build the additional_text for a gem instance. A note stored on the gem
+-- instance takes precedence; otherwise falls back to a "Level N[, Q% Quality]"
+-- hint so the loader has something useful to show.
 -- The .build schema has no level field on BuildSkill/BuildSupport, so this is
 -- the only channel for either piece of info.
 --

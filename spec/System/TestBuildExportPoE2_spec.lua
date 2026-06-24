@@ -300,6 +300,98 @@ describe("TestBuildExportPoE2", function()
 		end)
 	end)
 
+	describe("nodeNotes round-trip via PassiveSpec save/load", function()
+		before_each(function()
+			newBuild()
+		end)
+
+		it("persists nodeNotes through save/load", function()
+			local spec = new("PassiveSpec", build, latestTreeVersion)
+			spec.nodeNotes[42] = "Test note for node 42"
+
+			local xml = { attrib = {} }
+			spec:Save(xml)
+
+			local spec2 = new("PassiveSpec", build, latestTreeVersion)
+			spec2:Load(xml, "test.xml")
+
+			assert.are.equals("Test note for node 42", spec2.nodeNotes[42])
+		end)
+
+		it("nodeNotes are empty after save/load when not set", function()
+			local spec = new("PassiveSpec", build, latestTreeVersion)
+
+			local xml = { attrib = {} }
+			spec:Save(xml)
+
+			local spec2 = new("PassiveSpec", build, latestTreeVersion)
+			spec2:Load(xml, "test.xml")
+
+			assert.is_nil(next(spec2.nodeNotes))
+		end)
+	end)
+
+	describe("itemAdditionalText truncation", function()
+		before_each(function()
+			newBuild()
+		end)
+
+		it("truncates additional_text to at most 1000 chars", function()
+			local setId = build.itemsTab.itemSetOrderList[1]
+			local itemSet = build.itemsTab.itemSets[setId]
+			-- Inject a non-unique item with > 1000 chars of explicit mod text.
+			local longMod = string.rep("x", 250)
+			local mockItem = {
+				rarity = "NORMAL",
+				title = nil,
+				baseName = "Test Helmet",
+				explicitModLines = {
+					{ line = longMod },
+					{ line = longMod },
+					{ line = longMod },
+					{ line = longMod },
+					{ line = longMod },
+				},
+			}
+			build.itemsTab.items[999] = mockItem
+			itemSet["Helmet"] = { selItemId = 999 }
+
+			local root = BuildExportPoE2.BuildTable(build)
+			local found = false
+			for _, entry in ipairs(root.items) do
+				if type(entry) == "table" and entry.inventory_id == "Helm" and entry.additional_text then
+					assert.is_true(#entry.additional_text <= 1000,
+						"additional_text exceeds 1000 chars: " .. tostring(#entry.additional_text))
+					found = true
+				end
+			end
+			assert.is_true(found, "No Helm entry with additional_text found in export")
+		end)
+
+		it("does not truncate additional_text under 1000 chars", function()
+			local setId = build.itemsTab.itemSetOrderList[1]
+			local itemSet = build.itemsTab.itemSets[setId]
+			local mockItem = {
+				rarity = "NORMAL",
+				title = nil,
+				baseName = "Short Helmet",
+				explicitModLines = { { line = "+10 to Strength" } },
+			}
+			build.itemsTab.items[998] = mockItem
+			itemSet["Helmet"] = { selItemId = 998 }
+
+			local root = BuildExportPoE2.BuildTable(build)
+			local found = false
+			for _, entry in ipairs(root.items) do
+				if type(entry) == "table" and entry.inventory_id == "Helm" and entry.additional_text then
+					assert.is_truthy(entry.additional_text:find("+10 to Strength"))
+					found = true
+				end
+			end
+			assert.is_true(found, "No Helm entry found in export")
+		end)
+	end)
+
 	describe("levelMin/levelMax round-trip via PassiveSpec save/load", function()
 		before_each(function()
 			newBuild()

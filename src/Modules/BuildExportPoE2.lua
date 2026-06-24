@@ -351,8 +351,22 @@ local function buildSkills(build, brackets)
 		if skillSet and skillSet.socketGroupList then
 			for _, group in ipairs(skillSet.socketGroupList) do
 				if group.enabled ~= false and group.gemList and #group.gemList > 0 then
+					-- Partition gems using PoB's canonical support flag.
+					-- mainActiveSkill is an index into the active-skill list (not gemList),
+					-- so we must filter before indexing.
+					local activeGems = {}
+					local supportGems = {}
+					for _, gem in ipairs(group.gemList) do
+						if gem.gemData and gem.gemData.grantedEffect then
+							if gem.gemData.grantedEffect.support then
+								t_insert(supportGems, gem)
+							else
+								t_insert(activeGems, gem)
+							end
+						end
+					end
 					local activeIdx = tonumber(group.mainActiveSkill) or 1
-					local activeGem = group.gemList[activeIdx] or group.gemList[1]
+					local activeGem = activeGems[activeIdx] or activeGems[1]
 					local activeId = gemIdFor(activeGem)
 					if activeId then
 						local entry = { id = activeId }
@@ -360,8 +374,8 @@ local function buildSkills(build, brackets)
 						local activeText = gemAdditionalText(activeGem, false)
 						if activeText then entry.additional_text = activeText end
 						local supports = {}
-						for gi, gem in ipairs(group.gemList) do
-							if gem ~= activeGem and gem.enabled ~= false then
+						for _, gem in ipairs(supportGems) do
+							if gem.enabled ~= false then
 								local supId = gemIdFor(gem)
 								if supId then
 									local supText = gemAdditionalText(gem, true)

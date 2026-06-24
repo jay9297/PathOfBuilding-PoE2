@@ -1515,7 +1515,7 @@ function calcs.initEnv(build, mode, override, specEnv)
 				if not hasThornsDamage then
 					for _, socketGroup in pairs(build.skillsTab.socketGroupList) do
 						if socketGroup.source ~= "Thorns" and socketGroup.enabled ~= false then
-							for _, gem in ipairs(socketGroup.gemList) do
+							for _, gem in ipairs(socketGroup.gemList or { }) do
 								local grantedEffect = gem.enabled ~= false and env.data.skills[gem.skillId]
 								if grantedEffect and grantedEffect.grantsThornsDamage then
 									hasThornsDamage = true
@@ -1683,7 +1683,7 @@ function calcs.initEnv(build, mode, override, specEnv)
 					end
 				end
 
-				for gemIndex, gemInstance in ipairs(group.gemList) do
+				for gemIndex, gemInstance in ipairs(group.gemList or { }) do
 					-- Add support gems from this group
 					if env.mode == "MAIN" then
 						gemInstance.displayEffect = nil
@@ -1757,7 +1757,7 @@ function calcs.initEnv(build, mode, override, specEnv)
 				local slotHasActiveSkill = false
 
 				-- Create active skills
-				for gemIndex, gemInstance in ipairs(group.gemList) do
+				for gemIndex, gemInstance in ipairs(group.gemList or { }) do
 					if gemInstance.enabled and (gemInstance.gemData or gemInstance.grantedEffect) then
 						local grantedEffectList = gemInstance.gemData and gemInstance.gemData.grantedEffectList or { gemInstance.grantedEffect }
 						for index, grantedEffect in ipairs(grantedEffectList) do
@@ -1825,7 +1825,7 @@ function calcs.initEnv(build, mode, override, specEnv)
 											-- add socketed supports from other socketGroups
 											for _, otherSocketGroup in ipairs(build.skillsTab.socketGroupList) do
 												if otherSocketGroup.slot and otherSocketGroup.slot == group.slot then
-													for _, gem in ipairs(otherSocketGroup.gemList) do
+													for _, gem in ipairs(otherSocketGroup.gemList or { }) do
 														if gem.gemData and gem.gemData.grantedEffect and gem.gemData.grantedEffect.support then
 															t_insert(group.displayGemList, gem)
 														end
@@ -1845,7 +1845,7 @@ function calcs.initEnv(build, mode, override, specEnv)
 											if crossLinkedSupportedSlot == slotName and supportLists[crossLinkedSupportSlot] then
 												for _, otherSocketGroup in ipairs(build.skillsTab.socketGroupList) do
 													if otherSocketGroup.slot and otherSocketGroup.slot == crossLinkedSupportSlot then
-														for _, gem in ipairs(otherSocketGroup.gemList) do
+														for _, gem in ipairs(otherSocketGroup.gemList or { }) do
 															if gem.gemData and gem.gemData.grantedEffect and gem.gemData.grantedEffect.support then
 																t_insert(group.displayGemList, gem)
 															end
@@ -1925,7 +1925,7 @@ function calcs.initEnv(build, mode, override, specEnv)
 					group.displayLabel = group.label
 				else
 					group.displayLabel = nil
-					for _, gemInstance in ipairs(group.gemList) do
+					for _, gemInstance in ipairs(group.gemList or { }) do
 						local grantedEffect = gemInstance.gemData and gemInstance.gemData.grantedEffect or gemInstance.grantedEffect
 						local gemName = gemInstance.gemData and gemInstance.gemData.name
 						if grantedEffect and not grantedEffect.support and gemInstance.enabled then
@@ -1947,7 +1947,7 @@ function calcs.initEnv(build, mode, override, specEnv)
 
 			-- Check for enabled energy blade to see if we need to regenerate everything.
 			if not modDB.conditions["AffectedByEnergyBlade"] and group.enabled and group.slotEnabled then
-				for _, gemInstance in ipairs(group.gemList) do
+				for _, gemInstance in ipairs(group.gemList or { }) do
 					local grantedEffect = gemInstance.gemData and gemInstance.gemData.grantedEffect or gemInstance.grantedEffect
 					if grantedEffect and not grantedEffect.support and gemInstance.enabled and grantedEffect.name == "Energy Blade" then
 						override.conditions = override.conditions or { }

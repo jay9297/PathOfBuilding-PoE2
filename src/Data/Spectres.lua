@@ -1832,6 +1832,7 @@ minions["Metadata/Monsters/CrazedCannibalPicts/PictFemaleBow"] = {
 	companionReservation = 34.2,
 	monsterCategory = "Humanoid",
 	spawnLocation = {
+		"Crux of Nothingness (Map)",
 		"Deforestation (Map)",
 		"Freythorn (Act 1)",
 		"Mire (Map)",
@@ -1873,6 +1874,7 @@ minions["Metadata/Monsters/CrazedCannibalPicts/PictFemaleDaggerDagger"] = {
 	companionReservation = 30,
 	monsterCategory = "Humanoid",
 	spawnLocation = {
+		"Crux of Nothingness (Map)",
 		"Freythorn (Act 1)",
 		"Mire (Map)",
 		"The Viridian Wildwood (Map)",
@@ -1908,6 +1910,7 @@ minions["Metadata/Monsters/CrazedCannibalPicts/PictFemaleStaff"] = {
 	companionReservation = 42.3,
 	monsterCategory = "Humanoid",
 	spawnLocation = {
+		"Crux of Nothingness (Map)",
 		"Deforestation (Map)",
 		"Freythorn (Act 1)",
 		"The Viridian Wildwood (Map)",
@@ -3228,9 +3231,7 @@ minions["Metadata/Monsters/BoneCultists/BoneCultist_Zealots/FarudinLocustWarlock
 	companionReservation = 36.6,
 	monsterCategory = "Humanoid",
 	spawnLocation = {
-		"Abyssal Depths (Act 2)",
 		"Dreadnought (Act 2)",
-		"Lightless Void",
 		"Found in Maps",
 	},
 	skillList = {
@@ -8664,9 +8665,7 @@ minions["Metadata/Monsters/PlagueBringer/PlagueBringer"] = {
 	companionReservation = 42.3,
 	monsterCategory = "Beast",
 	spawnLocation = {
-		"Abyssal Depths (Act 2)",
 		"Dreadnought (Act 2)",
-		"Lightless Void",
 		"Mawdun Quarry (Act 2)",
 		"Pools of Khatal (Act 6)",
 		"The Dreadnought's Wake (Act 2)",
@@ -10223,6 +10222,7 @@ minions["Metadata/Monsters/CrazedCannibalPicts/PictMaleAxe"] = {
 	companionReservation = 31.2,
 	monsterCategory = "Humanoid",
 	spawnLocation = {
+		"Crux of Nothingness (Map)",
 		"Deforestation (Map)",
 		"Freythorn (Act 1)",
 		"The Viridian Wildwood (Map)",
@@ -10259,6 +10259,7 @@ minions["Metadata/Monsters/CrazedCannibalPicts/PictBigMale"] = {
 	companionReservation = 36.6,
 	monsterCategory = "Humanoid",
 	spawnLocation = {
+		"Crux of Nothingness (Map)",
 		"Deforestation (Map)",
 		"Freythorn (Act 1)",
 		"The Viridian Wildwood (Map)",
@@ -13266,10 +13267,10 @@ minions["Metadata/Monsters/Breach/BreachEliteFallenLunarisMonster__"] = {
 	},
 	skillList = {
 		"MeleeAtAnimationSpeedComboBrequel",
-		"MPSBreachEliteFallenLunarisMonsterChaosSpark",
 		"CGBreachEliteFallenLunarisMonsterChaosQuicksand",
 		"SGLBreachEliteFallenLunarisMonsterChaosQuicksand",
 		"BreachLunarisChaosSpark",
+		"GABreachEliteFallenLunarisMonsterMeleeFlurry",
 	},
 	modList = {
 		-- set_is_breach_monster [set_is_breach_monster = 1]
@@ -19591,7 +19592,7 @@ minions["Metadata/Monsters/LeagueDelirium/DeliriumMinion1"] = {
 	coldResist = 0,
 	lightningResist = 0,
 	chaosResist = 0,
-	damage = 1.3,
+	damage = 0.78,
 	damageSpread = 0.2,
 	attackTime = 1.665,
 	attackRange = 12,
@@ -19689,7 +19690,7 @@ minions["Metadata/Monsters/LeagueDelirium/DeliriumMinion4"] = {
 	coldResist = 0,
 	lightningResist = 0,
 	chaosResist = 0,
-	damage = 0.8,
+	damage = 0.48,
 	damageSpread = 0.2,
 	attackTime = 0.675,
 	attackRange = 8,

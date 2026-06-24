@@ -1,0 +1,1590 @@
+# cspell:disable
+# unmapped=1588 total_stats=2411
+action_allowed_queue_time_override_ms	25	Basic Bolt, Black Powder Blitz, Cluster Grenade, Compose Requiem, Explosive Grenade
+action_attack_or_cast_time_uses_animation_length	72	, Artillery Impact, Basic Attack, Basic Attack (Cold), Basic Attack (Fire)
+action_can_be_used_in_aiming_stance	25	Basic Bolt, Cluster Grenade, Compose Requiem, Emergency Reload, Explosive Grenade
+action_can_be_used_in_upward_aiming_stance	4	Emergency Reload, Load Hailstorm Rounds, Load Siege Cascade, Load Stormblast Bolts
+action_do_not_face_target	5	Armour Piercing Rounds, Fury of the Mountain, Ice Shards, Rapid Shot, Shockburst Rounds
+action_required_target_facing_angle_tolerance_degrees	26	Armour Piercing Rounds, Artillery, Ballista Bolt, Cluster Grenade, Crossbow Shot
+action_requires_aiming_stance	14	Armour Piercing Rounds, Crossbow Shot, Explosive Shot, Fragmentation Rounds, Galvanic Shards
+action_requires_upward_aiming_stance	3	Hailstorm Rounds, Siege Cascade, Stormblast Bolts
+active_block_cannot_be_stunned	1	Shield Charge
+active_block_light_stun_threshold_+%_final	1	Raise Shield
+active_skill_all_damage_%_as_fire_if_heat_is_consumed	2	Cluster Grenade, Explosive Grenade
+active_skill_all_elemental_exposure_compounding_magnitude	1	Frost Bomb
+active_skill_all_elemental_exposure_compounding_magnitude_cap	1	Frost Bomb
+active_skill_base_elemental_damage_to_deal_per_minute	1	Tornado
+active_skill_can_generate_glory_even_if_an_instance_of_this_skill_is_active	3	Defiance Banner, Dread Banner, War Banner
+active_skill_can_overload	1	Neural Overload
+active_skill_cannot_manually_reload	2	Load Hailstorm Rounds, Ratha's Assault
+active_skill_compounding_ignites	2	Flame Breath, Incinerate
+active_skill_consumes_a_cold_infusion	4	Empowered Sparks, Firestorm, Frost Darts, Ice Nova
+active_skill_consumes_a_fire_infusion	5	Ball Lightning, Comet, Fireball, Firestorm, Incinerate
+active_skill_consumes_a_lightning_infusion	5	Arc, Ember Fusillade, Firestorm, Flame Wall, Frost Wall
+active_skill_consumes_a_verisium_infusion	1	Skyfall
+active_skill_damage_+%_final_per_time_chained	1	Rolling Magma
+active_skill_damage_+%_final_vs_burning_enemies	2	Ruzhan's Brand, Solar Orb
+active_skill_damage_+%_final_vs_fully_broken_armour	1	Leap Slam
+active_skill_damage_+%_final_vs_unique_enemies	3	Battershout, High Velocity Rounds, Sandblast
+active_skill_damaging_ailment_effect_+%_final	1	Shattering Spite
+active_skill_display_aegis_variation	1	Sorcery Ward
+active_skill_does_not_decay_heavy_stun_during_action	4	Parry, Raise Shield, Resonating Shield, Runic Reprieve
+active_skill_enable_movement_cancelling	1	Spiral Volley
+active_skill_energy_generated_+%_final	4	Flame Breath, Flame Wall, Incinerate, Solar Orb
+active_skill_facing_angle_turn_duration_ms	5	Armour Piercing Rounds, Ice Shards, Rapid Shot, Shockburst Rounds, Wing Blast
+active_skill_generates_%_of_life_spent_as_glory	1	Zerphi's Infamy
+active_skill_generates_%_of_ward_spent_as_glory	1	Skyfall
+active_skill_generates_mp_%_glory_per_attack_hit	3	Defiance Banner, Dread Banner, War Banner
+active_skill_generates_mp_%_glory_per_chaos_hit	1	Archon of Chayula
+active_skill_generates_mp_%_glory_per_elemental_hit	1	Apocalypse
+active_skill_generates_mp_%_glory_per_freeze	2	Spear of Solaris, Starborn Onslaught
+active_skill_generates_mp_%_glory_per_heavy_stun	1	Hammer of the Gods
+active_skill_generates_mp_%_glory_per_ignite	1	Ancestral Cry
+active_skill_generic_grace_period_time_ms	3	Crushing Fear, Cull the Weak, Killing Palm
+active_skill_ground_effect_area_of_effect_+%_final_per_second	4	Creeping Chill, Decompose, Gas Arrow, Gas Grenade
+active_skill_ground_effect_area_of_effect_+%_final_per_second_max	4	Creeping Chill, Decompose, Gas Arrow, Gas Grenade
+active_skill_heavy_stun_decay_after_action_delay_ms	4	Parry, Raise Shield, Resonating Shield, Runic Reprieve
+active_skill_hit_damage_freeze_multiplier_+permyriad_final_per_1%_of_target_ailment_threshold_being_dealt_by_ignite_per_second	1	Frostflame Nova
+active_skill_hundred_times_generates_glory_per_ignite	1	Spear of Solaris
+active_skill_hundred_times_generates_glory_per_shock	1	Spear of Solaris
+active_skill_ignite_proliferation_radius	1	Phantasmal Arrow
+active_skill_ignore_setting_aim_stance	2	Barrage, Twister
+active_skill_ignores_crossbow_manager	1	Artillery
+active_skill_impale_magnitude_+%_final	1	Bonestorm
+active_skill_is_ignored_by_charged_staff	1	Frozen Locus
+active_skill_is_ignored_by_mantra_of_destruction	1	Frozen Locus
+active_skill_is_ignored_by_staggering_palm	1	Frozen Locus
+active_skill_knockback_distance_+%_final	1	Wind Serpent's Fury
+active_skill_life_gained_on_cull	1	Reap
+active_skill_on_start_gain_pushiness_+	3	Rampage, Shield Charge, Stampede
+active_skill_override_turn_duration_ms	19	Armour Piercing Rounds, Blink, Bonestorm, Detonating Arrow, Devour
+active_skill_poisons_are_not_stored_by_plague_bearer	1	Plague Bearer
+active_skill_projectile_damage_+%_final_if_pierced_enemy	2	Frostbolt, High Velocity Rounds
+active_skill_projectile_speed_+%_variation_final	13	Falling Thunder, Fragmentation Rounds, Galvanic Shards, Ice Shot, Incendiary Shot
+active_skill_projectile_speed_+%_variation_final_if_multiple_projectiles	7	Cluster Grenade, Explosive Grenade, Flash Grenade, Gas Grenade, Grenade
+active_skill_required_number_of_combo_stacks	2	Mantra of Destruction, Tempest Bell
+active_skill_requires_X_endurance_charges	1	Ancestral Warrior Totem
+active_skill_requires_X_frenzy_charges	1	Wind Serpent's Fury
+active_skill_requires_X_glory	12	Ancestral Cry, Apocalypse, Archon of Chayula, Defiance Banner, Dread Banner
+active_skill_requires_X_power_charges	1	Charged Staff
+active_skill_requires_X_power_or_endurance_charges	1	Spell Totem
+active_skill_shock_duration_+%_final	1	Plasma Blast
+active_skill_show_crush_range	6	Boneshatter, Hollow Focus, Moment of Vulnerability, Seismic Cry, Staggering Palm
+active_skill_show_cull_range	11	Command, Crushing Fear, Cull the Weak, Detonate Living, Devour
+active_skill_show_freeze_range	4	Arctic Howl, Moment of Vulnerability, Shattering Concoction, Wave of Frost
+active_skill_show_overload_range	2	Moment of Vulnerability, Neural Overload
+active_skill_show_overload_range_from_voltaic_mark	1	Voltaic Mark
+active_skill_show_stars_aligned	1	Syzygy
+active_skill_stun_threshold_+%_while_performing_action	4	Black Powder Blitz, Furious Slam, Rolling Slam, Runic Reprieve
+active_skill_tracks_number_of_damaging_skills_recently_for_minions	1	Ruzhan, the Blazing Sword
+added_cold_damage_%_ward_cost	1	Olroth's Hubris
+added_physical_damage_%_ward_cost	2	Olroth's Hubris, Runic Infusion
+additional_combo_gain_chance_%	1	Practiced Combo
+aegis_recharge_delay_ms	1	Sorcery Ward
+aftershock_area_of_effect_+%_final_from_support_dual_cascade_aftershocks	1	Tectonic Slams
+aftershock_damage_+%_final_from_support_dual_cascade_aftershocks	1	Tectonic Slams
+aftershock_delay_ms	3	Furious Slam, Rampage, Supercharged Slam
+aftershocks_create_jagged_ground	1	Jagged Ground II
+aggravate_bleeding_on_pin_chance_%	1	Rusted Spikes
+ailment_bearer_elemental_damage_+%_final	1	Unbound Avatar
+ailment_bearer_required_stacks_to_use	1	Unbound Avatar
+allies_in_font_of_blood_radius_leech_%_of_my_physical_damage_as_life	1	Font of Blood
+allies_in_font_of_mana_radius_leech_%_of_my_physical_damage_as_mana	1	Font of Mana
+alternate_minion	1	Summon Minions
+always_chain_from_cursed_enemies	1	Coiling Bolts
+always_chain_from_shocked_enemies	1	Stormchain
+always_light_stun	2	Parry, Raise Shield
+always_pierce_non_shocked_enemies_if_targeting_shocked_enemy	1	Shockchain Arrow
+always_shock_wet_enemies	1	Shock Conduction II
+ancestral_aid_required_count_of_recent_blocks	1	Ancestral Aid
+ancestral_cry_duration_+%_final_per_removable_endurance_charge	1	Ancestral Cry
+ancestral_cry_empowered_attacks_strike_X_additional_enemies	1	Ancestral Cry
+ancestral_cry_non_skill_physical_to_fire_convert_%	1	Ancestral Cry
+ancestral_cry_projectile_triggered_by_empowered_skill_on_hit	1	Volcanic Eruption
+ancestral_cry_triggers_shockwave_every_X_units_travelled	1	Ancestral Cry
+ancestral_warrior_totem_total_use_time_%_as_idle_after_animation	1	Ancestral Warrior Totem
+ancient_gifts_charm_charges_restored	1	Wildwood's Gifts
+ancient_gifts_life_flask_charges_restored	1	Wildwood's Gifts
+ancient_gifts_mana_flask_charges_restored	1	Wildwood's Gifts
+animation_cancelling_lockout_time_+%	1	Rapid Assault
+animus_exchange_gain_%_maximum_life_spent_as_ward	1	Animus Exchange
+animus_exchange_spend_up_to_X_life	1	Animus Exchange
+annihilation_blast_duration_ms	1	Annihilation
+annihilation_hit_intervals	1	Annihilation
+any_weapon_type_allowed	1	Summon Wolf
+apply_X_stacks_of_critical_weakness_on_hit	4	Kelari's Deception, Kelari's Judgment, Kelari, the Tainted Sands, Sandblast
+apply_attack_projectile_weakness_%_per_1m_knockback	1	Punch Through
+apply_unaffected_by_pacifying_curses_for_x_ms_on_curse_expiry	1	Kalisa's Crescendo
+arc_chain_distance	4	Arc, Orb of Storms, Storm Lance, Valako's Charge
+arc_chains_gained_from_infusion_consumption	1	Arc
+arc_damage_+%_final_from_infusion_consumption	1	Arc
+arc_enhanced_behaviour	1	Arc
+arc_to_minion_monster_variety_hash	1	Arc
+archon_chayula_storm_movement_speed	1	Chayula's Will
+archon_of_chayula_physical_and_chaos_damage_+%_final	1	Archon of Chayula
+archon_of_chayula_spawn_chaos_tornado_interval_ms	1	Archon of Chayula
+archon_of_chayula_tornado_attack_interval_ms	1	Chayula's Will
+archon_of_chayula_withered_on_hit_for_4_seconds_%_chance	1	Archon of Chayula
+arctic_armour_maximum_added_cold_damage_per_stack	1	Arctic Armour
+arctic_armour_minimum_added_cold_damage_per_stack	1	Arctic Armour
+area_of_effect_+%_per_combo_stack	1	Vruun's Inevitability
+area_of_effect_+%_per_totem_in_radius_from_support_greatwood	1	Cirel's Cultivation
+area_of_effect_radius_modifiers_apply_to_projectile_speed	1	Cluster Grenade
+armour_break_amount_+%	3	Armour Breaker, Armour Piercing Rounds, Resonating Shield
+armour_break_damage_%_dealt_as_armour_break	1	Maul
+armour_break_for_%_of_poison_damage_over_poison_duration	1	Corrosion
+armour_broken_skill_event_variation	1	Resonating Shield
+arrow_projectile_variation	1	Basic Attack
+arsonist_destructive_link_%_of_life_as_fire_damage	1	Explosive Demise
+attack_is_melee_override	4	Shield Charge, Shield Wave, Shockwave Slam, Stampede
+attack_is_not_melee_override	11	Crackling Palm, Fan the Flames, Freezing Explosion, Gelid Palm, Herald of Blood
+attack_maximum_action_distance_+	30	Basic Attack, Bite, Charged Sunder, Dash, Disengage
+attack_speed_+%_per_rage	1	Skeletal Reaver Minion
+attacks_chance_to_blind_on_hit_%	3	Flash Grenade, Projectile, Twister
+awakened_forest_area_of_effect_+%_final_when_wet	1	Thrashing Vines
+awakened_forest_spawn_vines_per_X%_cast_time	1	Thrashing Vines
+ball_lightning_infused_acceleration	1	Ball Lightning
+ball_lightning_infused_burning_ground_interval_ms	1	Ball Lightning
+ballistic_bounce_behavior_variation	1	Basic Spell
+ballistic_ice_chunk_cone_angle	1	Ice Fragments
+ballistic_projectiles_always_bounce	11	Chaos Spark, Cluster Grenade, Explosive Grenade, Explosive Shot, Flash Grenade
+barkskin_armour_to_gain_as_%_of_energy_shield_lost_to_enemy_hits	1	Barkskin
+barrage_base_spread_arc_override	1	Oil Barrage
+barrier_invocation_gain_1_energy_per_X_energy_shield_damage_taken_when_hit	1	Barrier Invocation
+base_active_skill_buff_stack_gain_frequency_ms	2	Arctic Armour, Virtuous Barrier
+base_additional_damage_from_distance_+%_final	2	Rake, Shield Charge
+base_aggravate_bleeding_on_attack_hit_chance_%	1	Bleeding Concoction
+base_bleed_chance_is_poison_chance_instead	1	Malady
+base_briarpatch_ground_limit	1	Briarpatch
+base_cannot_be_blocked	2	Slam, Toxic Rain
+base_chance_to_daze_%	2	Siphoning Strike, Wind Blast
+base_chance_to_not_consume_corpse_%	3	Corpse Conservation, Profane Ritual, Volatile Dead
+base_circle_of_power_mana_%_spend_per_upgrade	2	Rite of Restoration, Sigil of Power
+base_combo_stacks_decay_delay_ms	7	Combo Finisher I, Combo Finisher II, Culmination I, Culmination II, Mantra of Destruction
+base_consume_enemy_freeze_on_hit	1	Fragmentation Rounds
+base_consume_enemy_shock_on_hit	2	Primal Strikes, Siphoning Strike
+base_deal_no_damage	164	, Alchemist's Boon, Align Fate, Ancestral Cry, Ancestral Spirits
+base_deal_no_damage_over_time	4	, Feral Invocation, Life Remnants, Remnants of Kalguur
+base_deal_no_spell_damage	1	Feast of Flesh
+base_debuff_slow_magnitude_+%	1	Slow Potency
+base_is_projectile	139	, Acidic Concoction, Arc, Armour Piercing Rounds, Artillery
+base_knockback_distance	17	Armour Piercing Rounds, Crossbow Shot, Explosive Shot, Fragmentation Rounds, Galvanic Shards
+base_knockback_speed_+%	2	Devour, Wind Wave
+base_life_leech_from_any_attack_damage_permyriad	1	Slam
+base_mana_leech_rate_+%	1	Mana Drain
+base_maximum_number_of_frost_bombs	1	Frost Bomb
+base_melee_dash_range	14	Blood Hunt, Crushing Fear, Cull the Weak, Devour, Gathering Storm
+base_mirror_of_refraction_limit	1	Mirror of Refraction
+base_modifiers_to_number_of_projectiles_instead_apply_to_repeats	1	Freezing Salvo
+base_number_of_additional_fissures	3	Kaom's Madness, Upheaval I, Upheaval II
+base_number_of_arrow_rains_allowed	1	Rain of Arrows
+base_number_of_awakened_forests_allowed	1	Thrashing Vines
+base_number_of_bone_offerings_allowed	1	Bone Offering
+base_number_of_earthquakes_allowed	1	Earthquake
+base_number_of_entangle_roots_allowed	1	Entangle
+base_number_of_fissures	2	Forge Hammer, Starborn Onslaught
+base_number_of_frozen_locus_allowed	1	Frozen Locus
+base_number_of_grim_pillars_allowed	1	Grim Pillars
+base_number_of_ice_volcanos_allowed	1	Fragments of the Past
+base_number_of_overcharged_spears_allowed	1	Storm Lance
+base_number_of_pain_offerings_allowed	1	Pain Offering
+base_number_of_power_offerings_allowed	1	Soul Offering
+base_number_of_remote_spear_mines_allowed	1	Explosive Spear
+base_number_of_runic_aftershocks_allowed	1	Fist Of Kalguur
+base_number_of_shield_walls_allowed	1	Shield Wall
+base_number_of_sigil_of_power_allowed	2	Rite of Restoration, Sigil of Power
+base_number_of_tempest_bells_allowed	1	Tempest Bell
+base_number_of_tornado_shots_allowed	1	Tornado Shot
+base_number_of_verisium_octopus_minions_allowed	1	Skyfall
+base_number_of_verisium_runes_allowed	1	Manifest Rune
+base_physical_damage_equal_to_%_of_totem_life	1	Tawhoa's Vengeance
+base_pinned_art_variation	2	Ballista Bolt, Bone Cage
+base_poison_chance_is_bleed_chance_instead	1	Malady
+base_power_charge_skip_consume_chance_%	1	Hollow Form
+base_remnant_duration_ms	10	, Grim Feast, Into the Breach, Life Remnants, Mana Remnants
+base_skill_buff_additional_maximum_all_elemental_resistances_%_to_apply	1	Dread Banner
+base_skill_buff_ailment_threshold_+%_final_to_apply	1	Dread Banner
+base_skill_buff_banner_attack_speed_+%_to_apply	1	War Banner
+base_skill_can_be_avoided_by_dodge_roll	16	, Artillery, Artillery Impact, Basic Spell, Beam
+base_skill_can_be_blocked	18	, Basic Spell, Beam, Beam Impact, Death Mortar
+base_skill_cannot_be_avoided_by_dodge_roll_or_evaded_or_blocked	2	Pillar Slam, Slam
+base_skill_cannot_generate_energy	1	Midnight Zenith
+base_skill_cannot_generate_midnight_star_petals	1	Midnight Zenith
+base_skill_cost_efficiency_+%	1	Animus Splinters
+base_skill_enabled_while_mounted	4	Black Powder Blitz, Blink, Disengage, Spear of Solaris
+base_skill_exerted_itself	1	Righteous Descent
+base_skill_is_instant	2	Eternal March, Pinnacle of Power
+base_skill_is_totemified	8	Artillery, Ballista Bolt, Shockwave Slam, SupportAncestralWarriorTotemPlayer, SupportMetaTotemSpellTotemPlayer
+base_skill_seal_gain_interval_ms	2	Freezing Salvo, Salvo
+base_skill_summons_totems	3	Ancestral Warrior Totem, Mortar Cannon, Spell Totem
+base_skill_ward_cost_as_%_of_life_and_mana_cost	4	Animus Splinters, Olroth's Conviction, Runic Extraction, Scouring Flame
+base_spell_%_chance_to_echo	2	Comet, Skyfall
+base_totem_range	7	Ancestral Warrior Totem, Artillery Ballista, Dark Effigy, Mortar Cannon, Shockwave Totem
+base_warcry_echo_X_times	1	Echoing Cry
+base_ward_cost_+_%_of_maximum_ward	2	Olroth's Hubris, Runic Infusion
+bear_fury_of_the_mountain_front_facing_cone_angle	1	Fury of the Mountain
+bear_rampage_base_movement_speed	1	Rampage
+bear_skills_additional_base_attack_time_when_performing_from_default_stance	3	Furious Slam, Rampage, Walking Calamity
+bear_skills_additional_base_attack_time_when_performing_from_standing_stance	1	Slam
+bear_slam_spend_X_rage_for_stronger_slam	1	Furious Slam
+bear_warcry_gain_X_centirage_per_enemy_power	1	Ferocious Roar
+bell_ailment_threshold	1	Tempest Bell
+bell_distance_limit_for_recall	2	Hollow Focus, Tempest Bell
+bell_hit_limit	2	Hollow Focus, Tempest Bell
+bell_poise_threshold	1	Tempest Bell
+bell_shockwave_cooldown_ms	2	Hollow Focus, Tempest Bell
+bitter_dead_action_speed_+%_final_for_rune	1	Bitter Dead
+black_powder_blitz_travel_distance	1	Black Powder Blitz
+blazing_cluster_delay_between_projectiles_ms	1	Ember Fusillade
+blazing_cluster_maximum_number_of_projectiles_allowed	2	Ember Fusillade, His Scattering Calamity
+blazing_cluster_subsequent_targeting_radius	2	Ember Fusillade, His Scattering Calamity
+blink_travel_distance	1	Blink
+blink_valid_placement_search_radius	1	Blink
+blood_boil_%_health_as_corrupted_blood_damage_per_minute	1	Blood Boil
+blood_boil_application_interval_ms	1	Blood Boil
+blood_boil_explosion_area_+%_final_per_boil	1	Blood Boil
+blood_boil_explosion_delay_ms	1	Blood Boil
+blood_hunt_X_blood_loss_consumed_for_skill_area_of_effect_+%_final	1	Blood Hunt
+blood_hunt_X_blood_loss_consumed_to_explode	1	Blood Hunt
+blood_hunt_explosion_%_blood_loss_to_deal_as_life_loss	1	Blood Hunt
+blood_hunt_skill_area_of_effect_+%_final_per_X_blood_loss_consumed_up_to_500%	1	Blood Hunt
+blood_magic_skill_life_cost_+%_final	2	Atalui's Bloodletting, Lifetap
+blood_tendrils_beam_count	1	Exsanguinate
+bone_cone_angle	1	Unearth
+bone_offering_damage_taken_+%_final	1	Bone Offering
+bone_offering_damage_taken_+%_final_after_shield_loss	1	Bone Offering
+bone_offering_hit_threshold_%_of_maximum_life	1	Bone Offering
+bone_spear_target_rectangle_length	1	Bonestorm
+branching_fissure_area_of_effect_+%_final	2	Branching Fissures I, Branching Fissures II
+branching_fissure_damage_+%_final	2	Branching Fissures I, Branching Fissures II
+breach_flame_spawn_radius	2	Into the Breach, Wildwood's Gifts
+breach_flame_spawn_rate_ms	2	Into the Breach, Wildwood's Gifts
+breach_walk_base_visibility_range	2	Into the Breach, Wildwood's Gifts
+briarpatch_ground_creation_delay_ms	1	Briarpatch
+briarpatch_maximum_stored_physical_damage	1	Briarpatch
+briarpatch_stores_permyriad_of_physical_damage_dealt	1	Briarpatch
+briarpatches_arming_time_ms	1	Brambles
+broken_armour_consume_art_variation	2	High Velocity Rounds, Leap Slam
+broken_armour_debuff_art_variation	1	Armour Piercing Rounds
+broken_stance_hit_limit	1	Vaulting Impact
+burst_shot_cone_angle	2	Incendiary Shot, Permafrost Bolts
+called_shot_aiming_delay_ms	3	Alignment I, Alignment II, Alignment III
+called_shot_angle_allowance_degs	3	Alignment I, Alignment II, Alignment III
+caltrops_on_dodge_X_triggers	1	Trail of Caltrops
+caltrops_on_dodge_first_trigger_at_%_dodge	1	Trail of Caltrops
+caltrops_on_dodge_trigger_interval_%_dodge	1	Trail of Caltrops
+caltrops_only_spawn_laterally	1	Caltrops
+can_be_used_instantly_in_any_set	18	Basic Bolt, Compose Requiem, Emergency Reload, Load Armour Piercing Rounds, Load Explosive Shot
+can_create_jagged_ground	5	Earthquake, Furious Slam, Jagged Ground I, Jagged Ground II, Stampede
+can_only_damage_low_life_enemies	1	Einhar's Beastrite
+cannot_be_empowered_by_warcries	1	Resonating Shield
+cannot_cancel_skill_before_contact_point	19	Ancestral Cry, Arctic Howl, Crossbow Shot, Explosive Shot, Fangs of Frost
+cannot_cause_stun_but_allow_stun_buildup	2	Brink I, Brink II
+cannot_chain_to_previous_targets	1	Coursing Current
+cannot_consume_impale	2	Crystalline Shards, Impale
+cannot_create_jagged_ground	2	Shockwave Slam, Shockwave Totem
+cannot_damage_bell	1	Tempest Bell
+cannot_daze	1	Vaulting Impact
+cannot_electrocute	1	Voltaic Fulmination
+cannot_inflict_blind	1	Blindside
+cannot_inflict_bloodstone_lance	1	Shattering Spite
+cannot_inflict_maim	1	Undermine
+cannot_knockback	1	Glacial Cascade
+cannot_miss_against_full_life_enemies	1	Heightened Accuracy II
+cascade_aftershock_additional_offset_distance	4	Falling Thunder, Rolling Slam, Shockwave Totem, Volcanic Steps
+cascade_aftershock_angle_offset_override	4	Furious Slam, Shockwave Totem, Stampede, Sunder
+cascade_aftershock_spacing_area_%_override	3	Furious Slam, Stampede, Sunder
+cascade_attack_base_total_distance	1	Glacial Cascade
+cascade_attack_ease_in_exponent_%	1	Glacial Cascade
+cascade_attack_radius_per_stage_+1_per_100	1	Glacial Cascade
+cascade_attack_starting_distance_offset	1	Glacial Cascade
+cascadeable_offering_support_offering_casted_spell_damage_+%_final	1	Kulemak's Dominion
+cascadeable_spells_occur_from_offering	1	Kulemak's Dominion
+cast_fire_spell_on_hit_gain_X_centienergy_per_monster_power_on_hit	1	Fire Spell on Melee Hit
+cast_lightning_spell_on_hit_gain_X_centienergy_per_monster_power_on_hit	1	Thundergod's Wrath
+cast_on_block_gain_X_centienergy_on_block	2	Cast on Block, Curse on Block
+cast_on_crit_gain_X_centienergy_per_monster_power_on_crit	1	Cast on Critical
+cast_on_damage_taken_%	1	Valako's Charge
+cast_on_damage_taken_only_tracks_lightning	1	Valako's Charge
+cast_on_dodge_roll_gain_X_centienergy_per_unit_travelled_while_dodge_rolling	1	Cast on Dodge
+cast_on_freeze_gain_X_centienergy_per_monster_power_on_freeze	1	Cast on Elemental Ailment
+cast_on_ignite_gain_X_centienergy_per_monster_power_on_ignite	1	Cast on Elemental Ailment
+cast_on_melee_kill_gain_X_centienergy_per_monster_power_on_melee_kill	1	Cast on Melee Kill
+cast_on_melee_stun_gain_X_centienergy_per_monster_power_on_heavy_stun	1	Cast on Melee Stun
+cast_on_melee_stun_gain_X_centienergy_per_monster_power_on_stun	1	Cast on Melee Stun
+cast_on_minion_death_gain_1_energy_per_X_minion_relative_defensiveness_%	1	Cast on Minion Death
+cast_on_shock_gain_X_centienergy_per_monster_power_on_shock	1	Cast on Elemental Ailment
+cast_on_using_charm_gain_X_centienergy_per_charm_charge_used_on_using_charm	1	Cast on Charm Use
+chaining_range_+%	1	Coiling Bolts
+chance_%_to_create_additional_remnant	2	, Harmonic Remnants II
+chance_%_to_gain_abyssal_modifier_on_minion_death	1	Amanamu's Tithe
+chance_%_to_gain_power_charges_per_combo_spent	1	Ailith's Chimes
+chance_%_to_spawn_another_infusion_remnant	1	Snap
+chance_for_exerted_attacks_to_not_reduce_count_%	1	Tireless
+chance_to_aftershock_+%_per_250_ms_attack_time	1	Reverberate
+chance_to_be_trigger_elemental_expression_%	1	Elemental Expression
+chance_to_be_triggered_by_amazon_infusion_%	1	Elemental Surge
+chance_to_be_triggered_by_chaos_spear_%	1	Chaotic Surge
+chance_to_be_triggered_by_reload_infusion_%	1	Gemini Surge
+chance_to_cast_on_bear_warcry_%	1	SupportFerociousRoarPlayer
+chance_to_fork_from_frozen_enemy_%	1	Freezefork
+chance_to_gain_1_more_frenzy_charge_%	1	Mist Raven
+chance_to_gain_1_more_random_charge_%	1	Charge Profusion II
+chance_to_gain_endurance_charge_on_armour_break_%	2	Armour Break II, Armour Break III
+chance_to_gain_endurance_charge_on_heavy_stunning_non_unique_enemy_%	2	Enduring Impact I, Enduring Impact II
+chance_to_gain_endurance_charge_on_perfect_timing_hit_%	1	Perfected Endurance
+chance_to_load_a_bolt_on_killing_an_enemy_%	1	Arjun's Medal
+chance_to_not_consume_parried_%	1	Fangs of Frost
+chance_to_poison_on_hit_with_attacks_%	2	Basic Attack, Puncture
+chance_to_retain_40%_of_glory_on_use_%	1	Spear of Solaris
+chance_to_trigger_carried_spectral_bell_shockwave_on_crit_%	1	Hollow Resonance
+chance_to_trigger_fiery_death_on_ignited_enemy_death_%	1	Fiery Death
+chance_to_trigger_hunters_mark_explosion_%	1	Blood Explosion
+chance_to_trigger_living_lightning_on_lightning_damage_%	1	Living Lightning
+chance_to_trigger_shocked_ground_on_mark_activated_%	1	
+chance_to_trigger_volcanic_eruption	1	Volcanic Eruption
+chance_to_trigger_wind_dancer_on_taken_hit_%	1	Gale Force
+channel_end_duration_as_%_of_cast_time	1	Volcano
+channel_skill_end_animation_duration_multiplier_permyriad	2	Detonating Arrow, Snipe
+channel_skill_end_animation_duration_override_ms	5	Flameblast, Raise Shield, Runic Tempering, Supercharged Slam, Temper Weapon
+channel_start_duration_as_%_of_attack_time	3	Fury of the Mountain, Hollow Form, Oil Barrage
+channel_start_duration_as_%_of_cast_time	2	Runic Reprieve, Volcano
+channel_start_lock_cancelling_of_attack_time_%	5	Detonating Arrow, Gathering Storm, Hollow Form, Perfect Strike, Snipe
+channel_start_lock_cancelling_of_cast_time_%	1	Kelari's Judgment
+channel_start_lock_cancelling_scales_with_attack_speed	3	Hollow Form, Snipe, Supercharged Slam
+channel_start_lock_cancelling_scales_with_cast_speed	3	Bonestorm, Flameblast, Volcano
+channelled_skill_suppress_ongoing_rage_cost_for_first_X_ms	2	Flame Breath, Rampage
+charge_skip_consume_chance_%	1	Perpetual Charge
+charged_staff_bonus_width	1	Charged Shockwave
+charged_staff_cone_angle	1	Charged Shockwave
+check_for_targets_between_initiator_and_projectile_source	52	Arc, Armour Piercing Rounds, Basic Attack, Basic Spell, Basic Spell (Cold)
+chilling_ice_create_chilled_ground_on_freeze_base_duration_ms	1	Frost Nexus
+chilling_ice_freezing_area_base_radius	1	Frost Nexus
+circle_of_power_minimum_time_between_stage_increases_ms	1	Rite of Restoration
+cold_damage_cannot_chill	1	Icestorm
+combo_only_stacks_from_hits_with_weapon_restriction	2	Mantra of Destruction, Tempest Bell
+comet_fall_time_ms	2	Comet, Skyfall
+comet_fall_time_uses_animation_length	1	His Foul Emergence
+command_location_placement_variance	1	Command
+command_minion_does_not_interrupt	1	Command
+command_minion_marker_additional_time_ms	1	Command
+command_minion_target_ally_below_x_life	1	Explosive Demise
+command_skill_consumes_x_stacks_of_tangmazu_raven_to_use	1	Command
+command_skill_no_command_marker	1	Command
+command_target_rarity_prioritisation_radius	1	Command
+companion_takes_%_damage_before_you_from_support	2	Loyalty, Romira's Requital
+companion_tangmazu_thurible_visual_effect	1	Tangmazu's Thurible
+conditional_skill_additional_usages_after_meeting_requirement	1	Delayed Gratification
+conditional_skill_additional_usages_duration_ms	1	Delayed Gratification
+console_cast_on_self_custom_range	5	Flame Wall, Frost Wall, Shockwave Totem, Tornado Shot, Voltaic Barrier
+console_do_not_cancel_from_turn_angle	1	Rolling Slam
+consume_X_heat_on_skill_use	3	Cluster Grenade, Explosive Grenade, Incendiary Shot
+consume_armour_break_to_trigger_battershout_explosion	1	Battershout
+consume_armour_break_to_trigger_rune_forged_blades	1	Runeforged Blades
+consume_bleed_to_create_X_haemocrystals	1	Haemocrystals
+consume_enemy_freeze_to_trigger_morrigan_ward	1	Morrigan's Insight
+consume_frenzy_power_and_endurance_charge_every_x_ms	1	Charge Regulation
+consume_ignite_freeze_shock_on_hit_to_trigger_elemental_discharge	1	Elemental Discharge
+consume_maim_on_hit_to_break_%_armour	1	Undermine
+consume_parried_on_hit	1	Fangs of Frost
+consume_parry_debuff_on_hit_to_gain_X_frenzy_charges	2	Disengage, Frenzied Riposte
+consume_shock_of_X_enemies_to_trigger_shocking_rift	1	Electromagnetism
+contagion_maximum_spread_magnitude_+%_final	1	Contagion
+contagion_number_of_additional_targets	1	Contagion
+contagion_spread_magnitude_+%_final	1	Contagion
+cooldown_recovery_modifiers_also_apply_to_repeat_interval	6	Align Fate, Ghost Dance, Hollow Focus, Mirror of Refraction, Ravenous Swarm
+corpse_explosion_monster_life_permillage_fire	1	Fiery Reclamation
+create_X_briar_thorns_on_slam	1	Brambleslam
+create_furious_remnant_when_hitting_bleeding_enemies_once_every_x_ms	1	Sanguine Revelry
+create_life_remnant_on_melee_kill_bleeding_enemy_%	1	Rip
+create_verisium_remmant_on_kill_enemy_%	1	Runic Extraction
+crossbow_ammo_has_no_ammo	1	Compose Requiem
+crossbow_ammo_skill_binds_default_attack	1	Basic Bolt
+crossbow_ammo_skill_does_not_transition	2	Basic Bolt, Compose Requiem
+crossbow_ammo_skill_has_passive_reloading	1	Load Hailstorm Rounds
+crossbow_barrage_debuff_duration_ms	10	Armour Piercing Rounds, Crossbow Shot, Explosive Shot, Glacial Bolt, High Velocity Rounds
+crossbow_barrage_recoil_per_shot	10	Armour Piercing Rounds, Crossbow Shot, Explosive Shot, Glacial Bolt, High Velocity Rounds
+crossbow_barrage_recoil_target_location_override	1	Ice Shards
+crossbow_barrage_total_recoil_buff_count	10	Armour Piercing Rounds, Crossbow Shot, Explosive Shot, Glacial Bolt, High Velocity Rounds
+crossbow_load_x_bolts_on_dodge	1	Ratha's Assault
+crossbow_reload_on_heavy_stun	2	Auto Reload, Double Barrel III
+crossbow_skill_has_no_ammo	1	Requiem
+crushing_blow	6	Bonebreaker, Boneshatter, Hollow Focus, Seismic Cry, Staggering Palm
+crushing_blow_vs_ignited_and_fully_armour_broken	1	Syzygy
+crushing_fear_area_of_effect_+%_final_per_power_of_culled_enemy	1	Crushing Fear
+crushing_fear_damage_+%_final_per_power_of_culled_enemy	1	Crushing Fear
+curse_apply_as_aura	5	Blasphemy, Despair, Enfeeble, SupportBlasphemyPlayer, Temporal Chains
+curse_apply_as_curse_zone	3	Cursed Ground, Doedre's Undoing, Hayoxi's Fulmination
+curse_pacify_for_final_%_of_duration	1	Kalisa's Crescendo
+curse_pain_synchronisation_base_recorded_damage_%_to_apply	1	Inevitable Agony
+curse_repulsion_applies_X_fragility	1	Repulsion
+curse_repulsion_shockwave_hit_damage_stun_multiplier_+%_final_per_fragility_on_special_object	1	Repulsion Wave
+curse_supported_by_blasphemy	1	SupportBlasphemyPlayer
+curse_triggers_decaying_hex	1	Decaying Hex
+curse_zone_explosion_apply_supported_curse_for_base_ms_on_hit	1	Doedre's Dark Design
+curses_reflected_to_self	1	Atziri's Allure
+damage_+%_final_from_lich_apparition_cloned_skill	1	Abyssal Apparition
+damage_+%_final_per_totem_in_radius_from_support_greatwood	1	Cirel's Cultivation
+damage_cannot_be_reflected	2	Combust, On Kill Monster Explosion
+damage_cannot_be_reflected_or_leech_if_used_by_other_object	2	Elemental Storm, Orb of Storms
+damage_hit_effect_index	6	Bolt Impact, Empowered Sparks, Lightning Bolt, Omega Beam, Spark
+damage_per_bloodstone_lance_+%_final	1	Shattering Spite
+damage_vs_tiki_totems_+%	1	Smite
+dangerous_resolve_cone_angle	1	Deadly Resolve
+dangerous_resolve_explosion_cooldown_ms	1	Deadly Resolve
+dangerous_resolve_explosion_on_receive_hit_chance_%	1	Deadly Resolve
+dangerous_resolve_stack_duration_ms	1	Deadly Resolve
+daze_on_hit_vs_enemies_at_full_life	1	Opening Move
+daze_self_on_critical_hit_for_X_ms	1	Overextend
+deadeye_meta_marks_close_band_is_%_of_primary_radius	1	Called Shots
+deadeye_meta_marks_middle_band_is_%_of_primary_radius	1	Called Shots
+deadeye_meta_marks_number_of_enemies_to_mark	1	Called Shots
+death_from_above_volley_delay_ms	1	Death From Above
+demon_transformation_cooldown_does_not_tick	1	Demon Form
+destroy_frost_wall_segment_on_hit	4	Embrace The Fall, Fragmentation Rounds, Gelid Palm, Glacial Cascade
+detonate_on_landing_maximum_number_of_corpses_to_detonate	1	Fiery Reclamation
+difficulty_of_meeting_conditional_requirement_+%	1	Delayed Gratification
+disable_all_skill_indicators	1	SpiritVesselSupport
+disable_quadruped_head_control	5	Devour, Hollow Form, Rend, Rolling Magma, Wing Blast
+disable_quadruped_head_movement_when_turning	7	Ferocious Roar, Flame Breath, Furious Slam, Fury of the Mountain, Maul
+disable_visual_hit_effect	27	Arc, Armour Piercing Rounds, Basic Spell, Crossbow Shot, Essence Drain
+disangage_autotargeting_angle_%	1	Disengage
+disengage_%_chance_for_additional_shockwave	1	Disengage
+disengage_cone_angle	1	Disengage
+disengage_cone_radius	1	Disengage
+display_ailment_bearer_charge_interval	1	Unbound Avatar
+display_annihilation_tag_conversion	1	Annihilation
+display_attack_time_+%	1	Oil Barrage
+display_bear_warcry	1	SupportFerociousRoarPlayer
+display_charge_speed_is_move_speed	3	Rampage, Shield Charge, Stampede
+display_commanded_skill_ravens_expended	1	Mad Flight
+display_max_ailment_bearer_charges	1	Unbound Avatar
+display_minion_heal	1	Heal Buff
+display_minion_monster_type	14	Azmerian Wolf, Mist Raven, Raging Spirits, Raise Zombie, Skeletal Arsonist Minion
+display_modifiers_to_totem_life_effect_these_minions	1	Ancestral Spirits
+display_no_cooldown_use_if_empowered	1	Righteous Descent
+display_no_sockets	1	Smash to Smithereens
+display_projectiles_chain_when_impacting_ground	1	Rolling Magma
+display_sigil_of_power_stage_gain_delay	2	Rite of Restoration, Sigil of Power
+display_skill_area_of_effect_radius_from_curse	1	Doedre's Dark Design
+display_skill_deals_secondary_damage	8	Arctic Howl, Combust, Harbinger of Madness, Midnight Zenith, On Kill Monster Explosion
+display_skill_poisons_without_hit	3	Gas Arrow, Gas Grenade, Poisonburst Arrow
+display_skill_reserves_in_all_weapon_sets	4	Blink, Convalescence, Eternal Rage, Sacrifice
+display_statset_hide_usage_stats	127	Blood Explosion, Blood Hunt, Boneshatter, Bonestorm, Charged Shockwave
+display_statset_no_hit_damage	44	Ancestral Warrior Totem, Azmerian Swarms, Azmerian Wolf, Bone Offering, Cackling Companions
+display_tame_beast_mod_limit	1	Tame Beast
+distribute_projectiles_over_contact_points	10	Basic Spell (Chaos), Blood Projectile, Chaos Spark, Explosive Grenade, Explosive Shot
+djinn_damage_+%_final_per_number_of_damaging_skills_my_parent_has_used_recently	1	Ruzhan, the Blazing Sword
+djinn_damage_+%_final_per_teleport_in_sequence	1	Kelari's Deception
+djinn_fire_rune_minimum_target_distance	1	Ruzhan's Trap
+djinn_granted_energy_shield_recharge_rate_+%	1	Navira's Well
+djinn_hand_slam_area_of_effect_+%_final_per_additional_stage	1	Kelari's Judgment
+djinn_hand_slam_damage_+%_final_per_additional_stage	1	Kelari's Judgment
+djinn_hand_slam_maximum_area_of_effect_+%_final	1	Kelari's Judgment
+djinn_hand_slam_minimum_area_of_effect_+%_final	1	Kelari's Judgment
+djinn_knife_throw_number_of_knives_created	1	Kelari's Brutality
+do_not_apply_area_modifiers	1	Mana Tempest
+dodge_roll_additional_pathfinder_pushiness_modifier	1	Black Powder Blitz
+double_number_of_projectiles_from_dual_wielding	1	Molten Blast
+dps_display_statset_index	3	Conductive Runes, Rolling Slam, Tempest Bell
+dummy_stat_display_nothing	22	, Artillery Ballista, Blood Explosion, Dark Effigy, Fortifying Cry
+dynamic_target_updating_prioritises_movement_vector	1	Black Powder Blitz
+earthshatter_damage_+%_final_per_spike	1	Earthshatter
+electric_spit_empowered_channel_consume_power_charge_per_X_ms	1	Oil Barrage
+electric_spit_maximum_secondary_explosions	1	Oil Barrage
+electrocute_threshold_+%_final	1	Valako's Charge
+electrocuting_arrow_%_damage_gained_as_extra_lightning_on_debuffed_target	1	Electrocuting Arrow
+elemental_invocation_gain_X_centienergy_per_monster_power_on_freeze	1	Elemental Invocation
+elemental_invocation_gain_X_centienergy_per_monster_power_on_ignite	1	Elemental Invocation
+elemental_invocation_gain_X_centienergy_per_monster_power_on_shock	1	Elemental Invocation
+elemental_sundering_number_of_explosion_allowed	1	Elemental Sundering
+ember_fusillade_damage_+%_final_per_ember_fired	2	Ember Fusillade, His Scattering Calamity
+emergency_reload_damage_+%_final	1	Emergency Reload
+empower_barrage_cooldown_%_of_attack_time	1	Barrage
+empowered_barrage_maximum_cooldown_ms	1	Barrage
+empyrean_descent_number_of_explosions	1	Starborn Onslaught
+empyrean_descent_secondary_explosions_delay_ms	1	Starborn Onslaught
+empyrean_descent_secondary_explosions_initial_delay_ms	1	Starborn Onslaught
+empyrean_descent_secondary_explosions_inner_radius	1	Starborn Onslaught
+empyrean_descent_secondary_explosions_outer_radius	1	Starborn Onslaught
+energy_generated_+%	16	Barrier Invocation, Boundless Energy I, Boundless Energy II, Cast on Block, Cast on Charm Use
+entangle_apply_vines_every_X_ms	1	Entangle
+entangle_base_movement_speed_+%_final_per_applied_stack	1	Entangle
+entangle_duration_speed_+%_when_wet	1	Entangle
+entangle_vine_duration_ms	1	Entangle
+entangle_vines_additional_number_of_vines_allowed_when_wet	1	Entangle
+entangle_vines_maximum_number_of_vines_allowed	1	Entangle
+evasion_+%_while_performing_action_per_250_ms_attack_time	1	Untouchable
+exploit_debuff_attack_damage_to_convert_to_magnitude_%	2	High Velocity Rounds, Vaulting Impact
+explosion_delay_ms	5	Death From Above, Decompose, Detonate Dead, Fiery Reclamation, Voltaic Fulmination
+explosive_concoction_number_of_secondary_projectiles	1	Explosive Concoction
+explosive_teleport_clone_cast_speed_+%_final	1	Kelari's Deception
+extra_distance_from_target_when_feral_invocated	1	Rolling Magma
+eye_of_winter_first_hit_damage_+%_final	1	Eye of Winter
+feast_of_flesh_number_of_corpses	1	Feast of Flesh
+feast_of_flesh_recover_X_life_per_corpse_consumed	1	Feast of Flesh
+feast_of_flesh_recover_X_mana_per_corpse_consumed	1	Feast of Flesh
+feast_of_flesh_recovery_duration	1	Feast of Flesh
+feathered_ground_damage_on_full_life_+%	1	Primal Bounty
+feathered_ground_evasion_rating_+%	1	Primal Bounty
+feral_invocation_clone_spawn_delay_ms	1	Feral Invocation
+feral_invocation_distance_from_target	1	Feral Invocation
+feral_invocation_energy_cost_per_X_ms_of_base_attack_time	1	SupportFeralInvocationPlayer
+feral_invocation_gain_1_energy_per_X_mana_spent	1	Feral Invocation
+final_strike_attack_damage_%_dealt_as_armour_break	1	Rending Apex
+fire_djinn_flame_rune_tick_rate_ms	1	Ruzhan's Trap
+fire_djinn_maximum_flame_runes_allowed	1	Ruzhan's Trap
+fire_djinn_number_of_flame_runes_placed	1	Ruzhan's Trap
+firestorm_bolt_frequency_+%_if_consumed_fire_infusion	1	Firestorm
+firestorm_damage_+%_if_consumed_fire_infusion	1	Firestorm
+firestorm_fall_time_ms	1	Firestorm
+firestorm_improved_bolts_per_chill_consumed	1	Icestorm
+firestorm_improved_bolts_per_monster_power_of_freeze_consumed	1	Icestorm
+firestorm_max_number_of_storms	1	Firestorm
+firestorm_secondary_radius_+_if_consumed_fire_infusion	1	Firestorm
+firewall_attached_projectile_effect_mtx	1	Flame Wall
+fissures_nova	1	Starborn Onslaught
+fixed_projectile_height	1	Elemental Expression
+fixed_projectile_spread	8	Cluster Grenade, Explosive Grenade, Flash Grenade, Gas Grenade, Grenade
+flame_pillar_support_maximum_pillars_per_skill_use	1	Flame Pillar
+flame_pillar_unique_maximum_pillars_per_skill_use	1	His Winnowing Flame
+flask_throw_base_charges_used	5	Acidic Concoction, Bleeding Concoction, Explosive Concoction, Fulminating Concoction, Shattering Concoction
+font_of_blood_radius	1	Font of Blood
+font_of_mana_radius	1	Font of Mana
+foresight_clone_duration_ms	1	Future-Past
+forge_hammer_base_maximum_number_of_fissures	1	Forge Hammer
+forge_hammer_hammer_speed	1	Forge Hammer
+forge_hammer_maximum_hammers	1	Forge Hammer
+freeze_applies_%_physical_damage_taken_as_armour_break	1	Brittle Armour
+freezing_bolt_wall_maximum_length	1	Glacial Bolt
+frost_bomb_exposure_does_not_apply_to_enemies_of_level_higher_than_X	1	Frost Bomb
+frost_darts_explode_creates_X_mortars	1	Frost Darts
+frost_wall_damage_taken_+%_final_from_enemies	2	Frozen Locus, Grim Pillars
+frozen_claws_dash_cooldown_ms	1	Shred
+frozen_claws_hits_trigger_ballistic_ice_chunks_vs_frozen_enemies	1	Shred
+frozen_locus_stat_suppression	1	Frozen Locus
+full_armour_break_consume_uses_projectile_orientation	1	High Velocity Rounds
+fury_of_the_mountain_base_maximum_number_of_fissures	1	Fury of the Mountain
+gain_X_guard_on_heavy_stun_per_10_strength	2	Vanguard I, Vanguard II
+gain_X_guard_on_stun_per_10_strength	2	Vanguard I, Vanguard II
+gain_X_perfection_on_successful_perfect_timing	1	Perfection
+gain_X_tasalios_perfection_on_perfect_timing	1	Tasalio's Rhythm
+gain_X_wildshard_stacks_on_cast	1	Sione's Temper
+gain_archon_elemental_when_you_ignite_enemy_chance_%	1	Arbiter's Ignition
+gain_dangerous_resolve_stack_per_X_ms_channeling	1	Deadly Resolve
+gain_unholy_might_for_X_ms_on_command	1	Kurgal's Leash
+gain_x_endurance_charges_on_heavy_stunning_unique_enemy	2	Enduring Impact I, Enduring Impact II
+galvanic_field_maximum_number_of_spheres	1	Galvanic Field
+galvanic_field_retargeting_delay_ms	1	Galvanic Field
+gathering_storm_perfect_aoe_limit	1	Gathering Storm
+generic_knockback_+%_final_at_max_distance	7	Devour, Ice Nova, Leap Slam, Whirling Slash, Wind Blast
+generic_knockback_+%_final_at_min_distance	7	Devour, Ice Nova, Leap Slam, Whirling Slash, Wind Blast
+generic_knockback_distance_limit	8	Devour, Ice Nova, Knockback, Leap Slam, Whirling Slash
+generic_ongoing_trigger_1_maximum_energy_per_Xms_total_cast_time	15	SupportBarrierInvocationPlayer, SupportElementalInvocationPlayer, SupportMetaCastCurseOnBlockPlayer, SupportMetaCastFireSpellOnHitPlayer, SupportMetaCastLightningSpellOnHitPlayer
+generic_ongoing_trigger_does_not_use_energy	1	Trail of Caltrops
+generic_ongoing_trigger_maximum_energy	5	Barrier Invocation, Elemental Invocation, Feral Invocation, Reaper's Invocation, Spellslinger
+generic_ongoing_trigger_maximum_energy_is_total_of_socketed_skills	11	Cast on Block, Cast on Charm Use, Cast on Critical, Cast on Dodge, Cast on Elemental Ailment
+generic_ongoing_trigger_triggers_at_maximum_energy	22	Cast on Block, Cast on Charm Use, Cast on Critical, Cast on Dodge, Cast on Elemental Ailment
+generic_skill_trigger_id	2	Bolt Impact, Zap
+generic_skill_trigger_skills_with_id	1	Lightning Bolt
+ghost_dance_max_stacks	1	Ghost Dance
+glacial_cascade_attack_final_spike_rect_length	1	Glacial Cascade
+global_maim_on_hit	5	Ballista Bolt, Brambles, Caltrops, Leap Slam, Spearfield
+grenade_indirect_explosion_damage_+%_final	1	Explosive Shot
+grenade_skill_does_not_bounce_off_ground	2	Adhesive Grenades I, Adhesive Grenades II
+grenades_target_at_half_monster_height	1	Fire Bomb
+grim_pillars_number_of_pillars_to_create	1	Grim Pillars
+grim_remnant_chance_to_spawn_orb_on_minion_death_in_presence_%	1	Grim Feast
+grim_remnant_health_stored_in_globe_%	1	Grim Feast
+grim_remnant_max_health_stored	1	Grim Feast
+ground_blood_art_variation	1	Boiling Blood
+ground_caustic_art_variation	2	Pus Ground, Vomit Ground
+ground_effect_duration_+%	4	Lasting Ground, Persistent Ground I, Persistent Ground II, Persistent Ground III
+ground_effects_apply_cooldown_speed_+%_final	1	Persistent Ground III
+ground_effects_cannot_trigger	2	Persistent Ground II, Persistent Ground III
+ground_fire_art_variation	2	Burning Inscription, Large Ball Flame Geyser
+ground_lightning_art_variation	1	Death Storm
+ground_oil_art_variation	2	Oil Barrage, Oil Grenade
+grounding_shocks_chance_%_to_create_orb_on_shocking_enemy	1	Static Shocks
+grounding_shocks_maximum_targets_per_aoe	1	Static Shocks
+grounding_shocks_pulse_delay_ms	1	Static Shocks
+guard_on_stun_guard_duration_ms	2	Vanguard I, Vanguard II
+haemocrystals_X_additional_crystals_on_consuming_aggravated_bleed	1	Haemocrystals
+harbinger_of_madness_additional_damage_from_%_source_enemy_life	1	Harbinger of Madness
+has_freeze_cull	3	Arctic Howl, Shattering Concoction, Wave of Frost
+has_modular_projectiles_enabled	40	Armour Piercing Rounds, Bow Shot, Crossbow Shot, Detonating Arrow, Electrocuting Arrow
+hazard_damage_+%_final_for_first_500_ms_when_not_killed_by_self	4	Brambles, Grim Pillars, Ice Shards, Spearfield
+hazards_cant_trigger_x_seconds_after_creation	1	Controlled Hazard
+hazards_trigger_at_end_of_duration_instead	1	Delayed Reaction
+head_hunt_%_life_to_remove_on_self_stab	1	Ritual Sacrifice
+herald_of_ash_burning_%_overkill_damage_per_minute	1	Herald of Ash
+hex_remove_at_effect_variance	1	Vulnerability
+hexblast_damage_+%_final_per_second_remaining_curse_duration	1	Hexblast
+hexblast_maximum_number_of_explosions	1	Hexblast
+hide_minion_frame	9	, Align Fate, Animus Splinters, Feral Invocation, Hollow Form
+hinder_chance_%_on_spreading_poioson	1	Herald of Plague
+hollow_shell_per_target_cooldown_ms	1	Hollow Shell
+hunters_mark_%_of_max_threshold_to_trigger_explosion_on_death	1	Bloodhound's Mark
+hunters_mark_%_of_phys_damage_over_time_as_build_up	1	Bloodhound's Mark
+hunters_mark_buildup_%_as_explosion_damage_+%_final	1	Blood Explosion
+hunters_mark_explosion_area_of_effect_+%_final_from_buildup	1	Blood Explosion
+ice_chunk_refire_overshoot_max	1	Cross Slash
+ice_chunk_refire_overshoot_min	1	Cross Slash
+ice_chunk_refire_search_radius	1	Cross Slash
+ice_crystal_explosion_cold_damage_can_impale	1	Crystalline Shards
+ice_crystal_explosion_impale_chance_%	1	Crystalline Shards
+ice_crystal_shatter_detonation_area_of_effect_+%_final	2	Frost Wall, Glacial Bolt
+ice_crystal_shatter_detonation_damage_+%_final	2	Frost Wall, Glacial Bolt
+ice_crystals_damage_+%_final_for_first_500_ms_when_not_killed_by_self	2	Frost Wall, Glacial Bolt
+ice_fragment_art_variation	1	Ice Fragments
+ice_fragment_auto_aim_radius	1	Ice Fragments
+ice_fragment_auto_aim_roll_fudge	1	Ice Fragments
+ice_fragment_max_chunk_distance	1	Ice Fragments
+ice_fragment_min_chunk_distance	1	Ice Fragments
+ice_fragments_initial_firing_angle_override	1	Ice Fragments
+ice_nova_number_of_frost_bolts_to_cast_on	1	Ice Nova
+ice_volcano_eruption_additional_ice_fragment_projectiles	1	Fragments of the Past
+ice_volcano_fires_projectiles_every_x_ms	1	Fragments of the Past
+icestorm_max_number_of_storms	1	Icestorm
+igneous_shield_charge_up_time_+%	1	Magma Barrier
+igneous_shield_charge_up_time_ms	1	Magma Barrier
+igneous_shield_explosion_angle_degrees	1	Magma Spray
+igneous_shield_gain_endurance_charge_on_block	1	Magma Barrier
+ignite_art_variation	3	Fireball, Ground Laser, Rune Blast
+ignite_duration_+%_per_shotgun_pellet_hit	1	Incendiary Shot
+ignite_effect_+%_final_if_heat_is_consumed	1	Incendiary Shot
+ignore_muzzle_flash_animation_name_override	1	SupportMortarCannonPlayer
+ignore_shapeshift_talisman_requirement	2	Spirit Vessel, SpiritVesselSupport
+ignore_skill_weapon_restrictions	2	Deadly Resolve, SupportFeralInvocationPlayer
+ignore_talisman_inherent_form_restriction	4	Deadly Resolve, Spirit Vessel, SpiritVesselSupport, SupportFeralInvocationPlayer
+ignores_proximity_shield	4	Charge, Flicker Strike, Orb Charge, Shield Charge
+imbue_weapon_combust_trigger_chance_%	1	Combust
+impale_magnitude_+%	1	His Vile Intrusion
+incinerate_cone_angle	1	Incinerate
+incinerate_fuel_gain_per_mana_spent	1	Incinerate
+incinerate_maximum_fuel	1	Incinerate
+incinerate_minimum_fuel_to_use	1	Incinerate
+incinerate_sustains_every_%_of_cast_time	1	Incinerate
+infernal_cry_explosion_delay_ms	1	Infernal Cry
+infernal_cry_explosion_fire_damage_+%_final_per_corpse_power	1	Combust
+infernal_familiar_minion_burn_radius	1	Summon Infernal Hound
+infernal_familiar_minion_burns_for_%_max_life	1	Summon Infernal Hound
+infernal_legion_minion_burning_effect_radius	4	Catha's Brilliance, Infernal Legion I, Infernal Legion II, Infernal Legion III
+infinite_skill_effect_duration	4	Despair, Enfeeble, Enrage, Temporal Chains
+infusion_remnants_%_chance_to_spawn_cold_infusion_on_freezing_an_enemy	1	Siphon Elements
+infusion_remnants_%_chance_to_spawn_fire_infusion_on_igniting_an_enemy	1	Siphon Elements
+infusion_remnants_%_chance_to_spawn_lightning_infusion_on_shocking_an_enemy	1	Siphon Elements
+instability_on_critical_%_chance	1	Volatility
+intimidate_on_heavy_stun_vs_ignited_and_fully_armour_broken	1	Syzygy
+is_area_damage	298	, Acidic Concoction, Annihilation, Arctic Howl, Armour Breaker
+is_cluster_grenade_bomblet	1	Cluster Grenade
+is_feral_invocation	1	SupportFeralInvocationPlayer
+is_ice_crystal_explosion	5	Frost Wall, Frozen Locus, Glacial Bolt, Grim Pillars, Midnight Zenith
+is_mantra_illusion_skill	1	SupportHollowFormPlayer
+is_melee_attack_totem	1	Shockwave Totem
+is_player_earthquake	1	Earthquake
+is_ranged_attack_totem	3	Artillery Ballista, Mortar Cannon, Siege Ballista
+is_shield_barricade_segment	1	Shield Wall
+is_spectral_bell_shockwave	2	Hollow Focus, Hollow Resonance
+is_spell_totem	2	Dark Effigy, Spell Totem
+is_totem	7	Ancestral Warrior Totem, Artillery Ballista, Dark Effigy, Mortar Cannon, Shockwave Totem
+is_triggerable_elemental_storm	1	Elemental Storm
+is_warcry	1	Battershout
+knockback_distance_+%_final_vs_unique_enemies	1	Wind Serpent's Fury
+leap_maximum_allowed_path_distance	1	Disengage
+leap_slam_always_knockback_within_range	2	Leap Slam, Pounce
+leap_slam_animation_distance_threshold	4	Leap Slam, Molten Crash, Righteous Descent, Starborn Onslaught
+leap_slam_minimum_distance	3	Dash, Firehose, Leap
+life_leech_also_recovers_based_on_elemental_damage_types	1	Shattering Spite
+life_leech_from_source_not_removed_at_full_life	1	Life Leech III
+life_remnants_chance_to_spawn_orb_on_killing_enemy_%	1	Life Remnants
+life_remnants_spawn_remnant_on_hit_vs_enemy_every_X_ms	1	Life Remnants
+lightning_arrow_maximum_number_of_extra_targets	1	Lightning Arrow
+lightning_conduit_x_additional_strikes_if_consumed_a_shock	1	Lightning Conduit
+lightning_damage_roll_always_min_or_max	1	Esh's Prowess
+lightning_rod_%_chance_for_additional_burst_on_landing	1	Lightning Rod
+lightning_rod_number_of_chains_allowed	2	Lightning Rod, Shockchain Arrow
+lightning_storm_hit_frequency_variance_ms	1	Thunderstorm
+lightning_storm_max_number_of_storms	1	Thunderstorm
+lightning_strike_maximum_action_distance_+_when_empowered	1	Falling Thunder
+lingering_illusion_clone_base_maximum_life_%_of_owner_maximum_life	1	
+living_bomb_base_number_of_bombs_allowed	2	Living Bomb, Ruzhan's Brand
+living_bomb_damage_threshold_%_of_ailment_threshold	1	Living Bomb
+lose_%_of_life_es_and_mana_when_skill_is_used	1	Atziri's Impatience
+lose_%_of_maximum_rage_on_dealing_critical_strike	1	Prototype Seventeen
+lose_x%_of_life_per_5_rage_on_supported_skill_use	1	Medved's Felling
+loyalty_%_of_redirected_damage_recouped_as_life_for_owner	1	Romira's Requital
+magma_orb_base_bounce_range	1	Rolling Magma
+magma_orb_base_projectile_range	1	Rolling Magma
+magma_orb_impact_distance_%	1	Rolling Magma
+magma_orb_minimum_action_distance	1	Rolling Magma
+magma_orb_target_distance_absolute_maximum	1	Rolling Magma
+magma_orb_target_distance_absolute_minimum	1	Rolling Magma
+maim_on_hit_%	4	Basic Attack, Kelari's Brutality, Maim, Sunder
+main_hand_base_maximum_attack_distance	3	Artillery, Ballista Bolt, Slam
+main_hand_base_weapon_attack_duration_ms	5	Acidic Concoction, Bleeding Concoction, Explosive Concoction, Fulminating Concoction, Shattering Concoction
+main_hand_local_chance_to_bleed_on_hit_%	1	Basic Attack
+main_hand_local_maim_on_hit_%	2	Basic Attack, Spear Throw
+main_hand_weapon_range_+	5	Glacial Lance, Lightning Spear, Spear Throw, Twister, Whirlwind Lance
+maintain_projectile_direction_when_using_contact_position	29	Basic Attack, Basic Spell, Basic Spell (Chaos), Basic Spell (Cold), Basic Spell (Fire)
+mana_drain_base_mana_leech_amount	1	Mana Drain
+mana_remnants_chance_to_spawn_orb_on_killing_enemy_with_elemental_ailment_%	1	Mana Remnants
+mana_remnants_spawn_remnant_on_crit_vs_elemental_ailment_enemy_every_X_ms	1	Mana Remnants
+mana_required_to_activate_skill	1	The Stars Answer
+mana_tempest_effects_linger_X_ms	1	Mana Tempest
+mana_tempest_empowered_spells_split_to_X_additional_targets	1	Mana Tempest
+mana_tempest_mana_cost_%_to_add_to_cost_per_second	1	Mana Tempest
+mantra_of_destruction_grant_all_damage_%_to_gain_as_chaos_with_attacks	1	Mantra of Destruction
+mantra_of_destruction_purple_flame_all_damage_%_gained_as_chaos	1	Mantra of Destruction
+mantra_of_illusions_bonus_illusions_when_consuming_power_charge	1	Hollow Form
+mantra_of_illusions_cloned_skill_mana_cost_%	1	Hollow Form
+mark_supported_by_deadeye_meta_gem	1	SupportMetaDeadeyeMarksPlayer
+marked_enemies_leech_physical_attack_damage_taken_as_life_to_you_permyriad	1	Mark of Siphoning II
+marked_enemies_leech_physical_attack_damage_taken_as_mana_to_you_permyriad	2	Mark of Siphoning, Mark of Siphoning II
+marks_avoid_consumption_when_first_activated	1	Eternal Mark
+maximum_caltrops_allowed	1	Caltrops
+maximum_curse_zones_allowed	3	Cursed Ground, Doedre's Undoing, Hayoxi's Fulmination
+maximum_dangerous_resolve_stacks	1	Deadly Resolve
+maximum_grounding_shocks_allowed	1	Static Shocks
+maximum_life_%_damage_absorbed_per_jade_consumed	1	Encase in Jade
+maximum_number_of_arctic_armour_stationary_stacks	1	Arctic Armour
+maximum_number_of_crossbow_heat_stacks	1	Rapid Shot
+maximum_number_of_instilling_stacks	3	Chaotic Surge, Elemental Surge, Gemini Surge
+meditate_energy_shield_recharge_rate_+%_final	1	Meditate
+melee_conditional_step_distance	34	Armour Breaker, Basic Attack, Blood Hunt, Bonebreaker, Boneshatter
+melee_dash_placement_added_range	4	Crushing Fear, Killing Palm, Rake, Staggering Palm
+melee_defer_damage_prediction	5	Armour Breaker, Blood Hunt, Fangs of Frost, Rapid Assault, Whirling Assault
+melee_kill_invocation_gain_X_centienergy_per_monster_power_on_melee_kill	1	Reaper's Invocation
+melee_strike_bonus_attack_distance	2	Parry, Raise Shield
+meta_skill_base_costs_equals_%_total_base_costs_from_all_socketed_skills	1	Animus Splinters
+midnight_star_attempt_to_consume_x_ice_seeds_to_create_an_ice_crystal_each_time_you_gain_ice_seeds	1	Midnight Zenith
+midnight_star_gain_ice_seeds_equal_to_enemy_power_on_kill_with_critical_hit	1	Midnight Zenith
+midnight_star_gain_x_ice_seeds_when_you_critically_hit_a_rare_or_unique_enemy	1	Midnight Zenith
+midnight_star_max_ice_crystals	1	Midnight Zenith
+minimum_per_projectile_spread_angle_degrees	2	Glacial Lance, Twister
+minimum_projectile_target_distance_+	1	Oil Barrage
+minimum_rain_of_spores_movement_speed_+%_final_cap	1	Toxic Rain
+minion_aggro_radius_+%	1	Unearth
+minion_cathas_brilliance_blind_aura_radius	1	Catha's Brilliance
+minion_dies_when_parent_deleted	1	Summon Minions
+minion_dies_when_parent_dies	1	Summon Minions
+minion_gain_unholy_might_for_X_ms_on_command	1	Kurgal's Leash
+minion_melee_splash	2	Minion Splash I, Minion Splash II
+minion_on_death_heal_nearby_minions_for_%_of_life_and_remove_ailments	1	Deathmarch
+minion_on_death_heal_radius	1	Deathmarch
+minion_rage_effect_+%	1	Skeletal Reaver Minion
+minions_do_not_move_to_skill_target	1	Command
+modifiers_to_number_of_projectiles_instead_apply_to_number_of_targets_projectile_pierces	1	Soaring Midnight
+molten_blast_projectile_speed_as_%_of_attack_time	1	Molten Blast
+molten_blast_target_range	1	Molten Blast
+molten_crash_max_number_of_fissures	1	Molten Crash
+molten_crash_number_of_additional_fissures_from_rage_consumption	1	Molten Crash
+molten_crash_optionally_consume_X_rage_for_fissures	1	Molten Crash
+monster_breaks_brequel_npc_concentration	1	Basic Spell (Cold)
+monster_mortar_bounce_angle_variance	1	Mortar
+monster_no_drops_or_experience	1	Summon Minions
+monster_no_life_es_scaling_from_rarity	1	Companion: {0}
+monster_penalty_against_minions_damage_+%_final_vs_player_minions	7	Basic Attack, Firehose, Flamethrower, Large Ball Flame Geyser, Pillar Slam
+monster_projectile_variation	37	, Artillery, Basic Attack, Basic Spell, Basic Spell (Chaos)
+monster_reverse_point_blank_damage_-%_at_minimum_range	1	Spike Burst
+monster_skill_triggered_by_geal	1	Navira's Calming
+morrigan_ward_gain_X_guard	1	Nature's Exchange
+mortar_projectile_distance_override	2	Death Mortar, Mortar
+movement_speed_acceleration_+%_per_second_while_performing_action	177	Acidic Concoction, Ancestral Cry, Animus Exchange, Apocalypse, Arc
+movement_speed_while_performing_action_locked_duration_%	165	Acidic Concoction, Ancestral Cry, Animus Exchange, Apocalypse, Arc
+moving_melee_conditional_step_distance	2	Leap Slam, Maul
+multishot_empowered_projectile_speed_+%	1	Primal Bounty
+muzzle_flash_animation_index	1	SupportMortarCannonPlayer
+new_shock_nova_distance_based_damage_+%_final	1	Enervating Nova
+no_minion_duration	1	Summon Wolf
+non_skill_base_all_damage_%_to_gain_as_lightning_with_spells_from_buff	1	Mana Tempest
+non_skill_base_physical_damage_%_to_gain_as_fire	1	Burning Arrow
+non_ward_damage_taken_from_blocked_hits_is_taken_to_ward_as_well	1	Runic Reprieve
+number_of_additional_impaled_debuffs_to_apply	1	His Vile Intrusion
+number_of_allowed_firewalls	1	Flame Wall
+number_of_branching_fissures	5	Branching Fissures I, Branching Fissures II, Molten Crash, Starborn Onslaught, Volcanic Fissure
+number_of_dual_cascade_aftershocks	1	Tectonic Slams
+number_of_lightning_rods_allowed	2	Lightning Rod, Shockchain Arrow
+number_of_marks_allowed_per_type	5	Bloodhound's Mark, Freezing Mark, Predator's Mark, Sniper's Mark, Voltaic Mark
+number_of_monsters_to_summon	1	Summon Minions
+number_of_poison_cloud_allowed	3	Decompose, Gas Arrow, Gas Grenade
+number_of_poisonbloom_arrow_bloom_allowed	1	Toxic Growth
+number_of_projectiles_override	5	, Large Ball Spit, Snipe, Spear Throw, Toxic Growth
+number_of_shocking_rifts_allowed	1	Electromagnetism
+number_of_tornados_allowed	2	Elemental Storm, Tornado
+number_of_totems_allowed_is_1	3	Cirel's Cultivation, Splinter Totem I, Splinter Totem II
+number_of_triskelion_cascades_for_next_skill	1	Triskelion Cascade
+number_of_vine_arrow_pod_allowed	1	Vine Arrow
+oasis_damage_recouped_as_life_%	1	Navira's Oasis
+oasis_damage_recouped_as_mana_%	1	Navira's Oasis
+oasis_x_charges_for_life_and_mana_flasks_per_minute	1	Navira's Oasis
+on_kill_effect_occur_twice_chance_%_vs_bleeding_enemies	1	Tear
+orb_of_storms_base_bolt_frequency_ms	1	Orb of Storms
+orb_of_storms_base_maximum_number_of_orbs	1	Orb of Storms
+orb_of_storms_maximum_number_of_hits	1	Orb of Storms
+orb_of_storms_maximum_placement_range_%	1	Orb of Storms
+orb_of_storms_minimum_placement_range_%	1	Orb of Storms
+overcharged_spear_detonate_number_of_beams	1	Storm Lance
+overcharged_spear_detonated_duration_ms	1	Storm Lance
+override_turn_duration_ms	1	Disengage
+owl_feather_buff_timer_ms	1	Primal Bounty
+permafrost_shard_arming_time_ms	1	Ice Shards
+permafrost_shard_bonus_damage_delay_ms	1	Ice Shards
+permafrost_shard_damage_+%_final_after_1_second	1	Ice Shards
+permafrost_shard_detection_base_area_of_effect_radius	1	Ice Shards
+permafrost_shard_limit	1	Ice Shards
+pillar_of_flame_X_additional_pillars_on_consuming_aggravated_ignite	1	Flame Pillar
+pillar_of_flame_consume_ignite_to_create_X_pillars	1	Flame Pillar
+pillar_of_flame_creation_radius	1	Flame Pillar
+plague_bearer_gains_%_of_damage_from_inflicted_poisons	1	Plague Bearer
+plague_bearer_nova_area_+%_final_per_incubation_%	1	Plague Bearer
+plague_burst_%_stored_value_to_deal_as_physical_damage	1	Plague Burst
+plague_burst_area_+%_final_maximum	1	Plague Burst
+plague_burst_triggered_by_bursting_plague_death	1	Plague Burst
+plant_skill_damage_+%_final_when_wet	3	Brambles, Thrashing Vines, Vine Arrow
+play_commanded_additive_animation	1	Command
+poison_concoction_poison_burst_physical_damage_equal_to_%_of_strongest_active_poison	1	Acidic Concoction
+poison_vine_arrow_vine_stored_poison_damage_+%_final	1	Vine Arrow
+poison_vine_arrow_visual_max_poison	1	Vine Arrow
+power_charged_zombie_damage_taken_-%_final	1	Raise Zombie
+power_charged_zombie_hit_damage_+%_final	1	Raise Zombie
+power_charged_zombie_movement_speed_+%_final	1	Raise Zombie
+precise_cursor_targeting_uses_contact_point_height_offset	74	Arc, Armour Breaker, Armour Piercing Rounds, Ball Lightning, Blood Hunt
+primal_strikes_number_of_stags	1	Primal Strikes
+primal_strikes_stag_is_scaled_with_area_of_effect	1	Primal Strikes
+primal_strikes_stag_stampede_damage_+%_final	1	Primal Strikes
+primal_strikes_stag_volley_delay_ms	1	Primal Strikes
+primal_strikes_stag_volley_spacing	1	Primal Strikes
+projectile_angle_variance	2	Cluster Grenade, Spike Burst
+projectile_ballistic_angle_from_reference_event	21	Artillery, Basic Attack, Blow Dart, Cannon, Cluster Grenade
+projectile_ballistic_angle_from_target_distance	11	Basic Spell, Basic Spell (Chaos), Cluster Grenade, Explosive Spear, Napalm Cannon
+projectile_ballistic_angle_override	1	Chaos Spark
+projectile_ballistic_gravity_override	3	Basic Spell (Physical), Spear Throw, Vomit
+projectile_ballistic_ignore_force_while_exploding	2	Explosive Shot, Spear Throw
+projectile_distance_override	1	Escape Shot
+projectile_distance_variance	5	Cluster Grenade, Fragmentation Rounds, Galvanic Shards, Incendiary Shot, Permafrost Bolts
+projectile_firing_forward_distance_override	1	Eye of Winter
+projectile_maximum_downwards_angle_degrees	2	Firebolt, Oil Barrage
+projectile_maximum_duration_override_ms	1	Ice Shard
+projectile_maximum_range_override	3	Fireball, Firebolt, Molten Blast
+projectile_minimum_range	2	Artillery, Ballista Bolt
+projectile_only_collide_with_wet_targets	1	Coursing Current
+projectile_randomly_fork_chain_or_pierce	1	Gambleshot
+projectile_speed_variation_+%	5	Basic Spell (Chaos), Explosive Grenade, Large Ball Spit, Puncture, Rock Throw
+projectile_spread_radius	17	Artillery, Basic Spell, Basic Spell (Chaos), Basic Spell (Cold), Chaos Spark
+projectile_uses_bearing_as_firing_orientation	2	Explosive Shot, Spear Throw
+projectile_uses_contact_direction	52	Arc, Armour Piercing Rounds, Basic Spell, Blood Projectile, Bow Shot
+projectile_uses_contact_position	96	Arc, Armour Piercing Rounds, Artillery, Basic Attack, Basic Attack (Cold)
+projectiles_are_not_fired	1	Fragmentation Rounds
+projectiles_can_shotgun	5	Fragmentation Rounds, Galvanic Shards, Ice Fragments, Incendiary Shot, Permafrost Bolts
+projectiles_can_split_from_terrain	1	Lightning Spear
+projectiles_cannot_return	2	Glacial Lance, Lightning Spear
+projectiles_fire_at_ground	11	Bonestorm, Escape Shot, Explosive Shot, Gas Arrow, Glacial Bolt
+projectiles_move_with_precise_movement	2	Explosive Spear, Storm Lance
+projectiles_normal_distribution_height_mean	4	Fragmentation Rounds, Galvanic Shards, Incendiary Shot, Permafrost Bolts
+projectiles_normal_distribution_height_standard_deviation	4	Fragmentation Rounds, Galvanic Shards, Incendiary Shot, Permafrost Bolts
+projectiles_normal_distribution_spread_standard_deviation	4	Fragmentation Rounds, Galvanic Shards, Incendiary Shot, Permafrost Bolts
+projectiles_not_offset	10	, Blow Dart, Caltrops, Cluster Grenade, Explosive Shot
+projectiles_nova	7	Cluster Grenade, Empowered Sparks, Nova Projectiles I, Nova Projectiles II, Runeforged Blades
+projectiles_return	2	Breachlord's Amalgam, Soaring Midnight
+projectiles_should_collide_with_flying_monsters	3	Empowered Sparks, Falling Thunder, Spark
+projectiles_travel_at_fixed_height	1	Spear Throw
+pustules_grow_as_though_dealing_X_poison_damage_per_minute_when_wet	3	Poison Spores, Toxic Domain, Toxic Growth
+pvp_skill_dot_attack_time_override_ms	4	Contagion, Essence Drain, Exsanguinate, Soulrend
+quality_display_active_skill_ground_effect_area_of_effect_+%_final_per_second_max_is_gem	3	Frozen Locus, Gas Arrow, Gas Grenade
+quality_display_active_skill_required_number_of_combo_stacks_is_gem	1	Mantra of Destruction
+quality_display_arsonist_is_gem	1	Explosive Demise
+quality_display_base_number_of_remove_spear_mines_allowed_is_gem	1	Explosive Spear
+quality_display_contagion_is_gem	1	Contagion
+quality_display_earthquake_is_gem	1	Earthquake
+quality_display_earthshatter_is_gem	1	Earthshatter
+quality_display_ember_fusilade_is_gem	2	Ember Fusillade, His Scattering Calamity
+quality_display_exsanguinate_beam_targets_is_gem	1	Exsanguinate
+quality_display_gathering_storm_is_gem	1	Gathering Storm
+quality_display_ghost_dance_is_gem	1	Ghost Dance
+quality_display_herald_of_ash_burning_%_overkill_damage_per_minute_is_gem	1	Herald of Ash
+quality_display_herald_of_blood_is_gem	2	Herald of Blood, Herald of the Royal Queen
+quality_display_lingering_illusion_is_gem	1	
+quality_display_lingering_mirage_is_gem	1	
+quality_display_permafrost_shard_damage_+%_final_after_1_second_is_gem	1	Ice Shards
+quality_display_rapid_shot_maximum_num_of_stacks_is_gem	1	Rapid Shot
+quality_display_shield_wall_is_gem	1	Shield Wall
+quality_display_tornado_shot_is_gem	1	Tornado Shot
+quality_display_warding_steel_is_gem	1	Iron Ward
+quality_hide_display_character_panel	6	Disengage, Exsanguinate, Fangs of Frost, Flame Wall, Solar Orb
+rage_skip_consume_chance_%	1	Rageforged II
+rain_of_arrows_arrow_speed_+%	1	Rain of Arrows
+rain_of_blades_fall_delay_ms	1	Falling Blade
+rain_of_spores_vines_movement_speed_+%_final	1	Toxic Rain
+raise_shield_base_retaliation_duration_ms	1	Raise Shield
+raise_zombie_empowerment_effect_+%	1	Raise Zombie
+random_projectile_direction	2	Frost Darts, Salvo
+range_backflip_conditional_distance	5	Comet, His Foul Emergence, Lightning Conduit, Skyfall, Toxic Growth
+rapid_assault_%_chance_to_attach_additional_spear	1	Rapid Assault
+rapid_assault_attached_spear_limit	1	Rapid Assault
+rapidshot_requiem_active_duration_ms	1	Compose Requiem
+rapidshot_requiem_base_buff_count_requirement	1	Compose Requiem
+rapidshot_requiem_number_of_stacks_per_minute	1	Compose Requiem
+ravenous_swarm_maximum_swarm_count	1	Ravenous Swarm
+reaver_enrage_base_life_%_degen_per_minute	1	Enrage
+reaver_enrage_decay_rate_increase_+%_final	1	Enrage
+recoup_mana_%_on_minion_death	1	Essence Harvest
+recover_%_life_and_mana_per_minute_for_supported_offering_lifetime	1	Guatelitzi's Ablation
+recover_%_maximum_mana_on_cull	2	Killing Palm, Soul Drain
+recover_%_of_life_over_2_seconds_when_consuming_a_divine_fragment	1	Righteous Descent
+recover_%_of_mana_over_2_seconds_when_consuming_a_divine_fragment	1	Righteous Descent
+recovery_from_flasks_applies_to_allies_in_presence_%	1	Alchemist's Boon
+refresh_ignite_duration_on_critical_strike_chance_%	1	Eternal Flame III
+remnant_delay_X_ms	2	Remnant Potency II, Remnant Potency III
+remnant_pickup_range_+%	4	Harmonic Remnants I, Harmonic Remnants II, Magnetic Remnants, Siphon Elements
+remnants_affect_allies_in_presence_instead	1	Selfless Remnants
+remote_spear_mine_minimum_target_distance	1	Explosive Spear
+remove_ailment_when_applying_relevant_ailment	1	Commiserate
+remove_freeze_on_ignite	1	Frostfire
+repeat_last_step_of_combo_attack	2	Crescendo I, Crescendo II
+replace_main_hand_unarmed_attack_stats_with_nothing_type	13	Acidic Concoction, Bleeding Concoction, Blood Explosion, Caltrops, Conductive Runes
+replace_off_hand_unarmed_attack_stats_with_shield_type	8	Embrace The Fall, Parry, Raise Shield, Resonating Shield, Shield Charge
+repulsion_curse_when_detonated_prevent_curse_for_X_ms	1	Repulsion
+repulsion_mark_cannot_knockback_special_object	1	Repulsion Wave
+restore_%_life_on_skill_use_per_1000_ms_cooldown	1	Second Wind III
+rhoa_movement_speed_penalty_+%_final_while_performing_action	1	Rhoa Mount
+rime_damage_taken_+%_final	1	Ice Armour
+ring_of_bone_maximum_number_of_rings	1	Bone Cage
+ring_of_bone_spike_break_chance_%	1	Bone Cage
+rip_from_time_immunity_duration_ms	1	Moment of Vulnerability
+rip_support_buff_base_duration	1	Rip
+rip_support_life_regeneration_rate_+%	1	Rip
+rip_support_life_remnant_creation_radius	1	Rip
+ritual_of_power_maximum_number_of_rituals	1	Profane Ritual
+rune_hazard_arming_time_ms	1	Conductive Runes
+rune_hazard_base_number_of_runes_allowed	1	Conductive Runes
+rune_hazard_cone_angle	1	Conductive Runes
+rune_hazard_detonate_time_ms	1	Conductive Runes
+rune_hazard_number_of_runes_to_create	1	Conductive Runes
+rune_ward_block_%_damage_taken	1	Runic Reprieve
+rune_ward_requires_%_maximum_ward_to_perform	1	Runic Reprieve
+runic_boosted_attack_damage_%_gained_as_physical	1	Fist Of Kalguur
+runic_fortress_stun_threshold_+%_final	1	Refutation
+runic_fortress_stun_threshold_+%_final_per_10_ward_spent	1	Refutation
+runic_tempering_backlash_cooldown_ms	1	Runic Tempering
+runic_tempering_hit_per_rune	1	Runic Tempering
+runic_tempering_max_runes	1	Runic Tempering
+sacred_ground_armour_evasion_energy_shield_+%_final_per_stage	1	Rite of Restoration
+sacred_ground_life_regeneration_for_allies_per_minute_per_stage	1	Rite of Restoration
+sacrifice_%_life_on_skill_use	3	Extraction, Guatelitzi's Ablation, Sacrificial Offering
+sacrificial_lamb_minion_always_detonatable	1	Sacrificial Lamb II
+sand_djinn_hand_slam_maximum_number_of_stages	1	Kelari's Judgment
+sandstorm_swipe_display	1	Whirling Slash
+sandstorm_swipe_nova_radius_+	1	Whirlwind Lance
+sandstorm_swipe_nova_radius_+_per_stage	1	Whirling Slash
+sanguine_revelry_%_change_to_create_remnant_on_killing_bleeding_enemy	1	Sanguine Revelry
+sanguine_revelry_remnant_restore_%_permyriad_of_max_life_per_5_current_rage	1	Sanguine Revelry
+secondary_skill_triggered_by_primary_skill_of_gem	7	Chayula's Will, Ice Fragments, Magma Spray, Moonbeam, Predator's Mark
+seismic_cry_slam_skill_additional_aftershocks	1	Seismic Cry
+seismic_cry_slam_skill_aftershock_damage_+%_final	1	Seismic Cry
+self_targeted_storm_skills_target_a_location_instead	2	Advancing Storm, Morgana's Tempest
+shapeshift_ignore_form_check	2	Deadly Resolve, SupportFeralInvocationPlayer
+shapeshift_minimum_channel_time_ms_+	1	Rampage
+shattering_palm_debuff_damage_threshold	1	Shattering Palm
+shattering_spite_%_of_presence_radius	1	Shattering Spite
+shattering_spite_area_+%_per_lance_with_at_least_5_lances	1	Shattering Spite
+shattering_spite_life_leech_%_with_10_lances	1	Shattering Spite
+shearing_bolts_non_skill_base_physical_damage_%_to_convert_to_cold	1	Ice-Tipped Arrows
+shearing_bolts_number_of_empowered_attacks	1	Ice-Tipped Arrows
+shield_charge_acceleration_duration_ms	2	Shield Charge, Stampede
+shield_charge_base_movement_speed	2	Shield Charge, Stampede
+shield_charge_extra_distance	2	Shield Charge, Stampede
+shield_charge_pushiness_+_while_decelerating	1	Shield Charge
+shield_charge_pushiness_+_while_fully_charged	1	Shield Charge
+shield_wall_damage_+%_final_for_first_500_ms_when_not_killed_by_self	1	Shield Wall
+shield_wall_damage_+%_final_when_slammed	1	Shield Wall
+shield_wall_maximum_life	1	Shield Wall
+shield_wall_segment_display_stat	1	Shield Wall
+shielding_cry_an_additional_empowered_attack_per_X_mp	1	Fortifying Cry
+shielding_cry_an_additional_empowered_attack_per_X_mp_mp_cap	1	Fortifying Cry
+shielding_cry_grant_X_guard_per_5_mp	1	Fortifying Cry
+shielding_cry_grant_X_guard_per_5_mp_mp_cap	1	Fortifying Cry
+shock_art_variation	3	Bolt Impact, Lightning Bolt, Omega Beam
+shock_nearby_enemy_base_area_of_effect_radius	2	Shock Conduction, Shock Conduction II
+shockchain_arrow_X_additional_chains_on_first_hitting_shocked_or_electrocuted_enemy	1	Shockchain Arrow
+shocking_rift_damage_+%_final_per_pulse_performed	1	Electromagnetism
+shocking_rift_hinder_ms	1	Electromagnetism
+shocking_rift_number_of_pulses	1	Electromagnetism
+shocking_rift_pulse_interval_ms	1	Electromagnetism
+shocking_rift_speed_+%_per_shock_consumed	1	Electromagnetism
+shocks_reflected_to_self	1	Overcharge
+should_have_cast_when_damage_taken_charge_buff	1	Valako's Charge
+should_use_additive_aiming_animation	32	Arc, Armour Piercing Rounds, Bow Shot, Chaos Bolt, Coiling Bolts
+show_curse_hexblastable	1	Hexblast
+show_number_of_projectiles	2	Elemental Expression, Volcano
+siege_cascade_fall_time_ms	4	Artillery, Hailstorm Rounds, Siege Cascade, Stormblast Bolts
+siege_cascade_is_artillery_ballista	1	Artillery
+siege_cascade_visual_fall_time_delay_%	2	Artillery, Siege Cascade
+single_primary_projectile	1	Eye of Winter
+skeletal_cleric_grants_base_life_regeneration_rate_per_minute	1	Heal Buff
+skeletal_cleric_revived_skeletons_immune_for_X_ms	1	Skeletal Cleric Minion
+skill_added_attack_time_by_distance_ms	3	Devour, Leap Slam, Molten Crash
+skill_additional_fissure_chance_%	1	Entangle
+skill_additional_projectiles_per_seal_broken	1	Salvo
+skill_allow_base_use_time_when_using_anim_length	1	Toxic Rain
+skill_animation_duration_multiplier_override	5	Bonestorm, Raise Shield, Runic Reprieve, Snipe, Supercharged Slam
+skill_base_ghost_dance_grants_%_evasion_as_es_regeneration_per_minute_if_have_lost_ghost_dance_shroud_recently	1	Ghost Dance
+skill_base_oil_movement_speed_+%_final_to_apply	2	Oil Barrage, Oil Grenade
+skill_can_add_multiple_charges_per_action	11	Elemental Storm, Galvanic Field, Herald of Blood, Herald of Ice, Herald of the Royal Queen
+skill_can_be_queued_on_cooldown	1	Flame Breath
+skill_can_fire_wand_projectiles	5	Basic Attack, Basic Attack (Cold), Basic Attack (Fire), Basic Attack (Lightning), Tail Swipe
+skill_can_flicker	2	Killing Palm, Staggering Palm
+skill_can_see_monster_categories	1	Tame Beast
+skill_cannot_be_electrocuted	6	Death From Above, Death Storm, Enrage, Eternal Hunt, Explosive Demise
+skill_cannot_be_frozen	6	Death From Above, Death Storm, Enrage, Eternal Hunt, Explosive Demise
+skill_cannot_be_interrupted	3	Charge, Orb Charge, Sandblast
+skill_cannot_be_knocked_back	9	Black Powder Blitz, Charge, Death From Above, Death Storm, Enrage
+skill_cannot_be_stunned	10	Charge, Death From Above, Death Storm, Enrage, Eternal Hunt
+skill_cannot_be_used_unless_stationary_for_X_ms	1	Dauntless
+skill_cannot_gain_rage_during_use	2	Flame Breath, Rampage
+skill_cannot_generate_frenzy_charges	1	Ferocity
+skill_chill_magnitude_is_aura_magnitude	1	Heart of Ice
+skill_conditional_requires_X_volatility	1	Catharsis
+skill_consume_corpse_within_X_units_on_use	2	Profanity I, Profanity II
+skill_consume_up_to_X_corpses_on_use	2	Profanity I, Profanity II
+skill_cross_slash_triggered_summon_+_wolves_if_rare	1	Summon Wolf
+skill_cross_slash_triggered_summon_+_wolves_if_unique	1	Summon Wolf
+skill_curses_cannot_apply_to_targets_above_level	6	Despair, Elemental Weakness, Enfeeble, Repulsion, Temporal Chains
+skill_desired_amount_override	50	Align Fate, Azmerian Swarms, Azmerian Wolf, Black Powder Blitz, Blood Boil
+skill_desired_initial_amount	2	Companion: {0}, Skeletal Warrior Minion
+skill_detonate_random_volatility_amount_on_use	1	Catharsis
+skill_disabled_unless_cloned	11	Artillery, Ballista Bolt, Shockwave Slam, SupportAncestralWarriorTotemPlayer, SupportFeralInvocationPlayer
+skill_display_projectile_total_is_limit	1	Lightning Spear
+skill_do_not_elapse_channel_time_while_barraging	1	Oil Barrage
+skill_does_not_pathfind	15	Align Fate, Kelari's Brutality, Kelari's Deception, Kelari's Judgment, Mad Flight
+skill_echoes_per_seal_broken	1	Tul's Avalanche
+skill_effect_duration_is_sundered_armour_duration	1	Sunder
+skill_empower_limitation_specifier_for_stat_description	1	Ancestral Cry
+skill_empowers_next_x_melee_attacks	1	Mantra of Destruction
+skill_enemies_affected_by_non_ailment_damage_over_time_life_regeneration_rate_+%	1	Acrimony
+skill_eternal_march_life_per_ward_spent_%	1	Eternal March
+skill_eternal_march_maximum_ward_cost	1	Eternal March
+skill_gain_seal_every_x_hits_blocked	1	Tul's Avalanche
+skill_grant_X_frenzy_charges_against_normal_and_magic_monsters	1	Cull the Weak
+skill_grant_X_frenzy_charges_against_rare_monsters	1	Cull the Weak
+skill_grant_X_frenzy_charges_against_unique_monsters	1	Cull the Weak
+skill_grant_X_power_charges_against_normal_and_magic_monsters	1	Killing Palm
+skill_grant_X_power_charges_against_rare_monsters	1	Killing Palm
+skill_grant_X_power_charges_against_unique_monsters	1	Killing Palm
+skill_grants_%_chance_to_summon_azmerian_swarm_on_hitting_unique_or_rare_enemy_affected_by_elemental_ailment	1	Azmerian Swarms
+skill_grants_%_chance_to_summon_azmerian_swarm_on_kill_affected_by_elemental_ailment	1	Azmerian Swarms
+skill_grants_spawn_harbinger_of_madness_orb_on_melee_kill_once_per_timer_ms	1	Harbinger of Madness
+skill_grenade_detonate_only_at_end_of_duration	2	Long Fuse I, Long Fuse II
+skill_has_empowered_spark_support	1	Empowered Sparks I
+skill_has_spectral_arrows	1	Spectral Volley
+skill_herald_bleeding_enemies_explode_for_%_blood_loss_as_unscalable_physical_damage	2	Herald of Blood, Herald of the Royal Queen
+skill_herald_of_blood_explosion_aggravate_bleeding_chance_%	1	Herald of Blood
+skill_hollow_shell_spent_ward_%_to_grant_as_guard	1	Hollow Shell
+skill_ignore_moving_slowdown_on_shift_attack	1	Grenade Explosion
+skill_is_command	1	Command
+skill_is_deploy_skill	7	Ancestral Warrior Totem, Artillery Ballista, Dark Effigy, Mortar Cannon, Shockwave Totem
+skill_is_infusion_skill	1	Snap
+skill_is_not_considered_a_skill	1	Abyssal Apparition
+skill_leylines_density_per_myriad	1	Leylines
+skill_leylines_minimum_distance_between_leyline_ground_units	1	Leylines
+skill_leylines_respawn_time_ms	1	Leylines
+skill_leylines_reveal_radius	1	Leylines
+skill_leylines_spell_damage_+%_final	1	Leylines
+skill_leylines_ward_degeneration_per_minute	1	Leylines
+skill_lightning_rod_burst_delay_ms_override_on_damaging_lightning_rod	1	Lightning Arrow
+skill_lunar_blessing_extend_buff_by_X_ms_per_rage	1	Lunar Blessing
+skill_main_hand_total_attack_fire_damage_permyriad_to_add_as_unscalable_damage_to_oil_ground_ignite	2	Oil Barrage, Oil Grenade
+skill_maximum_energy_+%	1	Energy Capacitor
+skill_minion_summon_delay_interval_ms	2	Cackling Companions, Wolf Pack
+skill_mortar_maximum_projectile_distance	3	Frost Darts, Molten Shower, Volcanic Eruption
+skill_mortar_minimum_projectile_distance	3	Frost Darts, Molten Shower, Volcanic Eruption
+skill_moving_start_slowdown	1	Snipe
+skill_no_cost_or_reservation	2	Poison Spores, Toxic Domain
+skill_offering_targets_an_additional_skeleton	1	Danse Macabre
+skill_override_pvp_scaling_time_ms	3	Elemental Storm, Herald of Blood, Herald of the Royal Queen
+skill_raging_spirit_per_x_radius	1	Raging Spirits
+skill_raging_spirits_max_per_action	1	Raging Spirits
+skill_rapid_fire_repeats_per_broken_seal	3	Freezing Salvo, Unleash, Zarokh's Revolt
+skill_show_tempest_bell_on_staff	1	Tempest Bell
+skill_time_of_need_gain_x_life	1	Time of Need
+skill_track_enemy_blood_loss	1	Blood Hunt
+skill_triggered_by_owl_feathers	1	Primal Bounty
+skill_triggered_by_support_which_grants_it	5	Corrupted Cry, Fragment Self, Nature's Exchange, Profane Decay, Twisted Pact
+skill_triggered_on_hit_while_have_vivid_stag_wisps	1	Vivid Stampede
+skill_triggered_when_summoning_totem	1	Ancestral Spirits
+skill_unusable	1	SpiritVesselSupport
+skill_unusable_until_moved_X_distance	2	Echoing Cry, Hit and Run
+skill_used_by_fractured_mimic_spell_damage_+%_final	1	Trickster's Shard
+skill_using_no_fear	2	Stoicism I, Stoicism II
+skill_visual_scale_+%	1	
+skill_wolf_pack_size	1	Wolf Pack
+skill_wrath_aura_shared_damage_+%_to_other_shocked_enemies_in_presence	1	Fulmination
+skills_are_usable_without_mana_cost_while_surrounded	1	Defy II
+snap_maximum_proliferation_depth	1	Snap
+snap_proliferation_base_delay_ms	1	Snap
+snap_proliferation_delay_range_ms	1	Snap
+solar_orb_base_maximum_number_of_orbs	1	Solar Orb
+solaris_spear_ground_expands_to_+%_final_by_skill_end	1	Spear of Solaris
+spark_min_time_between_target_clearing_ms	3	, Empowered Sparks, Spark
+spark_pathing_width_bounds	2	Empowered Sparks, Spark
+spark_random_duration_%	2	Spark, Spark Nova
+spawn_doedre_toads_on_cursed_ground	1	Doedre's Undoing
+spear_lightning_warp_teleport_delay_ms	1	Thunderous Leap
+spear_wall_cm_per_spear	1	Spearfield
+spear_wall_maximum_active_spears	1	Spearfield
+spearfield_maim_slows_an_additional_%	1	Spearfield
+spectral_bells_maximum_active_bells	1	Hollow Focus
+spectral_throw_deceleration_override	1	Shock Rifle
+spectre_warp_end_distance	1	Spectre: {0} 
+spectre_warp_speed_override	1	Spectre: {0} 
+spectre_warp_start_distance	1	Spectre: {0} 
+spell_daze_on_critical_hit_dealing_physical_damage	1	Concussive Spells
+spell_maximum_action_distance_+%	51	, Arc, Artillery, Basic Spell, Basic Spell (Chaos)
+spell_skill_%_chance_to_fire_8_additional_projectiles_in_nova	2	Wildshards I, Wildshards II
+spell_skill_%_chance_to_fire_8_additional_projectiles_in_nova_per_wildshard_stack	1	Sione's Temper
+spell_totem_damage_+%_final_per_power_charge_consumed	1	Spell Totem
+spell_totem_maximum_life_+%_final_per_endurance_charge_consumed	1	Spell Totem
+spell_totem_totem_duration_+%_final_per_endurance_charge_consumed	1	Spell Totem
+spellflux_frequency_+%_final	1	Align Fate
+spellflux_frequency_+%_final_per_socketed_valid_spell	1	Align Fate
+spellflux_spell_damage_+%_final_if_matching_flux_cast	1	Align Fate
+spells_chance_to_hinder_on_hit_%	1	Briarpatch
+spellslinger_invocation_gain_X_centienergy_per_10ms_base_cast_time	1	Spellslinger
+spike_slam_max_spikes	1	Earthshatter
+spirit_vessel_damage_+%_final_per_skill_socketed_in_meta_gem	1	Spirit Vessel
+spread_contagion_base_radius_when_using_corpse	2	Decompose, Detonate Dead
+staff_unleash_cooldown_%_of_cast_time	1	Unleash
+staff_unleash_number_of_seals_for_next_skill	1	Unleash
+staggering_palm_buff_max_duration_ms	1	Staggering Palm
+start_animation_duration_as_%_of_attack_time	1	Flame Breath
+statset_index_for_fifth_animation_combo_index	1	Shred
+statset_index_for_final_animation_combo_index	4	Ice Strike, Primal Strikes, Shred, Tempest Flurry
+statset_index_for_fourth_animation_combo_index	1	Shred
+statset_index_for_second_animation_combo_index	1	Primal Strikes
+statset_index_for_third_animation_combo_index	2	Shred, Tempest Flurry
+stomping_ground_trigger_on_footstep_%_chance	1	Stomping Ground Shockwave
+storm_begin_slowing_down_when_at_X_units_from_target	1	Chayula's Will
+storm_end_slowing_down_when_at_X_units_from_target	1	Chayula's Will
+storm_min_slow_down_%_when_close_to_target	1	Chayula's Will
+storm_skills_spawn_at_initiator_location	2	Advancing Storm, Morgana's Tempest
+stormblast_bolts_maximum_active_bolt_count	1	Stormblast Bolts
+strikes_are_ancestrally_boosted	1	Ancestral Aid
+stun_threshold_+%_final_while_performing_action	1	Parry
+summon_specific_monsters_radius_+%	1	Summon Minions
+summoned_monsters_are_minions	1	Summon Minions
+sunder_armor_break_extra_magnitude	1	Sunder
+sunder_shockwave_limit_per_cascade	1	Sunder
+sunder_wave_max_steps	1	Sunder
+sunder_wave_radius_+_per_step	1	Sunder
+support_%_chance_to_shock_nearby_enemy_on_shock	2	Shock Conduction, Shock Conduction II
+support_%_chance_to_trigger_deadly_current_on_shock	1	Coursing Current
+support_active_skill_consume_enemy_freeze_to_apply_chill	1	Biting Frost II
+support_ancestral_call_strike_is_ancestral_boosted	2	Ancestral Call I, Ancestral Call II
+support_ancestral_slam_big_hit_max_count	3	Fist of War I, Fist of War II, Fist of War III
+support_approaching_storms_movement_speed_+%_final	1	Morgana's Tempest
+support_arcane_surge_base_duration_ms	1	Arcane Surge
+support_arcane_surge_gain_buff_on_%_of_maximum_mana_use_threshold	1	Arcane Surge
+support_armour_explosion	1	Armour Explosion
+support_auto_shotgun_projectile_count_+%_final	1	Streamlined Rounds
+support_battershout_physical_damage_equal_to_%_of_broken_armour	1	Battershout
+support_bone_shrapnel_physical_damage_equal_to_%_monster_life	1	Bone Shrapnel Explosion
+support_bursting_plague_max_value_%_of_max_life	1	Bursting Plague
+support_bursting_plague_store_%_poison_applied_magnitude_towards_burst	1	Bursting Plague
+support_called_shots_additional_projectiles_when_matching_indicated_direction	1	Alignment III
+support_called_shots_enable_directional_buff	3	Alignment I, Alignment II, Alignment III
+support_called_shots_projectile_damage_+%_final_when_matching_direction	2	Alignment I, Alignment II
+support_catalysing_elements_triggers_elemental_discharge	1	Catalysing Elements
+support_chance_to_trigger_hatching_elementals_%	2	Skittering Stone I, Skittering Stone II
+support_chaos_damage_+%_final_if_corpse_consumed_on_use	1	Profanity I
+support_chaos_damage_+%_final_per_corpse_consumed_on_use	1	Profanity II
+support_charged_shots_applies_every_X_shots	2	Charged Shots I, Charged Shots II
+support_charged_shots_recover_%_mana_cost_on_use	1	Charged Shots I
+support_charm_charges_gained_+%_final_from_killing_blow	3	Bounty I, Bounty II, Charm Bounty
+support_combo_finisher_damage_+%_final	2	Combo Finisher I, Combo Finisher II
+support_combo_finisher_required_number_of_combo_stacks	2	Combo Finisher I, Combo Finisher II
+support_consume_X_endurance_charges_on_use	1	Jagged Ground I
+support_consume_power_charge_to_gain_curse_duration_+%_final	1	Abiding Hex
+support_corrupting_cry_%_life_cost_per_supported_skill_trigger_or_use_recently_up_to_30%	1	Paquate's Pact
+support_crazed_minions_minion_damage_+%_final_if_revived_recently	1	Crazed Minions
+support_create_jagged_ground_if_consumed_endurance_charge	1	Jagged Ground I
+support_creeping_chill_cold_damage_equal_to_%_ice_crystal_maximum_life	1	Creeping Chill
+support_creeping_chill_consume_X_power_charges_to_trigger_on_ice_crystals	1	Creeping Chill
+support_crystalshatter_buff_damage_%_gained_as_extra_cold_per_2000_crystal_life	1	Verglas
+support_crystalshatter_buff_duration	1	Verglas
+support_culling_strike_threshold_+%_on_cull_for_seconds_from_code	1	Culling Strike II
+support_demolisher_physical_damage_taken_+%_on_fully_armour_breaking_up_to_20%	1	Uruk's Smelting
+support_djinn_lineage_damage_+%_final_per_different_command_in_last_8_seconds	1	Varashta's Blessing
+support_double_number_of_cooldown_uses	3	Second Wind I, Second Wind II, Second Wind III
+support_dual_cascade_aftershocks_attack_speed_+%_final	1	Tectonic Slams
+support_echoing_cry_area_of_effect_+%_final	1	Echoing Cry
+support_echoing_cry_damage_+%_final	1	Echoing Cry
+support_echoing_cry_warcry_monster_power_+%_final	1	Echoing Cry
+support_electrocute_lineage_triggers_explosion	1	Eonyr's Thunder
+support_elemental_armament_attack_damage_+%_final_per_elemental_ailment_on_target	1	Elemental Armament III
+support_empower_X_attacks_with_spark_on_power_charge_gain	1	Empowered Sparks
+support_empowers_x_additional_other_skills	1	Olroth's Conviction
+support_executioner_gain_one_rare_monster_mod_on_kill_ms	1	Behead I
+support_executioner_gain_two_rare_monster_mod_on_kill_ms	2	Behead II, Einhar's Beastrite
+support_explosive_growth_explosion_delay_X_ms	1	Accelerated Growth
+support_explosive_growth_trigger_explosion_on_plant_growth	2	Accelerated Growth, Accelerated Growth II
+support_fan_the_flames_trigger_explosion_on_hit_vs_ignited_enemies	2	Fan The Flames, Fan The Flames II
+support_fissure_on_landing_create_X_fissures_on_impact	1	Crater
+support_fissure_on_landing_maximum_fissure_count	1	Crater
+support_flame_pillar_fire_damage_equal_to_%_of_remaining_ignite_damage	1	Flame Pillar
+support_frostfire_ignite_effect_+%_final_vs_frozen_unique_enemies	1	Frostfire
+support_frozen_spite_%_enemy_maximum_life_dealt_as_cold_damage	1	Ice Fragments
+support_glory_required_+%_final	1	Daresso's Passion
+support_grants_X_life_flask_charges_on_using_corpse	1	Gorge
+support_grants_X_mana_flask_charges_on_using_corpse	1	Gorge
+support_greatwood_life_regeneration_rate_per_minute_%_per_totem_in_radius	1	Cirel's Cultivation
+support_greatwood_maximum_number_of_active_totems_in_radius_for_effects	1	Cirel's Cultivation
+support_greatwood_number_of_active_totems_in_base_radius_to_track	1	Cirel's Cultivation
+support_ground_effect_area_of_effect_+%_final_per_second	1	Encroaching Ground
+support_ground_effect_area_of_effect_+%_final_per_second_max	1	Encroaching Ground
+support_haemocrystals_maximum_allowed_crystals	1	Haemocrystals
+support_hardy_totems_trigger_splinter_explosion_on_death_chance_%	1	Tawhoa's Tending
+support_hatching_elementals_base_radius	2	Skittering Stone I, Skittering Stone II
+support_hatching_elementals_hatch_after_X_deaths_in_radius	2	Skittering Stone I, Skittering Stone II
+support_hatching_elementals_number_of_elementals_per_hatch	1	Skittering Stone
+support_healing_runes_healing_per_ward_spent_%	1	Healing Runes
+support_healing_runes_healing_pulse_interval_ms	1	Healing Runes
+support_healing_runes_maximum_ward_spent_per_pulse_%	1	Healing Runes
+support_hide_of_helbrym_gain_guard_from_%_of_damage_taken	1	Helbrym's Hide
+support_hide_of_helbrym_gain_rage_from_%_of_damage_taken	1	Helbrym's Hide
+support_hide_of_helbrym_guard_duration_ms	1	Helbrym's Hide
+support_hide_of_helbrym_soak_duration_ms	1	Helbrym's Hide
+support_hit_damage_stun_multiplier_+%_final_from_current_poise	2	Retaliate II, Spar
+support_holy_descent_consecrated_ground_on_landing_radius	1	Holy Descent
+support_ignite_proliferation_radius	1	Wildfire
+support_impact_shockwave_base_non_slam_aftershock_on_heavy_stun_radius	1	Impact Shockwave
+support_jagged_ground_base_duration_ms	2	Jagged Ground I, Jagged Ground II
+support_knights_legacy_heavy_stun_threshold_+%_final_while_performing_action	1	Styrn's Mountain
+support_knockback_wave_on_stunned	1	Wind Wave
+support_last_gasp_attack_and_cast_speed_+%_while_undying	1	Tecrod's Revenge
+support_last_gasp_duration_ms	2	Last Gasp, Tecrod's Revenge
+support_last_gasp_minion_soul_eater_while_undying	1	Tecrod's Revenge
+support_life_flask_charges_gained_+%_final_from_killing_blow	3	Bounty I, Bounty II, Life Bounty
+support_lineage_remnants_grant_cdr_buff_on_collection	1	Khatal's Rejuvenation
+support_lockdown_distance_based_pin_damage_+%_final	1	Lockdown
+support_long_fuse_detonation_damage_+%_final	2	Long Fuse I, Long Fuse II
+support_mana_flask_charges_gained_+%_final_from_killing_blow	3	Bounty I, Bounty II, Mana Bounty
+support_max_attack_damage_+%_final_from_current_poise	2	Retaliate I, Retaliate II
+support_measured_speed_attack_speed_+%_final_per_stack	1	Cadence
+support_measured_speed_disabled_ms	1	Cadence
+support_measured_speed_maximum_stacks	1	Cadence
+support_minion_damage_spirit_cost_minion_damage_+%_while_missing_mana	2	Upwelling I, Upwelling II
+support_minion_pact_user_life_%_removed_from_nearby_minion	2	Minion Pact I, Minion Pact II
+support_minions_ignite_for_%_max_life	4	Catha's Brilliance, Infernal Legion I, Infernal Legion II, Infernal Legion III
+support_mobility_damage_+%_final	1	Mobility
+support_momentum_distance_travelled_to_gain_momentum	1	Momentum
+support_mothers_declaration_intimidate_enemies_when_they_enter_your_presence_base_duration_ms	1	Her Declaration
+support_mothers_ward_base_duration_ms	1	Arbiter's Reach
+support_number_of_additional_uses_before_expiry	1	Durability
+support_pin_pin_duration_+%_final	1	Pin III
+support_pin_spell_pinned_art_variation	3	Pin I, Pin II, Pin III
+support_rage_attack_damage_+%_final	3	Rage I, Rage II, Rage III
+support_rageforged_consumes_X_rage_to_enrage_skill_use	2	Rageforged I, Rageforged II
+support_randomise_higher_aoe_+%_final	1	Ixchel's Torment
+support_randomise_higher_damage_+%_final	2	Fluke, Ixchel's Torment
+support_randomise_higher_projectile_speed_+%_final	1	Ixchel's Torment
+support_randomise_higher_recover_%_cost_on_use	2	Fluke, Ixchel's Torment
+support_randomise_lower_aoe_+%_final	1	Ixchel's Torment
+support_randomise_lower_damage_+%_final	2	Fluke, Ixchel's Torment
+support_randomise_lower_projectile_speed_+%_final	1	Ixchel's Torment
+support_randomise_lower_recover_%_cost_on_use	2	Fluke, Ixchel's Torment
+support_reduced_duration_damage_+%_final	2	Compressed Duration I, Compressed Duration II
+support_relentless_rage_gain_X_rage_on_skill_use_if_enough_was_spent	1	Relentless Rage
+support_relentless_rage_spending_X_rage_grants_rage_on_next_skill_use	1	Relentless Rage
+support_rupture_aggravate_bleeding_on_hitting_heavy_stunned_enemy	1	Rupture
+support_sacrificial_lamb	2	Sacrificial Lamb I, Sacrificial Lamb II
+support_sacrificial_lamb_base_radius	2	Sacrificial Lamb I, Sacrificial Lamb II
+support_scouring_flame_ignite_art_variation	1	Scouring Flame
+support_scouring_flame_ignite_effect_+%_final	1	Scouring Flame
+support_seraphs_heart_enemy_hits_%_chance_to_treat_all_resistances_as_90%	1	Seraph's Heart
+support_shocking_leap_create_shocked_ground_on_leap	1	Shocking Leap
+support_shocking_leap_shocked_ground_duration_ms	1	Shocking Leap
+support_shocking_leap_shocked_ground_radius	1	Shocking Leap
+support_slam_spend_%_supported_skill_cost_as_ward_for_runic_boost	1	Fist Of Kalguur
+support_spectral_arrows_base_duration_ms	1	Spectral Volley
+support_spectral_arrows_damage_+%_final_with_non_spectral_projectiles	1	Spectral Volley
+support_spectral_arrows_damage_+%_final_with_spectral_projectiles	1	Spectral Volley
+support_spectral_arrows_delay_between_projectiles_ms	1	Spectral Volley
+support_spectral_arrows_maximum_spectral_arrows	1	Spectral Volley
+support_spell_cascade_area_of_effect_+%_for_cascade	1	Spell Cascade
+support_spell_cascade_number_of_cascades_per_side	1	Spell Cascade
+support_spell_totem_cast_speed_+%_final	1	SupportMetaTotemSpellTotemPlayer
+support_splinter_totem_X_times	2	Splinter Totem I, Splinter Totem II
+support_splinter_totem_area_of_effect_+%_final_each_splinter	2	Splinter Totem I, Splinter Totem II
+support_splinter_totem_damage_+%_final_each_splinter	2	Splinter Totem I, Splinter Totem II
+support_splinter_totem_maximum_life_+%_final_each_splinter	2	Splinter Totem I, Splinter Totem II
+support_splinter_totem_skill_speed_+%_final_each_splinter	2	Splinter Totem I, Splinter Totem II
+support_splinter_totem_splinter_after_X_actions	2	Splinter Totem I, Splinter Totem II
+support_static_charge_%_damage_gained_as_lightning_per_10_charge	1	Volt
+support_static_charge_charge_gain_per_metre	1	Volt
+support_static_charge_maximum_charge	1	Volt
+support_steadfast_ailment_threshold_+%_final_while_channelling	1	Steadfast II
+support_steadfast_stun_threshold_+%_final_while_channelling	2	Steadfast I, Steadfast II
+support_stomping_ground	1	Stomping Ground
+support_storm_base_movement_speed	2	Advancing Storm, Morgana's Tempest
+support_stormfire_targets_shocked_by_this_take_%_of_damage_from_ignite_as_lightning_damage	1	Stormfire
+support_stunning_magic_buff_duration_ms	2	Practical Magic I, Practical Magic II
+support_stunning_magic_grant_spell_damage_+%_buff_on_heavy_stunning	2	Practical Magic I, Practical Magic II
+support_thrill_of_the_kill_buff_base_duration_ms	2	Thrill of the Kill, Thrill of the Kill II
+support_thrill_of_the_kill_buff_grant_%_added_lightning_attack_damage	2	Thrill of the Kill, Thrill of the Kill II
+support_thrill_of_the_kill_buff_shock_chance_+%	1	Thrill of the Kill II
+support_tricksters_shard_maximum_active_mimics	1	Fragment Self
+support_tricksters_shard_trigger_fractured_self_on_cast	1	Trickster's Shard
+support_trigger_mana_flare_on_crit	1	Mana Flare
+support_trigger_pummel_on_heavy_stun	1	Concussive Runes
+support_trigger_shocked_ground_on_mark_activate	1	Charged Mark
+support_uhtred_damage_+%_final_per_different_cooldown_skill_in_last_8_seconds	1	Uhtred's Constellation
+support_uhtreds_chalice_buff_on_skill_use_duration_ms_per_1000_ms_cooldown	1	Uhtred's Rite
+support_vaal_lineage_trigger_detonate_on_landing	1	Xibaqua's Rending
+support_volcanic_eruption_%_chance_to_trigger_vs_ignited_enemies	1	Volcanic Eruption
+support_warcries_detonate_your_ice_fragments	1	Vruun's Aftermath
+support_warcries_empower_x_additional_per_5_total_ice_crystals_or_fragments_destroyed	1	Vruun's Aftermath
+support_warcries_explode_ice_crystals	1	Vruun's Aftermath
+support_withered_base_duration_ms	1	Withering Touch
+supported_by_greatwood	1	Cirel's Cultivation
+supported_by_inevitable_criticals	2	Inexorable Critical I, Inexorable Critical II
+supported_by_spell_totem	1	SupportMetaTotemSpellTotemPlayer
+supported_offerings_grant_you_a_powercharge_every_x_ms	1	Guatelitzi's Ablation
+supported_skill_grants_shatter_fang_to_you_and_allies_in_presence_for_base_X_ms_on_freeze	1	Bhatair's Vengeance
+supported_skill_triggers_living_lightning_on_dealing_lightning_damage	2	Living Lightning, Living Lightning II
+suppress_weapon_surges	1	Leap Slam
+surge_can_apply_to_X_number_of_projectiles_per_skill_use	1	Gemini Surge
+tame_beast_hinder_%	1	Tame Beast
+tangmazu_mad_flight_damage_tick_delay_ms	1	Mad Flight
+tangmazu_raven_added_to_your_flock_every_x_msec_a_rare_or_unique_enemy_is_in_your_presence	1	Spiraling Conspiracy
+tangmazu_raven_added_to_your_flock_every_x_power_of_enemies_killed	1	Spiraling Conspiracy
+temper_weapon_empowers_per_strike	1	Temper Weapon
+tempest_bell_area_of_effect_+%_final_per_1_unit_of_knockback	1	Tempest Bell
+tempest_bell_damage_+%_final_per_time_hit	1	Tempest Bell
+tempest_bell_physical_damage_%_as_elemental_per_ailment	1	Tempest Bell
+temporal_rift_maximum_snapshots	1	Temporal Rift
+temporal_rift_snapshot_interval	1	Temporal Rift
+terrain_arrow_attachment_chance_reduction_+%	3	Fork, Multishot I, Multishot II
+thorns_damage_modifiers_apply_to_spell_damage	1	Briarpatch
+thrashing_vines_retarget_cooldown_ms	1	Thrashing Vines
+throw_flask_effects_type	4	Acidic Concoction, Bleeding Concoction, Fulminating Concoction, Shattering Concoction
+thunderfist_bolt_delay_ms	2	Crackling Palm, Gelid Palm
+thunderfist_number_of_bolts_delays	2	Crackling Palm, Gelid Palm
+thunderous_leap_%_chance_for_shocked_ground_when_detonating	1	Thunderous Leap
+thunderstorm_wet_debuff_cannot_apply_to_targets_above_level	1	Thunderstorm
+time_freeze_resistance_duration_ms	1	Time Freeze
+time_rip_damage_share_%	1	Moment of Vulnerability
+tornado_failled_pull_cooldown_ms	1	Tornado
+tornado_hinder	1	Elemental Storm
+tornado_movement_speed_+%_final	2	Chayula's Will, Tornado
+tornado_pull_interval_ms	1	Tornado
+tornado_pull_strength_%	1	Tornado
+tornado_pushiness	1	Tornado
+tornado_shot_number_of_hits_allowed	1	Tornado Shot
+tornado_shot_projectile_damage_+%_final	1	Tornado Shot
+tornado_shot_projectile_range	1	Tornado Shot
+tornado_slow_%_at_max_range	2	Chayula's Will, Tornado
+total_projectile_spread_angle_override	1	Ice Shot
+totem_has_ancestral_warrior_spirit	1	Ancestral Warrior Totem
+totem_skill_area_of_effect_+%	1	Mortar Cannon
+totem_targets_ignoring_action_distance	5	Artillery Ballista, Dark Effigy, Mortar Cannon, Shockwave Totem, Siege Ballista
+totemified_rolling_slam_attack_maximum_action_distance_+	1	Rolling Slam
+toxic_domain_healing_per_minute_+	1	Toxic Domain
+toxic_domain_mana_cost_+%	1	Toxic Domain
+toxic_domain_pustule_chance_%	1	Toxic Domain
+toxic_pustule_burst_1%_more_damage_per_x_stored_poison	3	Poison Spores, Toxic Domain, Toxic Growth
+toxic_pustule_burst_base_radius_+1_per_x_stored_poison	3	Poison Spores, Toxic Domain, Toxic Growth
+toxic_pustule_duration_expires_1%_faster_per_x_stored_poison_damage_multiplied_by_sixty	3	Poison Spores, Toxic Domain, Toxic Growth
+toxic_pustule_max_additional_burst_base_radius_+	3	Poison Spores, Toxic Domain, Toxic Growth
+toxic_pustule_max_burst_damage_+%_final_from_stored_poison	3	Poison Spores, Toxic Domain, Toxic Growth
+transfer_hexes_to_X_nearby_enemies_on_kill	1	Hex Bloom
+trigger_ballistic_ice_chunks_on_killing_frozen_enemy	1	Frozen Spite
+trigger_bone_shrapnel_explosion_on_killing_pinned_enemy	1	Bone Shrapnel
+trigger_caltrops_at_end_of_projectile_flight	1	Caltrops
+trigger_from_hayhoxis_binding_after_x_ms	1	Hayoxi's Fulmination
+trigger_meta_gem_damage_+%_final	2	SupportMetaCastOnCritPlayer, SupportMetaCastOnMeleeKillPlayer
+trigger_on_armour_break_%_chance	1	Armour Explosion
+trigger_on_heavy_stun_%	1	Smash to Smithereens
+trigger_on_stunned_while_performing_supported_skill	1	Wind Wave
+trigger_poison_spore_pustule	1	Poison Spores
+trigger_skills_refund_half_energy_spent_chance_%	1	Energy Retention
+trigger_toad_spawn_chance_%	1	Bursting Fen Toad
+trigger_vicious_hex_explosion_when_curse_ends	1	Impending Doom
+triggerable_in_any_set	29	, Accelerated Growth, Ancestral Spirits, Blood Explosion, Combust
+triggered_by_battershout_support_%	1	Battershout
+triggered_by_bone_shrapnel_support_%	1	Bone Shrapnel Explosion
+triggered_by_briarpatch_support_on_slam_%	1	Brambles
+triggered_by_burning_runes_support_%	1	Burning Inscription
+triggered_by_caltrops_support_%	1	Caltrops
+triggered_by_catalysing_elements	1	Catalysing Discharge
+triggered_by_charged_staff	1	Charged Shockwave
+triggered_by_cross_slash	1	SupportWolfPouncePlayer
+triggered_by_curse_zones_are_hazards_%	1	Doedre's Dark Design
+triggered_by_deadly_current_support	1	Coursing Current
+triggered_by_escape_shot_%	1	Ice Fragments
+triggered_by_fiery_death_support_%	1	Fiery Death
+triggered_by_fissure_on_landing_support_%	1	Crater
+triggered_by_fist_of_kalguur_support_%	1	Fist of Kalguur
+triggered_by_flame_pillar_support_%	1	Flame Pillar
+triggered_by_flame_pillar_unique_%	1	Grisly Pyre
+triggered_by_freezing_word_bomb	1	Freezing Explosion
+triggered_by_frozen_spite_support_%	1	Ice Fragments
+triggered_by_generic_ongoing_trigger	16	Caltrops, SupportBarrierInvocationPlayer, SupportElementalInvocationPlayer, SupportMetaCastCurseOnBlockPlayer, SupportMetaCastFireSpellOnHitPlayer
+triggered_by_grounding_shocks_support_on_shock_%	1	Static Shocks
+triggered_by_hand_of_chayula	1	SupportHandOfChayulaPlayer
+triggered_by_hayhoxis_binding_%	1	Annihilation
+triggered_by_infernal_cry	1	Combust
+triggered_by_lich_consuming_power	1	Abyssal Apparition
+triggered_by_lingering_illusion	1	
+triggered_by_lingering_mirage	1	
+triggered_by_mana_flare_support_%	1	Mana Flare
+triggered_by_primary_skill	4	Ice Fragments, Manifest Rune, Repulsion Wave, Transmutation Explosion
+triggered_by_shocking_rift_support_%	1	Electromagnetism
+triggered_by_spiked_gauntlets_support_%	1	Quill Burst
+triggered_by_staggering_palm_on_hit_with_other_skill	1	Projectile
+triggered_by_support_creeping_chill_%	1	Creeping Chill
+triggered_by_support_electrocute_lineage_%	1	Voltaic Fulmination
+triggered_by_support_explosive_growth_%	1	Accelerated Growth
+triggered_by_support_fan_the_flames_%	1	Fan the Flames
+triggered_by_support_hatching_elementals_%	1	Skittering Stone
+triggered_by_support_rune_forged_blades_%	1	Runeforged Blades
+triggered_by_supported_spell_consuming_ignite_freeze_shock_on_hit	1	Elemental Discharge
+triggered_by_unleash_the_elements	3	Crash Lightning, Hailstorm, Meteor
+triggered_by_vaal_lineage_detonate_on_landing_support_%_chance	1	Fiery Reclamation
+triggered_by_void_illusion	1	Void Illusion
+triggered_by_walking_calamity	2	Meteors, Starfall
+triggered_fan_the_flames_spread_ignite_to_hit_enemies	1	Fan the Flames
+triggered_on_critical_strike_%	1	Lightning Bolt
+triggered_on_death_%	1	Tawhoa's Vengeance
+triggered_on_voltaic_barrier_boosted_projectile_collision	1	
+triggered_pustule_from_poison_spores_on_hit_chance_%	1	Poison Spores
+triggered_rain_of_blades_%	1	Falling Blade
+triggers_burning_runes_on_placing_ground_rune	1	Burning Inscription
+trinity_resonance_decay_delay_ms	1	Trinity
+trinity_resonance_loss_per_second	1	Trinity
+trinity_resonance_to_grant	1	Trinity
+trinity_skill_speed_+%_while_all_resonance_is_at_least_250_to_grant	1	Trinity
+triskelion_cascade_cooldown_%_of_cast_time	1	Triskelion Cascade
+triskelion_cascade_next_skill_area_of_effect_+%_final	1	Triskelion Cascade
+triskelion_cascade_next_skill_damage_+%_final	1	Triskelion Cascade
+try_consuming_shock_to_trigger_shocking_rift_in_radius_on_shocking_enemy	1	Electromagnetism
+twister_%_chance_for_additional_twister	1	Twister
+twister_base_movement_speed	1	Twister
+twister_bounce_check_angle	1	Twister
+twister_consumes_wind_storm	1	Twister
+twister_hit_interval_ms	1	Twister
+unbound_ailment_elemental_ailment_chance_+%_final	1	Unbound Avatar
+unbound_ailment_hit_damage_elemental_immobilisation_multiplier_+%_final	1	Unbound Avatar
+unearth_base_cone_speed_multiplier	1	Unearth
+unique_chance_to_spawn_harbinger_of_madness_orb_on_hitting_rare_or_unique_enemy_with_melee_attacks_%	1	Harbinger of Madness
+unique_flame_pillar_fire_damage_equal_to_%_of_remaining_ignite_damage	1	Grisly Pyre
+unique_nattblom_crystal_radius	1	Midnight Zenith
+unique_nattblom_crystals_per_trigger	1	Midnight Zenith
+unique_pillar_of_flame_X_additional_pillars_on_consuming_aggravated_ignite	1	His Winnowing Flame
+unique_pillar_of_flame_consume_ignite_to_create_X_pillars	1	His Winnowing Flame
+unique_pillar_of_flame_creation_radius	1	Grisly Pyre
+unleash_blizzard_maximum_bolt_frequency_ms	1	Hailstorm
+unleash_blizzard_minimum_bolt_frequency_ms	1	Hailstorm
+unleash_blizzard_number_of_bolts	1	Hailstorm
+unleash_meteor_time_till_impact_ms	1	Meteor
+unleash_static_field_number_of_pluses	1	Crash Lightning
+unleash_static_field_time_till_final_strike_ms	1	Crash Lightning
+unleash_the_elements_base_trigger_frequency_ms	1	Apocalypse
+unleash_the_elements_trigger_frequency_+%	1	Apocalypse
+upheaval_number_of_spikes	2	Detonate Dead, Glacial Cascade
+usable_with_talisman	5	Blink, Sanguine Revelry, Savage Fury, Summon Wolf, Tame Beast
+use_owners_culling_threshold_instead_of_your_own	1	Mist Raven
+use_scaled_contact_offset	36	Basic Attack, Basic Attack (Cold), Basic Attack (Fire), Basic Attack (Lightning), Basic Spell
+use_time_+_ms_if_shapeshift_required	2	Furious Slam, Maul
+vaulting_impact_short_animation_maximum_range	1	Vaulting Impact
+verisium_comet_number_of_minions_to_create	1	Skyfall
+verisium_infusion_duration_+%	1	Powered by Verisium
+verisium_infusion_skill_number_of_verisium_infusion_to_grant	1	Powered by Verisium
+vine_arrow_area_of_effect_+%_final_when_wet	1	Vine Arrow
+visual_hit_effect_chaos_is_green	1	Gas Arrow
+visual_hit_effect_physical_is_green	2	Gas Grenade, Plague Bearer
+visual_hit_effect_physical_is_plant	1	Entangle
+visual_hit_effect_physical_is_wind	10	Gale Force, Projectile, Twister, Vaulting Impact, Whirling Assault
+vivid_stag_cascade_number_of_damaging_areas	1	Vivid Stampede
+vivid_stag_spacing	1	Vivid Stampede
+volatile_dead_base_number_of_corpses_to_consume	2	Bitter Dead, Volatile Dead
+volcanic_fissure_base_maximum_number_of_fissures	2	Starborn Onslaught, Volcanic Fissure
+volcano_base_number_of_geysers_allowed	1	Volcano
+volcano_delay_between_slams_ms	1	Volcano
+volcano_gain_stage_every_%_of_cast_time	1	Volcano
+volcano_initial_explosion_damage_+%_final_per_additional_stage	1	Volcano
+volcano_initial_explosion_number_of_additional_projectiles_per_additional_stage	1	Volcano
+volcano_maximum_number_of_stages	1	Volcano
+volcano_slam_unscalable_limit	1	Volcano
+volcano_sustains_every_%_of_cast_time	1	Volcano
+voll_slam_damage_+%_final_at_centre	7	Basic Attack, Death Explosion, Pillar Slam, Slam, Sunder
+voltaic_barrier_active_actions_limit	1	Voltaic Barrier
+voltaic_barrier_damage_interval_ms	1	Voltaic Barrier
+voltaic_barrier_trigger_maximum_number_of_extra_targets	1	
+walk_emerge_extra_distance	2	Dash, Leap
+walking_calamity_base_rage_regeneration_per_minute	1	Walking Calamity
+walking_calamity_ignore_first_x_enemies_for_frequency_increase	2	The Stars Answer, Walking Calamity
+walking_calamity_large_meteor_every	2	The Stars Answer, Walking Calamity
+walking_calamity_large_meteor_same_target_prevention_duration_ms	2	The Stars Answer, Walking Calamity
+walking_calamity_meteor_frequency_+%_cap	2	The Stars Answer, Walking Calamity
+walking_calamity_meteor_frequency_+%_per_enemy_in_walking_calamity_radius	2	The Stars Answer, Walking Calamity
+walking_calamity_non_skill_base_all_damage_%_to_gain_as_fire	1	Walking Calamity
+walking_calamity_spawn_meteor_every_ms	2	The Stars Answer, Walking Calamity
+wall_expand_delay_ms	2	Frost Wall, Shield Wall
+wall_is_created_along_a_fissure_instead	1	Ahn's Citadel
+wall_is_created_in_a_circle_instead	2	Fortress I, Fortress II
+wall_maximum_length	5	Firehose, Flame Wall, Frost Wall, Glacial Bolt, Shield Wall
+wall_maximum_length_+%	3	Ahn's Citadel, Fortress I, Fortress II
+warcries_knock_back_enemies	1	Ancestral Cry
+warcry_bypass_cooldown_spending_X_rage_instead_of_endurance_charge	2	Enraged Warcry I, Enraged Warcry II
+warcry_echo_area_of_effect_+%_final_per_repeat	1	Echoing Cry
+warcry_echo_delay_ms_from_support	1	Echoing Cry
+warcry_grant_break_X_armour_on_hit	1	Ferocious Roar
+warcry_minimum_benefit_if_monster_power_present	5	Arctic Howl, Ferocious Roar, Fortifying Cry, Infernal Cry, Seismic Cry
+ward_remnants_chance_to_spawn_orb_on_killing_enemy_%	1	Remnants of Kalguur
+ward_remnants_chance_to_spawn_remnant_on_stun_%	1	Remnants of Kalguur
+ward_remnants_gain_per_globe	1	Remnants of Kalguur
+ward_remnants_spawn_remnant_on_stun_cooldown_ms	1	Remnants of Kalguur
+wardbound_minion_maximum_number_of_casts	1	Wardbound Minions
+wardbound_minions_summon_minion_for_every_X_runic_ward_spent	1	Wardbound Minions
+warding_steel_area_of_effect_+%_final_per_charge_%	1	Iron Ward
+warding_steel_gains_%_of_damage_from_mitigated_physical_damage	1	Iron Ward
+warding_steel_maximum_stored_mitigated_physical_damage	1	Iron Ward
+water_djinn_mana_wave_mana_regeneration_rate_+%	2	Navira's Calming, Navira, the Last Mirage
+water_djinn_water_bubble_absorb_damage_%_enemy_outside_bubble	1	Navira's Embrace
+water_djinn_water_bubble_health_per_100_mana_on_target	1	Navira's Embrace
+whirling_slash_knockback_distance_+%_final_per_stage	2	Whirling Slash, Whirlwind Lance
+wild_beast_energy_per_hit	1	Savage Fury
+wild_beast_maximum_energy	1	Savage Fury
+wind_blast_damage_+%_final_from_distance	1	Wind Blast
+wind_dancer_stages_gained_every_x_ms	1	Wind Dancer
+windstorm_base_maximum_number_of_storms	2	Whirling Slash, Whirlwind Lance
+wing_blast_chance_to_gain_power_charge_on_stun_%	1	Wing Blast
+wing_blast_cone_pullback_%	1	Wing Blast
+wing_blast_shockwave_damage_+%_final_if_created_from_unique	1	Wing Blast
+wither_channeled_move_targeting_area_X_units_per_second	1	Wither
+wolf_cross_slash_angle	1	Cross Slash
+wolf_cross_slash_offset	1	Cross Slash
+wolf_lunar_blessing_all_damage_%_to_gain_as_cold_damage	1	Lunar Blessing
+wolf_lunar_blessing_beam_attack_delay_between_beams_ms	1	Moonbeam
+wolf_lunar_blessing_beam_attack_delay_ms	1	Moonbeam
+wolf_lunar_blessing_beam_attack_extra_beams_to_trigger	1	Moonbeam
+wolf_lunar_blessing_same_target_trigger_beam_attack_prevention_duration_ms	1	Lunar Blessing
+wolf_pounce_mark_shockwave_delay_ms	2	Cross Slash, Pounce
+wolf_warcry_apply_effect_on_freeze	1	Arctic Howl
+wolf_warcry_buff_cold_damage_max_per_5_power_up_to_cap	1	Arctic Howl
+wolf_warcry_buff_cold_damage_min_per_5_power_up_to_cap	1	Arctic Howl
+wolf_warcry_buff_freeze_buildup_+%	1	Arctic Howl
+wolf_warcry_empowered_attack_cold_damage_max_per_5_power_up_to_cap	1	Arctic Howl
+wolf_warcry_empowered_attack_cold_damage_min_per_5_power_up_to_cap	1	Arctic Howl
+wyvern_devour_base_all_damage_%_to_gain_as_lightning	1	Rend
+wyvern_devour_empowered_flame_breath_base_all_damage_%_to_gain_as_lightning	1	Flame Breath
+wyvern_devour_empowered_flame_breath_rage_consumption_+%	1	Flame Breath
+wyvern_devour_far_target_attack_speed_+%_final	1	Devour
+wyvern_devour_flask_charm_charge_gain_chance_%	1	Devour
+wyvern_devour_life_restoration	1	Devour
+wyvern_devour_max_extra_corpses_to_consume	1	Devour
+wyvern_devour_near_target_attack_speed_+%_final	1	Devour
+your_marks_spread_to_a_nearby_enemies_on_consume_%_chance	1	SupportMetaDeadeyeMarksPlayer
+zero_projectiles_if_no_power_charges	1	Falling Thunder
+zombie_base_decay_rate_permyriad	1	Raise Zombie
+zombie_decay_rate_increase_+%_final	1	Raise Zombie

@@ -515,7 +515,7 @@ return {
 	mod("Damage", "INC", nil, 0, 0, { type = "Condition", var = "LeechingEnergyShield" }),
 },
 ["aura_effect_+%"] = {
-	mod("AuraEffect", "INC", nil),
+	mod("Magnitude", "INC", nil, 0, 0, { type = "SkillType", skillType = SkillType.Aura }),
 },
 ["elusive_effect_+%"] = {
 	mod("ElusiveEffect", "MAX", nil, 0, 0, { type = "GlobalEffect", effectType = "Buff" }),
@@ -576,8 +576,7 @@ return {
 	div = 1000,
 },
 ["support_hourglass_display_cooldown_time_ms"] = {
-	mod("CooldownRecovery", "BASE", nil),
-	div = 1000,
+	-- handled around 700 of CalcActiveSkill, search for level.cooldown
 },
 ["base_cooldown_modifiable_repeat_interval_ms"] = {
 	mod("CooldownRecovery", "BASE", nil),

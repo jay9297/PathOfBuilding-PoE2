@@ -1,5 +1,5 @@
 # cspell:disable
-# unmapped=1588 total_stats=2411
+# unmapped=1587 total_stats=2411
 action_allowed_queue_time_override_ms	25	Basic Bolt, Black Powder Blitz, Cluster Grenade, Compose Requiem, Explosive Grenade
 action_attack_or_cast_time_uses_animation_length	72	, Artillery Impact, Basic Attack, Basic Attack (Cold), Basic Attack (Fire)
 action_can_be_used_in_aiming_stance	25	Basic Bolt, Cluster Grenade, Compose Requiem, Emergency Reload, Explosive Grenade
@@ -624,7 +624,6 @@ hexblast_maximum_number_of_explosions	1	Hexblast
 hide_minion_frame	9	, Align Fate, Animus Splinters, Feral Invocation, Hollow Form
 hinder_chance_%_on_spreading_poioson	1	Herald of Plague
 hollow_shell_per_target_cooldown_ms	1	Hollow Shell
-hunters_mark_%_of_max_threshold_to_trigger_explosion_on_death	1	Bloodhound's Mark
 hunters_mark_%_of_phys_damage_over_time_as_build_up	1	Bloodhound's Mark
 hunters_mark_buildup_%_as_explosion_damage_+%_final	1	Blood Explosion
 hunters_mark_explosion_area_of_effect_+%_final_from_buildup	1	Blood Explosion

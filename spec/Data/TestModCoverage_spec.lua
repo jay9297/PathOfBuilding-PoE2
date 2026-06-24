@@ -45,6 +45,6 @@ describe("ModCoverage #data", function()
         table.sort(added)
 
         local diff = table.concat(removed, "\n") .. "\n" .. table.concat(added, "\n")
-        fail("audit/mod-coverage.txt is stale. Re-run: luajit tools/audit_mod_coverage.lua\nDiff:\n" .. diff)
+        error("audit/mod-coverage.txt is stale. Re-run: luajit tools/audit_mod_coverage.lua\nDiff:\n" .. diff)
     end)
 end)

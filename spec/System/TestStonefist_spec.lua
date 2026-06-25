@@ -788,10 +788,8 @@ describe("TestStonefist", function()
 		assert.is_true(transformedEvasion > baseEvasion,
 			("expected Evasion > %d (FoS +3/level implicit should increase evasion chance vs baseline), got %d"):format(
 				baseEvasion, transformedEvasion))
-		-- Fists of Stone: +1 ES per player level → at level 1, gain exactly +1 ES (additive, exact for hit-point pools)
+		-- Fists of Stone: +1 ES per player level → at level 1, gain exactly +1 ES (CLAUDE.md: exact for hit-point pools)
 		local transformedES = build.calcsTab.mainOutput.EnergyShield or 0
-		assert.is_true(transformedES >= baseES + 1,
-			("expected ES >= %d (base %d + 1 from FoS +1/level implicit at level 1), got %d"):format(
-				baseES + 1, baseES, transformedES))
+		assert.equal(baseES + 1, transformedES)
 	end)
 end)

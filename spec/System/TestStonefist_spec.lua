@@ -772,11 +772,23 @@ describe("TestStonefist", function()
 			Stocky Mitts
 		]])
 		build.itemsTab:AddDisplayItem()
+		runCallback("OnFrame")
+		local baseEvasion = build.calcsTab.mainOutput.Evasion or 0
+		local baseES = build.calcsTab.mainOutput.EnergyShield or 0
+
 		build.configTab.input.customMods = "\z
 		Gloves you equip have their base type transformed to fists of stone while equipped\n\z
 		"
 		build.configTab:BuildModList()
 		runCallback("OnFrame")
-		assert.is_not_nil(build.calcsTab.mainOutput)
+
+		-- Fists of Stone: +3 Evasion Rating per player level → at level 1, gain +3 Evasion Rating vs baseline
+		local transformedEvasion = build.calcsTab.mainOutput.Evasion or 0
+		assert.is_true(transformedEvasion >= baseEvasion + 3,
+			("expected Evasion >= %d (base %d + 3 from FoS +3/level implicit at level 1), got %d"):format(
+				baseEvasion + 3, baseEvasion, transformedEvasion))
+		-- Fists of Stone: +1 ES per player level → at level 1, gain exactly +1 ES vs baseline
+		local transformedES = build.calcsTab.mainOutput.EnergyShield or 0
+		assert.equal(baseES + 1, transformedES)
 	end)
 end)

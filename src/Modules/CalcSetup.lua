@@ -1472,6 +1472,7 @@ function calcs.initEnv(build, mode, override, specEnv)
 					explodeBySource[explodeSource.modSource or explodeSource.id] = explodeSource
 				end
 				-- Update the group
+				group.gemList = group.gemList or { }
 				group.explodeSources = explodeBySource
 				local gemsBySource = { }
 				for _, gem in ipairs(group.gemList) do

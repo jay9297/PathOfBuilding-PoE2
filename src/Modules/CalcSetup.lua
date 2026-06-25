@@ -1479,7 +1479,7 @@ function calcs.initEnv(build, mode, override, specEnv)
 						gemsBySource[gem.explodeSource.modSource or gem.explodeSource.id] = gem
 					end
 				end
-				group.gemList = wipeTable(group.gemList) or { }
+				group.gemList = group.gemList and wipeTable(group.gemList) or { }
 				for _, explodeSource in pairs(explodeBySource) do
 					local activeGemInstance
 					if gemsBySource[explodeSource.modSource or explodeSource.id] then

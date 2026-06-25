@@ -1313,7 +1313,7 @@ c["10% reduced Intelligence"]={{[1]={flags=0,keywordFlags=0,name="Int",type="INC
 c["10% reduced Light Radius"]={{[1]={flags=0,keywordFlags=0,name="LightRadius",type="INC",value=-10}},nil}
 c["10% reduced Magnitude of Ignite on you"]={{[1]={flags=0,keywordFlags=0,name="SelfIgniteEffect",type="INC",value=-10}},nil}
 c["10% reduced Movement Speed"]={{[1]={flags=0,keywordFlags=0,name="MovementSpeed",type="INC",value=-10}},nil}
-c["10% reduced Movement Speed Penalty while Actively Blocking"]={{[1]={flags=0,keywordFlags=0,name="MovementSpeed",type="INC",value=-10}},"  Penalty ly Blocking "}
+c["10% reduced Movement Speed Penalty while Actively Blocking"]={{[1]={[1]={skillType=262,type="SkillType"},flags=0,keywordFlags=0,name="MovementSpeedPenalty",type="INC",value=-10}},nil}
 c["10% reduced Poison Duration on you"]={{[1]={flags=0,keywordFlags=0,name="SelfPoisonDuration",type="INC",value=-10}},nil}
 c["10% reduced Projectile Speed"]={{[1]={flags=0,keywordFlags=0,name="ProjectileSpeed",type="INC",value=-10}},nil}
 c["10% reduced Projectile Speed for Spell Skills"]={{[1]={flags=2,keywordFlags=0,name="ProjectileSpeed",type="INC",value=-10}},nil}
@@ -3106,7 +3106,7 @@ c["5% reduced Flask Charges used"]={{[1]={flags=0,keywordFlags=0,name="FlaskChar
 c["5% reduced Movement Speed Penalty from using Cold Skills while moving"]={{[1]={[1]={type="Condition",var="Moving"},flags=0,keywordFlags=0,name="MovementSpeed",type="INC",value=-5}},"  Penalty from using Cold Skills  "}
 c["5% reduced Movement Speed Penalty from using Fire Skills while moving"]={{[1]={[1]={type="Condition",var="Moving"},flags=0,keywordFlags=0,name="MovementSpeed",type="INC",value=-5}},"  Penalty from using Fire Skills  "}
 c["5% reduced Movement Speed Penalty from using Skills while moving"]={{[1]={flags=0,keywordFlags=0,name="MovementSpeedPenalty",type="INC",value=-5}},nil}
-c["5% reduced Movement Speed Penalty while Actively Blocking"]={{[1]={flags=0,keywordFlags=0,name="MovementSpeed",type="INC",value=-5}},"  Penalty ly Blocking "}
+c["5% reduced Movement Speed Penalty while Actively Blocking"]={{[1]={[1]={skillType=262,type="SkillType"},flags=0,keywordFlags=0,name="MovementSpeedPenalty",type="INC",value=-5}},nil}
 c["5% reduced Projectile Speed for Spell Skills"]={{[1]={flags=2,keywordFlags=0,name="ProjectileSpeed",type="INC",value=-5}},nil}
 c["5% reduced Skill Speed"]={{[1]={flags=0,keywordFlags=0,name="Speed",type="INC",value=-5},[2]={flags=0,keywordFlags=0,name="WarcrySpeed",type="INC",value=-5},[3]={flags=0,keywordFlags=0,name="TotemPlacementSpeed",type="INC",value=-5}},nil}
 c["5% reduced Slowing Potency of Debuffs on You"]={{}," Slowing Potency of Debuffs on You "}
@@ -4465,6 +4465,7 @@ c["Allocates Puppet Master chance"]={{[1]={flags=0,keywordFlags=0,name="GrantedP
 c["Allocates Pure Chaos"]={{[1]={flags=0,keywordFlags=0,name="GrantedPassive",type="LIST",value="pure chaos"}},nil}
 c["Allocates Pure Power"]={{[1]={flags=0,keywordFlags=0,name="GrantedPassive",type="LIST",value="pure power"}},nil}
 c["Allocates Push the Advantage"]={{[1]={flags=0,keywordFlags=0,name="GrantedPassive",type="LIST",value="push the advantage"}},nil}
+c["Allocates Pyromancer"]={{[1]={flags=0,keywordFlags=0,name="GrantedPassive",type="LIST",value="pyromancer"}},nil}
 c["Allocates Quick Fingers"]={{[1]={flags=0,keywordFlags=0,name="GrantedPassive",type="LIST",value="quick fingers"}},nil}
 c["Allocates Quick Recovery"]={{[1]={flags=0,keywordFlags=0,name="GrantedPassive",type="LIST",value="quick recovery"}},nil}
 c["Allocates Rallying Form"]={{[1]={flags=0,keywordFlags=0,name="GrantedPassive",type="LIST",value="rallying form"}},nil}
@@ -6004,7 +6005,7 @@ c["Infinite Parry Range"]={nil,"Infinite Parry Range "}
 c["Infinite Parry Range 50% increased Parried Debuff Duration"]={nil,"Infinite Parry Range 50% increased Parried Debuff Duration "}
 c["Inflict Abyssal Wasting on Hit"]={nil,"Inflict Abyssal Wasting on Hit "}
 c["Inflict Abyssal Wasting on Hit Projectiles have 16% chance to Chain an additional time from terrain"]={nil,"Inflict Abyssal Wasting on Hit Projectiles have 16% chance to Chain an additional time from terrain "}
-c["Inflict Abyssal Wasting on Hit Targets affected by Abyssal Wasting you inflict are Hindered"]={nil,"Inflict Abyssal Wasting on Hit Targets affected by Abyssal Wasting you inflict are Hindered "}
+c["Inflict Abyssal Wasting on Hit Targets affected by Abyssal Wasting in your Presence have double Power"]={{},"Inflict Abyssal Wasting  Targets affected by Abyssal Wasting in your Presence have  Power "}
 c["Inflict Cold Exposure on Igniting an Enemy"]={nil,"Inflict Cold Exposure on Igniting an Enemy "}
 c["Inflict Cold Exposure on Igniting an Enemy Inflict Fire Exposure on Shocking an Enemy"]={nil,"Inflict Cold Exposure on Igniting an Enemy Inflict Fire Exposure on Shocking an Enemy "}
 c["Inflict Corrupted Blood for 5 seconds on Block, dealing 50% of"]={nil,"Inflict Corrupted Blood for 5 seconds on Block, dealing 50% of "}
@@ -6330,7 +6331,7 @@ c["No Inherent loss of Rage Regenerate 6% of your maximum Rage per second Increa
 c["No Inherent loss of Rage Regenerate 6% of your maximum Rage per second Increases and Reductions to Mana Regeneration Rate also apply to Rage Regeneration Rate Skills have +5 to Rage cost +7 to Maximum Rage"]={{[1]={flags=0,keywordFlags=0,name="RageCost",type="BASE",value=7}},"No Inherent loss of  Regenerate 6% of your  per second Increases and Reductions to Mana Regeneration Rate also apply to Rage Regeneration Rate Skills have +5 to Rage  to Maximum Rage "}
 c["No Inherent loss of Rage during effect"]={nil,"No Inherent loss of Rage during effect "}
 c["No Inherent loss of Rage during effect 50% increased Duration"]={nil,"No Inherent loss of Rage during effect 50% increased Duration "}
-c["No Movement Speed Penalty while Shield is Raised"]={{[1]={[1]={skillName="Raise Shield",type="SkillName"},flags=0,keywordFlags=0,name="MovementSpeedPenalty",type="MORE",value=-100}},nil}
+c["No Movement Speed Penalty while Shield is Raised"]={{[1]={[1]={skillType=262,type="SkillType"},flags=0,keywordFlags=0,name="MovementSpeedPenalty",type="MORE",value=-100}},nil}
 c["No Physical Damage"]={{[1]={flags=0,keywordFlags=0,name="WeaponData",type="LIST",value={key="PhysicalMin"}},[2]={flags=0,keywordFlags=0,name="WeaponData",type="LIST",value={key="PhysicalMax"}},[3]={flags=0,keywordFlags=0,name="WeaponData",type="LIST",value={key="PhysicalDPS"}}},nil}
 c["No Rage effect"]={{[1]={flags=0,keywordFlags=0,name="RageEffect",type="OVERRIDE",value=0}},nil}
 c["No inherent Mana Regeneration"]={{[1]={flags=0,keywordFlags=0,name="Condition:NoInherentManaRegen",type="FLAG",value=true}},nil}
@@ -6770,6 +6771,8 @@ c["Tame Beast can capture Unique Beasts Can have up to one Unique Tamed Beast su
 c["Targets Cursed by you have 100% reduced Life Regeneration Rate"]={{[1]={flags=0,keywordFlags=0,name="EnemyModifier",type="LIST",value={mod={[1]={type="Condition",var="Cursed"},flags=0,keywordFlags=0,name="LifeRegen",type="INC",value=-100}}}},nil}
 c["Targets Cursed by you have 50% reduced Life Regeneration Rate"]={{[1]={flags=0,keywordFlags=0,name="EnemyModifier",type="LIST",value={mod={[1]={type="Condition",var="Cursed"},flags=0,keywordFlags=0,name="LifeRegen",type="INC",value=-50}}}},nil}
 c["Targets Cursed by you have at least 15% of Life Reserved"]={{[1]={flags=0,keywordFlags=0,name="EnemyModifier",type="LIST",value={mod={[1]={type="Condition",var="Cursed"},flags=0,keywordFlags=0,name="LifeReservationPercent",type="BASE",value=15}}}},nil}
+c["Targets affected by Abyssal Wasting in your Presence have double Power"]={{},"Targets affected by Abyssal Wasting in your Presence have  Power "}
+c["Targets affected by Abyssal Wasting in your Presence have double Power Targets affected by Abyssal Wasting you inflict are Hindered"]={{},"Targets affected by Abyssal Wasting in your Presence have  Power Targets affected by Abyssal Wasting you inflict are Hindered "}
 c["Targets affected by Abyssal Wasting you inflict are Blinded"]={nil,"Targets affected by Abyssal Wasting you inflict are Blinded "}
 c["Targets affected by Abyssal Wasting you inflict are Blinded Enemies you kill while they are affected by Abyssal Wasting"]={nil,"Targets affected by Abyssal Wasting you inflict are Blinded Enemies you kill while they are affected by Abyssal Wasting "}
 c["Targets affected by Abyssal Wasting you inflict are Debilitated"]={nil,"Targets affected by Abyssal Wasting you inflict are Debilitated "}

@@ -2262,9 +2262,9 @@ function ItemsTabClass:IsItemValidForSlot(item, slotName, itemSet, flagState)
 		elseif item.baseName:match("Mana Flask") and slotName:match("Flask 2") then
 			return true
 		end
-	elseif item.base.subType == "Transcendent Arm" and slotType == "Arm" then
+	elseif item.base and item.base.subType == "Transcendent Arm" and slotType == "Arm" then
 		return true
-	elseif item.base.subType == "Transcendent Leg" and slotType == "Leg" then
+	elseif item.base and item.base.subType == "Transcendent Leg" and slotType == "Leg" then
 		return true
 	elseif item.type == slotType then
 		return true

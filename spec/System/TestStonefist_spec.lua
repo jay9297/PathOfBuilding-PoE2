@@ -759,4 +759,37 @@ describe("TestStonefist", function()
 
 		data.modEquivalencies = origEquiv
 	end)
+
+	-- CalcSetup: nil gemList guard
+
+	it("CalcSetup does not crash when socket groups have nil gemList during GloveBaseTypeTransform calculation", function()
+		-- GloveBaseTypeTransform triggers CALCULATOR-mode passes that iterate over every
+		-- socket group's gemList. Synthetic groups created during that pass may have a nil
+		-- gemList; CalcSetup must guard all ipairs(group.gemList) sites with `or {}`.
+		-- Previously this crashed: "bad argument #1 to 'ipairs' (table expected, got nil)"
+		build.itemsTab:CreateDisplayItemFromRaw([[
+			New Item
+			Stocky Mitts
+		]])
+		build.itemsTab:AddDisplayItem()
+		runCallback("OnFrame")
+		local baseEvasion = build.calcsTab.mainOutput.Evasion or 0
+		local baseES = build.calcsTab.mainOutput.EnergyShield or 0
+
+		build.configTab.input.customMods = "\z
+		Gloves you equip have their base type transformed to fists of stone while equipped\n\z
+		"
+		build.configTab:BuildModList()
+		runCallback("OnFrame")
+
+		-- Fists of Stone: +3 Evasion Rating per player level → evasion chance increases vs Stocky Mitts baseline.
+		-- mainOutput.Evasion is the evasion chance (non-linear), not raw rating, so we assert > not >= base+3.
+		local transformedEvasion = build.calcsTab.mainOutput.Evasion or 0
+		assert.is_true(transformedEvasion > baseEvasion,
+			("expected Evasion > %d (FoS +3/level implicit should increase evasion chance vs baseline), got %d"):format(
+				baseEvasion, transformedEvasion))
+		-- Fists of Stone: +1 ES per player level → at level 1, gain exactly +1 ES (CLAUDE.md: exact for hit-point pools)
+		local transformedES = build.calcsTab.mainOutput.EnergyShield or 0
+		assert.equal(baseES + 1, transformedES)
+	end)
 end)

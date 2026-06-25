@@ -1472,15 +1472,14 @@ function calcs.initEnv(build, mode, override, specEnv)
 					explodeBySource[explodeSource.modSource or explodeSource.id] = explodeSource
 				end
 				-- Update the group
-				group.gemList = group.gemList or { }
 				group.explodeSources = explodeBySource
 				local gemsBySource = { }
-				for _, gem in ipairs(group.gemList) do
+				for _, gem in ipairs(group.gemList or { }) do
 					if gem.explodeSource then
 						gemsBySource[gem.explodeSource.modSource or gem.explodeSource.id] = gem
 					end
 				end
-				wipeTable(group.gemList)
+				group.gemList = wipeTable(group.gemList) or { }
 				for _, explodeSource in pairs(explodeBySource) do
 					local activeGemInstance
 					if gemsBySource[explodeSource.modSource or explodeSource.id] then

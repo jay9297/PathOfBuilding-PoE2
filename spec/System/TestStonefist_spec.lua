@@ -759,4 +759,24 @@ describe("TestStonefist", function()
 
 		data.modEquivalencies = origEquiv
 	end)
+
+	-- CalcSetup: nil gemList guard
+
+	it("CalcSetup does not crash when socket groups have nil gemList during GloveBaseTypeTransform calculation", function()
+		-- GloveBaseTypeTransform triggers CALCULATOR-mode passes that iterate over every
+		-- socket group's gemList. Synthetic groups created during that pass may have a nil
+		-- gemList; CalcSetup must guard all ipairs(group.gemList) sites with `or {}`.
+		-- Previously this crashed: "bad argument #1 to 'ipairs' (table expected, got nil)"
+		build.itemsTab:CreateDisplayItemFromRaw([[
+			New Item
+			Stocky Mitts
+		]])
+		build.itemsTab:AddDisplayItem()
+		build.configTab.input.customMods = "\z
+		Gloves you equip have their base type transformed to fists of stone while equipped\n\z
+		"
+		build.configTab:BuildModList()
+		runCallback("OnFrame")
+		assert.is_not_nil(build.calcsTab.mainOutput)
+	end)
 end)

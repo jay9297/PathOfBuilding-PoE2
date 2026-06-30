@@ -1,7 +1,7 @@
 # cspell:disable
-# unmapped=1588 total_stats=2411
+# unmapped=1588 total_stats=2419
 action_allowed_queue_time_override_ms	25	Basic Bolt, Black Powder Blitz, Cluster Grenade, Compose Requiem, Explosive Grenade
-action_attack_or_cast_time_uses_animation_length	72	, Artillery Impact, Basic Attack, Basic Attack (Cold), Basic Attack (Fire)
+action_attack_or_cast_time_uses_animation_length	91	, Artillery Impact, Basic Attack, Basic Attack (Cold), Basic Attack (Fire)
 action_can_be_used_in_aiming_stance	25	Basic Bolt, Cluster Grenade, Compose Requiem, Emergency Reload, Explosive Grenade
 action_can_be_used_in_upward_aiming_stance	4	Emergency Reload, Load Hailstorm Rounds, Load Siege Cascade, Load Stormblast Bolts
 action_do_not_face_target	5	Armour Piercing Rounds, Fury of the Mountain, Ice Shards, Rapid Shot, Shockburst Rounds
@@ -23,7 +23,6 @@ active_skill_consumes_a_fire_infusion	5	Ball Lightning, Comet, Fireball, Firesto
 active_skill_consumes_a_lightning_infusion	5	Arc, Ember Fusillade, Firestorm, Flame Wall, Frost Wall
 active_skill_consumes_a_verisium_infusion	1	Skyfall
 active_skill_damage_+%_final_per_time_chained	1	Rolling Magma
-active_skill_damage_+%_final_vs_burning_enemies	2	Ruzhan's Brand, Solar Orb
 active_skill_damage_+%_final_vs_fully_broken_armour	1	Leap Slam
 active_skill_damage_+%_final_vs_unique_enemies	3	Battershout, High Velocity Rounds, Sandblast
 active_skill_damaging_ailment_effect_+%_final	1	Shattering Spite
@@ -90,7 +89,7 @@ ailment_bearer_elemental_damage_+%_final	1	Unbound Avatar
 ailment_bearer_required_stacks_to_use	1	Unbound Avatar
 allies_in_font_of_blood_radius_leech_%_of_my_physical_damage_as_life	1	Font of Blood
 allies_in_font_of_mana_radius_leech_%_of_my_physical_damage_as_mana	1	Font of Mana
-alternate_minion	1	Summon Minions
+alternate_minion	2	Summon Maggots, Summon Minions
 always_chain_from_cursed_enemies	1	Coiling Bolts
 always_chain_from_shocked_enemies	1	Stormchain
 always_light_stun	2	Parry, Raise Shield
@@ -116,8 +115,6 @@ apply_X_stacks_of_critical_weakness_on_hit	4	Kelari's Deception, Kelari's Judgme
 apply_attack_projectile_weakness_%_per_1m_knockback	1	Punch Through
 apply_unaffected_by_pacifying_curses_for_x_ms_on_curse_expiry	1	Kalisa's Crescendo
 arc_chain_distance	4	Arc, Orb of Storms, Storm Lance, Valako's Charge
-arc_chains_gained_from_infusion_consumption	1	Arc
-arc_damage_+%_final_from_infusion_consumption	1	Arc
 arc_enhanced_behaviour	1	Arc
 arc_to_minion_monster_variety_hash	1	Arc
 archon_chayula_storm_movement_speed	1	Chayula's Will
@@ -138,7 +135,7 @@ arrow_projectile_variation	1	Basic Attack
 arsonist_destructive_link_%_of_life_as_fire_damage	1	Explosive Demise
 attack_is_melee_override	4	Shield Charge, Shield Wave, Shockwave Slam, Stampede
 attack_is_not_melee_override	11	Crackling Palm, Fan the Flames, Freezing Explosion, Gelid Palm, Herald of Blood
-attack_maximum_action_distance_+	30	Basic Attack, Bite, Charged Sunder, Dash, Disengage
+attack_maximum_action_distance_+	31	Basic Attack, Bite, Blood Spit, Charged Sunder, Dash
 attack_speed_+%_per_rage	1	Skeletal Reaver Minion
 attacks_chance_to_blind_on_hit_%	3	Flash Grenade, Projectile, Twister
 awakened_forest_area_of_effect_+%_final_when_wet	1	Thrashing Vines
@@ -156,21 +153,22 @@ base_additional_damage_from_distance_+%_final	2	Rake, Shield Charge
 base_aggravate_bleeding_on_attack_hit_chance_%	1	Bleeding Concoction
 base_bleed_chance_is_poison_chance_instead	1	Malady
 base_briarpatch_ground_limit	1	Briarpatch
-base_cannot_be_blocked	2	Slam, Toxic Rain
+base_cannot_be_blocked	3	Dive, Slam, Toxic Rain
 base_chance_to_daze_%	2	Siphoning Strike, Wind Blast
 base_chance_to_not_consume_corpse_%	3	Corpse Conservation, Profane Ritual, Volatile Dead
 base_circle_of_power_mana_%_spend_per_upgrade	2	Rite of Restoration, Sigil of Power
 base_combo_stacks_decay_delay_ms	7	Combo Finisher I, Combo Finisher II, Culmination I, Culmination II, Mantra of Destruction
 base_consume_enemy_freeze_on_hit	1	Fragmentation Rounds
 base_consume_enemy_shock_on_hit	2	Primal Strikes, Siphoning Strike
-base_deal_no_damage	164	, Alchemist's Boon, Align Fate, Ancestral Cry, Ancestral Spirits
+base_deal_no_damage	172	, Alchemist's Boon, Align Fate, Ancestral Cry, Ancestral Spirits
 base_deal_no_damage_over_time	4	, Feral Invocation, Life Remnants, Remnants of Kalguur
 base_deal_no_spell_damage	1	Feast of Flesh
 base_debuff_slow_magnitude_+%	1	Slow Potency
-base_is_projectile	139	, Acidic Concoction, Arc, Armour Piercing Rounds, Artillery
+base_is_projectile	156	, Acidic Concoction, Arc, Armour Piercing Rounds, Artillery
 base_knockback_distance	17	Armour Piercing Rounds, Crossbow Shot, Explosive Shot, Fragmentation Rounds, Galvanic Shards
-base_knockback_speed_+%	2	Devour, Wind Wave
+base_knockback_speed_+%	3	Devour, Dive, Wind Wave
 base_life_leech_from_any_attack_damage_permyriad	1	Slam
+base_lightning_damage_to_deal_per_minute	1	Sulphur Gas
 base_mana_leech_rate_+%	1	Mana Drain
 base_maximum_number_of_frost_bombs	1	Frost Bomb
 base_melee_dash_range	14	Blood Hunt, Crushing Fear, Cull the Weak, Devour, Gathering Storm
@@ -205,9 +203,10 @@ base_remnant_duration_ms	10	, Grim Feast, Into the Breach, Life Remnants, Mana R
 base_skill_buff_additional_maximum_all_elemental_resistances_%_to_apply	1	Dread Banner
 base_skill_buff_ailment_threshold_+%_final_to_apply	1	Dread Banner
 base_skill_buff_banner_attack_speed_+%_to_apply	1	War Banner
-base_skill_can_be_avoided_by_dodge_roll	16	, Artillery, Artillery Impact, Basic Spell, Beam
-base_skill_can_be_blocked	18	, Basic Spell, Beam, Beam Impact, Death Mortar
-base_skill_cannot_be_avoided_by_dodge_roll_or_evaded_or_blocked	2	Pillar Slam, Slam
+base_skill_can_be_avoided_by_dodge_roll	19	, Artillery, Artillery Impact, Basic Spell, Beam
+base_skill_can_be_blocked	21	, Basic Spell, Beam, Beam Impact, Death Mortar
+base_skill_cannot_be_avoided_by_dodge_roll_or_blocked	2	Head Slam, Punch
+base_skill_cannot_be_avoided_by_dodge_roll_or_evaded_or_blocked	3	Dive, Pillar Slam, Slam
 base_skill_cannot_generate_energy	1	Midnight Zenith
 base_skill_cannot_generate_midnight_star_petals	1	Midnight Zenith
 base_skill_cost_efficiency_+%	1	Animus Splinters
@@ -372,7 +371,6 @@ command_minion_target_ally_below_x_life	1	Explosive Demise
 command_skill_consumes_x_stacks_of_tangmazu_raven_to_use	1	Command
 command_skill_no_command_marker	1	Command
 command_target_rarity_prioritisation_radius	1	Command
-companion_takes_%_damage_before_you_from_support	2	Loyalty, Romira's Requital
 companion_tangmazu_thurible_visual_effect	1	Tangmazu's Thurible
 conditional_skill_additional_usages_after_meeting_requirement	1	Delayed Gratification
 conditional_skill_additional_usages_duration_ms	1	Delayed Gratification
@@ -447,7 +445,7 @@ difficulty_of_meeting_conditional_requirement_+%	1	Delayed Gratification
 disable_all_skill_indicators	1	SpiritVesselSupport
 disable_quadruped_head_control	5	Devour, Hollow Form, Rend, Rolling Magma, Wing Blast
 disable_quadruped_head_movement_when_turning	7	Ferocious Roar, Flame Breath, Furious Slam, Fury of the Mountain, Maul
-disable_visual_hit_effect	27	Arc, Armour Piercing Rounds, Basic Spell, Crossbow Shot, Essence Drain
+disable_visual_hit_effect	28	Arc, Armour Piercing Rounds, Basic Spell, Crossbow Shot, Dive
 disangage_autotargeting_angle_%	1	Disengage
 disengage_%_chance_for_additional_shockwave	1	Disengage
 disengage_cone_angle	1	Disengage
@@ -473,7 +471,7 @@ display_skill_reserves_in_all_weapon_sets	4	Blink, Convalescence, Eternal Rage, 
 display_statset_hide_usage_stats	127	Blood Explosion, Blood Hunt, Boneshatter, Bonestorm, Charged Shockwave
 display_statset_no_hit_damage	44	Ancestral Warrior Totem, Azmerian Swarms, Azmerian Wolf, Bone Offering, Cackling Companions
 display_tame_beast_mod_limit	1	Tame Beast
-distribute_projectiles_over_contact_points	10	Basic Spell (Chaos), Blood Projectile, Chaos Spark, Explosive Grenade, Explosive Shot
+distribute_projectiles_over_contact_points	11	Basic Spell (Chaos), Blood Projectile, Chaos Spark, Explosive Grenade, Explosive Shot
 djinn_damage_+%_final_per_number_of_damaging_skills_my_parent_has_used_recently	1	Ruzhan, the Blazing Sword
 djinn_damage_+%_final_per_teleport_in_sequence	1	Kelari's Deception
 djinn_fire_rune_minimum_target_distance	1	Ruzhan's Trap
@@ -598,13 +596,15 @@ grim_remnant_chance_to_spawn_orb_on_minion_death_in_presence_%	1	Grim Feast
 grim_remnant_health_stored_in_globe_%	1	Grim Feast
 grim_remnant_max_health_stored	1	Grim Feast
 ground_blood_art_variation	1	Boiling Blood
-ground_caustic_art_variation	2	Pus Ground, Vomit Ground
+ground_caustic_art_variation	3	Caustic Ground, Pus Ground, Vomit Ground
 ground_effect_duration_+%	4	Lasting Ground, Persistent Ground I, Persistent Ground II, Persistent Ground III
 ground_effects_apply_cooldown_speed_+%_final	1	Persistent Ground III
 ground_effects_cannot_trigger	2	Persistent Ground II, Persistent Ground III
 ground_fire_art_variation	2	Burning Inscription, Large Ball Flame Geyser
 ground_lightning_art_variation	1	Death Storm
 ground_oil_art_variation	2	Oil Barrage, Oil Grenade
+ground_sulphite_art_variation	1	Sulphur Gas
+ground_web_art_variation	1	Web Ground
 grounding_shocks_chance_%_to_create_orb_on_shocking_enemy	1	Static Shocks
 grounding_shocks_maximum_targets_per_aoe	1	Static Shocks
 grounding_shocks_pulse_delay_ms	1	Static Shocks
@@ -623,8 +623,8 @@ hexblast_damage_+%_final_per_second_remaining_curse_duration	1	Hexblast
 hexblast_maximum_number_of_explosions	1	Hexblast
 hide_minion_frame	9	, Align Fate, Animus Splinters, Feral Invocation, Hollow Form
 hinder_chance_%_on_spreading_poioson	1	Herald of Plague
+hit_damage_stun_multiplier_+%	1	Headbutt
 hollow_shell_per_target_cooldown_ms	1	Hollow Shell
-hunters_mark_%_of_max_threshold_to_trigger_explosion_on_death	1	Bloodhound's Mark
 hunters_mark_%_of_phys_damage_over_time_as_build_up	1	Bloodhound's Mark
 hunters_mark_buildup_%_as_explosion_damage_+%_final	1	Blood Explosion
 hunters_mark_explosion_area_of_effect_+%_final_from_buildup	1	Blood Explosion
@@ -676,7 +676,7 @@ infusion_remnants_%_chance_to_spawn_fire_infusion_on_igniting_an_enemy	1	Siphon 
 infusion_remnants_%_chance_to_spawn_lightning_infusion_on_shocking_an_enemy	1	Siphon Elements
 instability_on_critical_%_chance	1	Volatility
 intimidate_on_heavy_stun_vs_ignited_and_fully_armour_broken	1	Syzygy
-is_area_damage	298	, Acidic Concoction, Annihilation, Arctic Howl, Armour Breaker
+is_area_damage	322	, Acid Spit, Acidic Concoction, Annihilation, Arctic Howl
 is_cluster_grenade_bomblet	1	Cluster Grenade
 is_feral_invocation	1	SupportFeralInvocationPlayer
 is_ice_crystal_explosion	5	Frost Wall, Frozen Locus, Glacial Bolt, Grim Pillars, Midnight Zenith
@@ -726,7 +726,7 @@ main_hand_base_weapon_attack_duration_ms	5	Acidic Concoction, Bleeding Concoctio
 main_hand_local_chance_to_bleed_on_hit_%	1	Basic Attack
 main_hand_local_maim_on_hit_%	2	Basic Attack, Spear Throw
 main_hand_weapon_range_+	5	Glacial Lance, Lightning Spear, Spear Throw, Twister, Whirlwind Lance
-maintain_projectile_direction_when_using_contact_position	29	Basic Attack, Basic Spell, Basic Spell (Chaos), Basic Spell (Cold), Basic Spell (Fire)
+maintain_projectile_direction_when_using_contact_position	32	Basic Attack, Basic Spell, Basic Spell (Chaos), Basic Spell (Cold), Basic Spell (Fire)
 mana_drain_base_mana_leech_amount	1	Mana Drain
 mana_remnants_chance_to_spawn_orb_on_killing_enemy_with_elemental_ailment_%	1	Mana Remnants
 mana_remnants_spawn_remnant_on_crit_vs_elemental_ailment_enemy_every_X_ms	1	Mana Remnants
@@ -767,7 +767,7 @@ minimum_rain_of_spores_movement_speed_+%_final_cap	1	Toxic Rain
 minion_aggro_radius_+%	1	Unearth
 minion_cathas_brilliance_blind_aura_radius	1	Catha's Brilliance
 minion_dies_when_parent_deleted	1	Summon Minions
-minion_dies_when_parent_dies	1	Summon Minions
+minion_dies_when_parent_dies	2	Summon Maggots, Summon Minions
 minion_gain_unholy_might_for_X_ms_on_command	1	Kurgal's Leash
 minion_melee_splash	2	Minion Splash I, Minion Splash II
 minion_on_death_heal_nearby_minions_for_%_of_life_and_remove_ailments	1	Deathmarch
@@ -784,9 +784,9 @@ monster_breaks_brequel_npc_concentration	1	Basic Spell (Cold)
 monster_mortar_bounce_angle_variance	1	Mortar
 monster_no_drops_or_experience	1	Summon Minions
 monster_no_life_es_scaling_from_rarity	1	Companion: {0}
-monster_penalty_against_minions_damage_+%_final_vs_player_minions	7	Basic Attack, Firehose, Flamethrower, Large Ball Flame Geyser, Pillar Slam
-monster_projectile_variation	37	, Artillery, Basic Attack, Basic Spell, Basic Spell (Chaos)
-monster_reverse_point_blank_damage_-%_at_minimum_range	1	Spike Burst
+monster_penalty_against_minions_damage_+%_final_vs_player_minions	13	Basic Attack, Bite, Blood Spit Impact, Firehose, Flamethrower
+monster_projectile_variation	44	, Artillery, Basic Attack, Basic Spell, Basic Spell (Chaos)
+monster_reverse_point_blank_damage_-%_at_minimum_range	2	Spike Burst, Spike Shrapnel
 monster_skill_triggered_by_geal	1	Navira's Calming
 morrigan_ward_gain_X_guard	1	Nature's Exchange
 mortar_projectile_distance_override	2	Death Mortar, Mortar
@@ -806,10 +806,10 @@ number_of_branching_fissures	5	Branching Fissures I, Branching Fissures II, Molt
 number_of_dual_cascade_aftershocks	1	Tectonic Slams
 number_of_lightning_rods_allowed	2	Lightning Rod, Shockchain Arrow
 number_of_marks_allowed_per_type	5	Bloodhound's Mark, Freezing Mark, Predator's Mark, Sniper's Mark, Voltaic Mark
-number_of_monsters_to_summon	1	Summon Minions
+number_of_monsters_to_summon	2	Summon Maggots, Summon Minions
 number_of_poison_cloud_allowed	3	Decompose, Gas Arrow, Gas Grenade
 number_of_poisonbloom_arrow_bloom_allowed	1	Toxic Growth
-number_of_projectiles_override	5	, Large Ball Spit, Snipe, Spear Throw, Toxic Growth
+number_of_projectiles_override	8	, Large Ball Spit, Mass Mortar, Snipe, Spear Throw
 number_of_shocking_rifts_allowed	1	Electromagnetism
 number_of_tornados_allowed	2	Elemental Storm, Tornado
 number_of_totems_allowed_is_1	3	Cirel's Cultivation, Splinter Totem I, Splinter Totem II
@@ -855,11 +855,11 @@ primal_strikes_stag_is_scaled_with_area_of_effect	1	Primal Strikes
 primal_strikes_stag_stampede_damage_+%_final	1	Primal Strikes
 primal_strikes_stag_volley_delay_ms	1	Primal Strikes
 primal_strikes_stag_volley_spacing	1	Primal Strikes
-projectile_angle_variance	2	Cluster Grenade, Spike Burst
-projectile_ballistic_angle_from_reference_event	21	Artillery, Basic Attack, Blow Dart, Cannon, Cluster Grenade
-projectile_ballistic_angle_from_target_distance	11	Basic Spell, Basic Spell (Chaos), Cluster Grenade, Explosive Spear, Napalm Cannon
+projectile_angle_variance	3	Cluster Grenade, Spike Burst, Spike Shrapnel
+projectile_ballistic_angle_from_reference_event	23	Artillery, Basic Attack, Blow Dart, Cannon, Cluster Grenade
+projectile_ballistic_angle_from_target_distance	16	Basic Spell, Basic Spell (Chaos), Blood Spit, Blood Spray, Cluster Grenade
 projectile_ballistic_angle_override	1	Chaos Spark
-projectile_ballistic_gravity_override	3	Basic Spell (Physical), Spear Throw, Vomit
+projectile_ballistic_gravity_override	8	Basic Spell (Physical), Blood Spit, Blood Spray, Goop Ball, Large Goop Ball
 projectile_ballistic_ignore_force_while_exploding	2	Explosive Shot, Spear Throw
 projectile_distance_override	1	Escape Shot
 projectile_distance_variance	5	Cluster Grenade, Fragmentation Rounds, Galvanic Shards, Incendiary Shot, Permafrost Bolts
@@ -867,14 +867,14 @@ projectile_firing_forward_distance_override	1	Eye of Winter
 projectile_maximum_downwards_angle_degrees	2	Firebolt, Oil Barrage
 projectile_maximum_duration_override_ms	1	Ice Shard
 projectile_maximum_range_override	3	Fireball, Firebolt, Molten Blast
-projectile_minimum_range	2	Artillery, Ballista Bolt
+projectile_minimum_range	4	Artillery, Ballista Bolt, Mass Mortar, Web Projectile
 projectile_only_collide_with_wet_targets	1	Coursing Current
 projectile_randomly_fork_chain_or_pierce	1	Gambleshot
-projectile_speed_variation_+%	5	Basic Spell (Chaos), Explosive Grenade, Large Ball Spit, Puncture, Rock Throw
-projectile_spread_radius	17	Artillery, Basic Spell, Basic Spell (Chaos), Basic Spell (Cold), Chaos Spark
+projectile_speed_variation_+%	6	Basic Spell (Chaos), Explosive Grenade, Large Ball Spit, Puncture, Rock Throw
+projectile_spread_radius	25	Artillery, Basic Spell, Basic Spell (Chaos), Basic Spell (Cold), Blood Spit
 projectile_uses_bearing_as_firing_orientation	2	Explosive Shot, Spear Throw
-projectile_uses_contact_direction	52	Arc, Armour Piercing Rounds, Basic Spell, Blood Projectile, Bow Shot
-projectile_uses_contact_position	96	Arc, Armour Piercing Rounds, Artillery, Basic Attack, Basic Attack (Cold)
+projectile_uses_contact_direction	56	Arc, Armour Piercing Rounds, Basic Spell, Blood Projectile, Blood Spray
+projectile_uses_contact_position	105	Arc, Armour Piercing Rounds, Artillery, Basic Attack, Basic Attack (Cold)
 projectiles_are_not_fired	1	Fragmentation Rounds
 projectiles_can_shotgun	5	Fragmentation Rounds, Galvanic Shards, Ice Fragments, Incendiary Shot, Permafrost Bolts
 projectiles_can_split_from_terrain	1	Lightning Spear
@@ -884,7 +884,7 @@ projectiles_move_with_precise_movement	2	Explosive Spear, Storm Lance
 projectiles_normal_distribution_height_mean	4	Fragmentation Rounds, Galvanic Shards, Incendiary Shot, Permafrost Bolts
 projectiles_normal_distribution_height_standard_deviation	4	Fragmentation Rounds, Galvanic Shards, Incendiary Shot, Permafrost Bolts
 projectiles_normal_distribution_spread_standard_deviation	4	Fragmentation Rounds, Galvanic Shards, Incendiary Shot, Permafrost Bolts
-projectiles_not_offset	10	, Blow Dart, Caltrops, Cluster Grenade, Explosive Shot
+projectiles_not_offset	12	, Blow Dart, Caltrops, Cluster Grenade, Explosive Shot
 projectiles_nova	7	Cluster Grenade, Empowered Sparks, Nova Projectiles I, Nova Projectiles II, Runeforged Blades
 projectiles_return	2	Breachlord's Amalgam, Soaring Midnight
 projectiles_should_collide_with_flying_monsters	3	Empowered Sparks, Falling Thunder, Spark
@@ -1139,7 +1139,7 @@ spectre_warp_end_distance	1	Spectre: {0}
 spectre_warp_speed_override	1	Spectre: {0} 
 spectre_warp_start_distance	1	Spectre: {0} 
 spell_daze_on_critical_hit_dealing_physical_damage	1	Concussive Spells
-spell_maximum_action_distance_+%	51	, Arc, Artillery, Basic Spell, Basic Spell (Chaos)
+spell_maximum_action_distance_+%	53	, Arc, Artillery, Basic Spell, Basic Spell (Chaos)
 spell_skill_%_chance_to_fire_8_additional_projectiles_in_nova	2	Wildshards I, Wildshards II
 spell_skill_%_chance_to_fire_8_additional_projectiles_in_nova_per_wildshard_stack	1	Sione's Temper
 spell_totem_damage_+%_final_per_power_charge_consumed	1	Spell Totem
@@ -1171,7 +1171,8 @@ stormblast_bolts_maximum_active_bolt_count	1	Stormblast Bolts
 strikes_are_ancestrally_boosted	1	Ancestral Aid
 stun_threshold_+%_final_while_performing_action	1	Parry
 summon_specific_monsters_radius_+%	1	Summon Minions
-summoned_monsters_are_minions	1	Summon Minions
+summoned_monsters_are_minions	2	Summon Maggots, Summon Minions
+summoned_monsters_no_drops_or_experience	1	Summon Maggots
 sunder_armor_break_extra_magnitude	1	Sunder
 sunder_shockwave_limit_per_cascade	1	Sunder
 sunder_wave_max_steps	1	Sunder
@@ -1312,7 +1313,6 @@ support_spectral_arrows_delay_between_projectiles_ms	1	Spectral Volley
 support_spectral_arrows_maximum_spectral_arrows	1	Spectral Volley
 support_spell_cascade_area_of_effect_+%_for_cascade	1	Spell Cascade
 support_spell_cascade_number_of_cascades_per_side	1	Spell Cascade
-support_spell_totem_cast_speed_+%_final	1	SupportMetaTotemSpellTotemPlayer
 support_splinter_totem_X_times	2	Splinter Totem I, Splinter Totem II
 support_splinter_totem_area_of_effect_+%_final_each_splinter	2	Splinter Totem I, Splinter Totem II
 support_splinter_totem_damage_+%_final_each_splinter	2	Splinter Totem I, Splinter Totem II
@@ -1493,7 +1493,7 @@ unleash_the_elements_trigger_frequency_+%	1	Apocalypse
 upheaval_number_of_spikes	2	Detonate Dead, Glacial Cascade
 usable_with_talisman	5	Blink, Sanguine Revelry, Savage Fury, Summon Wolf, Tame Beast
 use_owners_culling_threshold_instead_of_your_own	1	Mist Raven
-use_scaled_contact_offset	36	Basic Attack, Basic Attack (Cold), Basic Attack (Fire), Basic Attack (Lightning), Basic Spell
+use_scaled_contact_offset	41	Basic Attack, Basic Attack (Cold), Basic Attack (Fire), Basic Attack (Lightning), Basic Spell
 use_time_+_ms_if_shapeshift_required	2	Furious Slam, Maul
 vaulting_impact_short_animation_maximum_range	1	Vaulting Impact
 verisium_comet_number_of_minions_to_create	1	Skyfall

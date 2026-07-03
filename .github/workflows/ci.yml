@@ -45,7 +45,12 @@ jobs:
           fi
 
       - name: Run ${{ matrix.suite.name }} tests
-        run: docker compose run --rm busted-tests ${{ matrix.suite.args }}
+        # Coverage is measured separately by the dedicated `coverage` job, so the
+        # test matrix runs without LuaCov instrumentation. `.busted` sets
+        # coverage=true globally; instrumenting here too is redundant and slow
+        # (it pushed the growing unit suite past timeout-minutes). --no-coverage
+        # overrides the config for these pass/fail runs only.
+        run: docker compose run --rm busted-tests --no-coverage ${{ matrix.suite.args }}
 
   coverage:
     name: coverage

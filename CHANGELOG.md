@@ -1,5 +1,30 @@
 # Changelog
 
+## [beta](https://github.com/PathOfBuildingCommunity/PathOfBuilding-PoE2/tree/beta) (2026/09/11)
+
+[Full Changelog](https://github.com/jay9297/PathOfBuilding-PoE2/compare/v0.15.0...beta)
+
+
+## What's Changed
+### Other changes
+- Fix/hollow palm technique [\#58](https://github.com/jay9297/PathOfBuilding-PoE2/pull/58) ([jay9297](https://github.com/jay9297))
+- Sync with upstream [\#59](https://github.com/jay9297/PathOfBuilding-PoE2/pull/59) ([jay9297](https://github.com/jay9297))
+- feat(martial-artist): implement Way of the Stonefist notable [\#61](https://github.com/jay9297/PathOfBuilding-PoE2/pull/61) ([jay9297](https://github.com/jay9297))
+- merge: upstream dev (v0.19.0 / 0.5.1) into fork dev [\#64](https://github.com/jay9297/PathOfBuilding-PoE2/pull/64) ([jay9297](https://github.com/jay9297))
+- fix: correct Runic Ward import, double-count, and EHP operator precedence [\#62](https://github.com/jay9297/PathOfBuilding-PoE2/pull/62) ([jay9297](https://github.com/jay9297))
+- docs: rewrite CLAUDE.md and AGENTS.md to match actual repo state [\#65](https://github.com/jay9297/PathOfBuilding-PoE2/pull/65) ([jay9297](https://github.com/jay9297))
+- docs: refresh agent docs (test baseline, ModCache, 0.5 tree, exporter constraints) [\#66](https://github.com/jay9297/PathOfBuilding-PoE2/pull/66) ([jay9297](https://github.com/jay9297))
+- fix(ci): push agent's own commits when nothing is left staged [\#73](https://github.com/jay9297/PathOfBuilding-PoE2/pull/73) ([jay9297](https://github.com/jay9297))
+- fix: add contents:write permission to beta workflow [\#74](https://github.com/jay9297/PathOfBuilding-PoE2/pull/74) ([jay9297](https://github.com/jay9297))
+- feat(stonefist): implement GloveExplicitModTransform for unique item Fists of Stone upgrade [\#63](https://github.com/jay9297/PathOfBuilding-PoE2/pull/63) ([jay9297](https://github.com/jay9297))
+- fix(ci): properly skip ai-review steps when diff exceeds 3000 lines [\#75](https://github.com/jay9297/PathOfBuilding-PoE2/pull/75) ([jay9297](https://github.com/jay9297))
+- feat(tooling): mod-coverage audit manifest + CI regression guard [\#86](https://github.com/jay9297/PathOfBuilding-PoE2/pull/86) ([jay9297](https://github.com/jay9297))
+- feat(advisor): native deterministic build-advisor tab (Epic #85) [\#88](https://github.com/jay9297/PathOfBuilding-PoE2/pull/88) ([jay9297](https://github.com/jay9297))
+- feat(tooling): add skill stat coverage audit (#68) [\#87](https://github.com/jay9297/PathOfBuilding-PoE2/pull/87) ([jay9297](https://github.com/jay9297))
+- fix(Advisor): reduce false positives in support and tree checks [\#90](https://github.com/jay9297/PathOfBuilding-PoE2/pull/90) ([jay9297](https://github.com/jay9297))
+
+
+
 ## [v0.21.1](https://github.com/PathOfBuildingCommunity/PathOfBuilding-PoE2/tree/v0.21.1) (2026/06/20)
 
 [Full Changelog](https://github.com/PathOfBuildingCommunity/PathOfBuilding-PoE2/compare/v0.21.0...v0.21.1)

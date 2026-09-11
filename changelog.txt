@@ -1,3 +1,23 @@
+VERSION[beta][2026/09/11]
+
+--- Other changes ---
+* Fix/hollow palm technique (jay9297)
+* Sync with upstream (jay9297)
+* feat(martial-artist): implement Way of the Stonefist notable (jay9297)
+* merge: upstream dev (v0.19.0 / 0.5.1) into fork dev (jay9297)
+* fix: correct Runic Ward import, double-count, and EHP operator precedence (jay9297)
+* docs: rewrite CLAUDE.md and AGENTS.md to match actual repo state (jay9297)
+* docs: refresh agent docs (test baseline, ModCache, 0.5 tree, exporter constraints) (jay9297)
+* fix(ci): push agent's own commits when nothing is left staged (jay9297)
+* fix: add contents:write permission to beta workflow (jay9297)
+* feat(stonefist): implement GloveExplicitModTransform for unique item Fists of Stone upgrade (jay9297)
+* fix(ci): properly skip ai-review steps when diff exceeds 3000 lines (jay9297)
+* feat(tooling): mod-coverage audit manifest + CI regression guard (jay9297)
+* feat(advisor): native deterministic build-advisor tab (Epic #85) (jay9297)
+* feat(tooling): add skill stat coverage audit (#68) (jay9297)
+* fix(Advisor): reduce false positives in support and tree checks (jay9297)
+
+
 VERSION[0.21.1][2026/06/20]
 
 --- Fixed Crashes ---
